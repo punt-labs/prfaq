@@ -1,8 +1,8 @@
 ---
-name: working-backwards
+name: prfaq
 description: >
   This skill should be used when the user asks to "write a PR/FAQ",
-  "working backwards", "product discovery", "evaluate a product idea",
+  "prfaq", "working backwards", "product discovery", "evaluate a product idea",
   "press release FAQ", "test product value", or wants to use the
   Amazon Working Backwards process to evaluate whether a product or
   feature is worth building.
@@ -39,7 +39,7 @@ Do not proceed until you have clear answers for at least customer, problem, and 
 
 ### Phase 2: Draft the Press Release
 
-Read the LaTeX template from `${CLAUDE_PLUGIN_ROOT}/assets/prfaq-template.tex`. Read the PR section guide from `${CLAUDE_PLUGIN_ROOT}/skills/working-backwards/references/pr-structure.md`.
+Read the LaTeX template from `${CLAUDE_PLUGIN_ROOT}/assets/prfaq-template.tex`. Read the PR section guide from `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/pr-structure.md`.
 
 Write each section of the press release using the user's discovery answers:
 
@@ -56,11 +56,11 @@ Write the LaTeX content into a `.tex` file in the user's project directory (defa
 
 After writing, share each section with the user for review. Ask for corrections before proceeding.
 
-Read `${CLAUDE_PLUGIN_ROOT}/skills/working-backwards/references/common-mistakes.md` and check the draft against known anti-patterns. Flag any issues.
+Read `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/common-mistakes.md` and check the draft against known anti-patterns. Flag any issues.
 
 ### Phase 3: Draft the FAQ
 
-Read the FAQ section guide from `${CLAUDE_PLUGIN_ROOT}/skills/working-backwards/references/faq-structure.md`. Read the four risks framework from `${CLAUDE_PLUGIN_ROOT}/skills/working-backwards/references/four-risks.md`.
+Read the FAQ section guide from `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/faq-structure.md`. Read the four risks framework from `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/four-risks.md`.
 
 Generate two categories of FAQs:
 
@@ -91,7 +91,7 @@ If compilation fails, read the LaTeX log, fix the issue, and recompile. Report t
 
 ### Phase 5: Review
 
-Evaluate the completed PR/FAQ against these review criteria (from `${CLAUDE_PLUGIN_ROOT}/skills/working-backwards/references/four-risks.md`):
+Evaluate the completed PR/FAQ against these review criteria (from `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/four-risks.md`):
 
 1. Is the target customer clearly defined and specific?
 2. Is the problem significant and well-evidenced?
@@ -112,7 +112,7 @@ Present the assessment honestly. Identify the weakest sections and suggest speci
 
 Detailed guidance for each phase is in the reference files:
 
-- `${CLAUDE_PLUGIN_ROOT}/skills/working-backwards/references/pr-structure.md` — Section-by-section press release guide
-- `${CLAUDE_PLUGIN_ROOT}/skills/working-backwards/references/faq-structure.md` — FAQ section guide (external + internal)
-- `${CLAUDE_PLUGIN_ROOT}/skills/working-backwards/references/four-risks.md` — Cagan four risks framework, review criteria, decision outcomes
-- `${CLAUDE_PLUGIN_ROOT}/skills/working-backwards/references/common-mistakes.md` — Anti-patterns and failure modes
+- `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/pr-structure.md` — Section-by-section press release guide
+- `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/faq-structure.md` — FAQ section guide (external + internal)
+- `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/four-risks.md` — Cagan four risks framework, review criteria, decision outcomes
+- `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/common-mistakes.md` — Anti-patterns and failure modes
