@@ -1,0 +1,285 @@
+\documentclass[11pt,letterpaper]{article}
+
+% ── Geometry ──────────────────────────────────────────────────────────────────
+\usepackage[margin=1in]{geometry}
+
+% ── Fonts ─────────────────────────────────────────────────────────────────────
+\usepackage[T1]{fontenc}
+\usepackage{newpxtext}     % Palatino-based serif (TeX Gyre Pagella)
+\usepackage{newpxmath}     % Matching math font
+
+% ── Colors ────────────────────────────────────────────────────────────────────
+\usepackage[dvipsnames]{xcolor}
+\definecolor{SectionBlue}{HTML}{1B3A5C}
+\definecolor{AccentGray}{HTML}{4A4A4A}
+\definecolor{QuoteBorder}{HTML}{8B9DAF}
+\definecolor{RiskRed}{HTML}{C0392B}
+\definecolor{RiskAmber}{HTML}{E67E22}
+\definecolor{RiskGreen}{HTML}{27AE60}
+\definecolor{BoxBg}{HTML}{F7F8FA}
+
+% ── Tables ────────────────────────────────────────────────────────────────────
+\usepackage{booktabs}
+\usepackage{tabularx}
+
+% ── Boxes ─────────────────────────────────────────────────────────────────────
+\usepackage[framemethod=tikz]{mdframed}
+
+% ── Lists ─────────────────────────────────────────────────────────────────────
+\usepackage{enumitem}
+
+% ── Hyperlinks ────────────────────────────────────────────────────────────────
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=SectionBlue,
+  urlcolor=SectionBlue,
+  pdfauthor={},
+  pdftitle={PR/FAQ},
+  pdfsubject={Working Backwards — Product Discovery},
+}
+
+% ── Section styling ───────────────────────────────────────────────────────────
+\usepackage{titlesec}
+\titleformat{\section}
+  {\Large\bfseries\color{SectionBlue}}
+  {}
+  {0pt}
+  {}
+  [\vspace{-0.5em}\textcolor{QuoteBorder}{\rule{\textwidth}{0.4pt}}]
+
+\titleformat{\subsection}
+  {\large\bfseries\color{AccentGray}}
+  {}
+  {0pt}
+  {}
+
+% ══════════════════════════════════════════════════════════════════════════════
+% Custom environments
+% ══════════════════════════════════════════════════════════════════════════════
+
+% ── \prsection{title} — styled press release section header ──────────────────
+\newcommand{\prsection}[1]{%
+  \vspace{1em}%
+  {\large\bfseries\color{SectionBlue}#1}%
+  \vspace{0.3em}\par%
+}
+
+% ── customerquote — indented, italic customer quote ──────────────────────────
+\newmdenv[
+  topline=false,
+  bottomline=false,
+  rightline=false,
+  linewidth=3pt,
+  linecolor=QuoteBorder,
+  backgroundcolor=BoxBg,
+  innerleftmargin=12pt,
+  innerrightmargin=12pt,
+  innertopmargin=8pt,
+  innerbottommargin=8pt,
+  skipabove=\baselineskip,
+  skipbelow=\baselineskip,
+]{customerquote}
+
+% ── spokespersonquote — indented spokesperson quote ──────────────────────────
+\newmdenv[
+  topline=false,
+  bottomline=false,
+  rightline=false,
+  linewidth=3pt,
+  linecolor=SectionBlue,
+  backgroundcolor=BoxBg,
+  innerleftmargin=12pt,
+  innerrightmargin=12pt,
+  innertopmargin=8pt,
+  innerbottommargin=8pt,
+  skipabove=\baselineskip,
+  skipbelow=\baselineskip,
+]{spokespersonquote}
+
+% ── faqpair — Q&A pair with bold question ────────────────────────────────────
+\newenvironment{faqpair}[1]{%
+  \vspace{0.5em}%
+  \noindent\textbf{\color{SectionBlue}Q: #1}\par%
+  \vspace{0.2em}%
+  \begin{adjustwidth}{1em}{0pt}%
+}{%
+  \end{adjustwidth}%
+  \vspace{0.5em}%
+}
+
+% ── riskmatrix — four-risks assessment table ─────────────────────────────────
+\newcommand{\riskmatrix}[4]{%
+  \vspace{1em}%
+  \begin{mdframed}[
+    linewidth=0.5pt,
+    linecolor=QuoteBorder,
+    backgroundcolor=BoxBg,
+    innerleftmargin=10pt,
+    innerrightmargin=10pt,
+    innertopmargin=10pt,
+    innerbottommargin=10pt,
+  ]
+  {\bfseries\color{SectionBlue}Four Risks Assessment}\par
+  \vspace{0.5em}
+  \begin{tabularx}{\textwidth}{@{}l X@{}}
+    \toprule
+    \textbf{Risk} & \textbf{Assessment} \\
+    \midrule
+    \textbf{Value}       & #1 \\
+    \textbf{Usability}   & #2 \\
+    \textbf{Feasibility} & #3 \\
+    \textbf{Viability}   & #4 \\
+    \bottomrule
+  \end{tabularx}
+  \end{mdframed}
+  \vspace{1em}%
+}
+
+% ── adjustwidth (for faqpair indentation) ────────────────────────────────────
+\usepackage{changepage}
+
+% ══════════════════════════════════════════════════════════════════════════════
+% Document
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{document}
+
+% ── Title block ───────────────────────────────────────────────────────────────
+\begin{center}
+  {\LARGE\bfseries\color{SectionBlue} PRODUCT NAME} \\[0.5em]
+  {\large\color{AccentGray} Subtitle — one-line value proposition} \\[1.5em]
+  {\small\color{AccentGray} Date \quad|\quad Author \quad|\quad Team}
+\end{center}
+
+\vspace{1em}
+\textcolor{QuoteBorder}{\rule{\textwidth}{0.8pt}}
+\vspace{1em}
+
+% ══════════════════════════════════════════════════════════════════════════════
+% PRESS RELEASE
+% ══════════════════════════════════════════════════════════════════════════════
+
+\section*{Press Release}
+
+\prsection{Summary}
+
+CITY, STATE — Today, COMPANY announced PRODUCT, which provides BENEFIT
+to TARGET CUSTOMER. Unlike ALTERNATIVES, PRODUCT offers DIFFERENTIATOR,
+enabling customers to OUTCOME.
+
+\prsection{Problem}
+
+TARGET CUSTOMER struggles with PROBLEM. Today they cope by CURRENT WORKAROUND,
+which results in NEGATIVE CONSEQUENCE. Despite EXISTING SOLUTIONS, customers
+still face UNRESOLVED PAIN POINT because REASON.
+
+\prsection{Solution}
+
+PRODUCT solves this by APPROACH. Customers can now KEY ACTION, which means
+they experience BENEFIT. The product works by BRIEF MECHANISM, requiring
+MINIMAL EFFORT from the customer.
+
+\prsection{Customer Quote}
+
+\begin{customerquote}
+\textit{``Before PRODUCT, I spent PAIN POINT doing WORKAROUND. Now I can
+DESIRED OUTCOME in TIMEFRAME. It has changed how I BROADER IMPACT.''}
+
+\raggedleft --- \textbf{Customer Name}, Role at Company
+\end{customerquote}
+
+\prsection{Getting Started}
+
+Getting started with PRODUCT is simple. Customers FIRST STEP, then
+SECOND STEP, and within TIMEFRAME they can INITIAL VALUE. There is no
+need to REMOVED FRICTION.
+
+\prsection{Spokesperson Quote}
+
+\begin{spokespersonquote}
+``We built PRODUCT because we saw that TARGET CUSTOMER deserved
+BETTER EXPERIENCE. By focusing on KEY DESIGN DECISION, we've been able to
+deliver QUANTIFIABLE IMPROVEMENT while keeping IMPORTANT QUALITY.''
+
+\raggedleft --- \textbf{Spokesperson Name}, Title at Company
+\end{spokespersonquote}
+
+\prsection{Call to Action}
+
+To learn more and get started, visit URL. PRODUCT is available starting
+DATE with PRICING MODEL.
+
+\newpage
+
+% ══════════════════════════════════════════════════════════════════════════════
+% FREQUENTLY ASKED QUESTIONS
+% ══════════════════════════════════════════════════════════════════════════════
+
+\section*{Frequently Asked Questions}
+
+% ── External FAQs (Customer-facing) ──────────────────────────────────────────
+
+\subsection*{External FAQs}
+
+\begin{faqpair}{What is PRODUCT and who is it for?}
+  PRODUCT is BRIEF DESCRIPTION designed for TARGET CUSTOMER who needs
+  to CORE JOB TO BE DONE.
+\end{faqpair}
+
+\begin{faqpair}{How is this different from COMPETITOR/ALTERNATIVE?}
+  Unlike ALTERNATIVE, PRODUCT provides DIFFERENTIATOR because REASON.
+  This means customers can UNIQUE BENEFIT.
+\end{faqpair}
+
+\begin{faqpair}{How do I get started?}
+  ONBOARDING STEPS. Most customers see INITIAL VALUE within TIMEFRAME.
+\end{faqpair}
+
+% ── Internal FAQs (Business-facing) ──────────────────────────────────────────
+
+\subsection*{Internal FAQs}
+
+\subsubsection*{Value \& Market}
+
+\begin{faqpair}{What is the total addressable market?}
+  TAM ANALYSIS with supporting data.
+\end{faqpair}
+
+\begin{faqpair}{What evidence do we have that customers want this?}
+  CUSTOMER EVIDENCE: interviews, surveys, usage data, or market signals.
+\end{faqpair}
+
+\subsubsection*{Technical}
+
+\begin{faqpair}{What are the major technical risks?}
+  TECHNICAL RISKS and mitigation strategies.
+\end{faqpair}
+
+\begin{faqpair}{What is the estimated development timeline?}
+  TIMELINE with key milestones and dependencies.
+\end{faqpair}
+
+\subsubsection*{Business}
+
+\begin{faqpair}{What is the revenue model?}
+  REVENUE MODEL description with pricing rationale.
+\end{faqpair}
+
+\begin{faqpair}{What are the key metrics for success?}
+  SUCCESS METRICS with targets and measurement approach.
+\end{faqpair}
+
+% ══════════════════════════════════════════════════════════════════════════════
+% FOUR RISKS ASSESSMENT
+% ══════════════════════════════════════════════════════════════════════════════
+
+\section*{Risk Assessment}
+
+\riskmatrix
+  {VALUE RISK ASSESSMENT — Will customers buy/choose this?}
+  {USABILITY RISK ASSESSMENT — Can customers figure out how to use it?}
+  {FEASIBILITY RISK ASSESSMENT — Can we build it with available resources?}
+  {VIABILITY RISK ASSESSMENT — Does it work for the business?}
+
+\end{document}
