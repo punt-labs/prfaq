@@ -1,37 +1,24 @@
-# Working Backwards
+# prfaq
 
 A Claude Code plugin that guides you through the Amazon Working Backwards PR/FAQ process and produces professional LaTeX documents.
 
-## What Is Working Backwards?
+## What It Does
 
-Working Backwards is Amazon's product discovery process: write a 1-page mock press release and detailed FAQ *before* building anything. This forces clarity about customer value, surfaces risks early, and creates a shared decision-making artifact.
+`prfaq` turns product thinking into a terminal command. Type `/prfaq` in any Claude Code session and Claude walks you through a structured conversation: who is the customer, what is their problem, why is this solution different, what are the risks. From your answers, it generates a complete PR/FAQ document — a one-page mock press release followed by detailed FAQs — compiled to a polished PDF.
 
-The output is a PR/FAQ document — a press release describing the product as if it already launched, followed by external (customer-facing) and internal (business-facing) FAQs that stress-test the idea against Cagan's four risks: Value, Usability, Feasibility, and Viability.
+The output is a decision-making artifact, not a brainstorm. It is designed to be read, debated, and revised before committing to building anything.
 
 ## Installation
 
-### As a local plugin (symlink)
-
 ```bash
-ln -s /path/to/working-backwards ~/.claude/plugins/local-plugins/plugins/working-backwards
+curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/main/install.sh | bash
 ```
 
-Then add an entry to `~/.claude/plugins/local-plugins/.claude-plugin/marketplace.json`:
-
-```json
-{
-  "name": "working-backwards",
-  "description": "Amazon Working Backwards PR/FAQ process — generate professional LaTeX documents for product discovery and decision-making",
-  "version": "0.1.0",
-  "author": { "name": "yourname", "email": "you@example.com" },
-  "source": "./plugins/working-backwards",
-  "category": "development"
-}
-```
+The installer clones the plugin, registers it with Claude Code, and checks for a TeX distribution. Restart Claude Code after installing.
 
 ### Prerequisites
 
-LaTeX must be installed for PDF compilation. Any TeX distribution with `pdflatex` works:
+PDF compilation requires `pdflatex`. Any TeX distribution works:
 
 ```bash
 # macOS
@@ -41,12 +28,33 @@ brew install --cask mactex
 sudo apt install texlive-full
 ```
 
+The plugin generates `.tex` files regardless — you can install TeX later.
+
+### Manual Installation
+
+```bash
+git clone https://github.com/punt-labs/prfaq.git ~/.claude/plugins/local-plugins/plugins/prfaq
+```
+
+Then add to `~/.claude/plugins/local-plugins/.claude-plugin/marketplace.json`:
+
+```json
+{
+  "name": "prfaq",
+  "description": "Amazon Working Backwards PR/FAQ process",
+  "version": "0.1.0",
+  "author": { "name": "punt-labs" },
+  "source": "./plugins/prfaq",
+  "category": "development"
+}
+```
+
 ## Usage
 
 In any Claude Code session:
 
 ```
-/working-backwards
+/prfaq
 ```
 
 The skill walks you through five phases:
@@ -61,3 +69,18 @@ The skill walks you through five phases:
 
 - `prfaq.tex` — LaTeX source in your project directory
 - `prfaq.pdf` — Compiled PDF ready for review
+
+## What Is Working Backwards?
+
+Working Backwards is Amazon's product discovery process: write a 1-page mock press release and detailed FAQ *before* building anything. This forces clarity about customer value, surfaces risks early, and creates a shared decision-making artifact.
+
+The PR/FAQ document includes:
+
+- **Press Release** — Summary, problem, solution, customer quote, getting started, spokesperson quote, call to action
+- **External FAQs** — Customer-facing questions and answers
+- **Internal FAQs** — Business-facing questions organized by value/market, technical, and business risk
+- **Four Risks Assessment** — Cagan framework evaluation: value, usability, feasibility, viability
+
+## License
+
+MIT
