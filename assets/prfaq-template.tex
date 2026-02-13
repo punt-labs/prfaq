@@ -3,6 +3,12 @@
 % ── Geometry ──────────────────────────────────────────────────────────────────
 \usepackage[margin=1in]{geometry}
 
+% ── Pagination ────────────────────────────────────────────────────────────────
+\widowpenalty=10000          % No widow lines (last line alone at page top)
+\clubpenalty=10000           % No orphan lines (first line alone at page bottom)
+\brokenpenalty=10000         % No hyphenated words across page breaks
+\raggedbottom                % Allow uneven page bottoms rather than stretching
+
 % ── Fonts ─────────────────────────────────────────────────────────────────────
 \usepackage[T1]{fontenc}
 \usepackage{newpxtext}     % Palatino-based serif (TeX Gyre Pagella)
@@ -122,7 +128,7 @@
   ]
   {\bfseries\color{SectionBlue}Four Risks Assessment}\par
   \vspace{0.5em}
-  \begin{tabularx}{\textwidth}{@{}l X@{}}
+  \begin{tabularx}{\linewidth}{@{}l X@{}}
     \toprule
     \textbf{Risk} & \textbf{Assessment} \\
     \midrule
