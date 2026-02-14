@@ -109,6 +109,8 @@
 ]{spokespersonquote}
 
 % ── faqpair — Q&A pair with bold question ────────────────────────────────────
+% Label FAQ pairs that explain judgment calls: \begin{faqpair}{Question}\label{faq:slug}
+% Then cross-reference from the press release: (see p.\,\pageref{faq:slug})
 \newenvironment{faqpair}[1]{%
   \vspace{0.5em}%
   \noindent\textbf{\color{SectionBlue}Q: #1}\par%

@@ -160,7 +160,7 @@ SAN FRANCISCO --- Today, punt-labs released \texttt{prfaq}, a free, open-source 
 
 \prsection{Problem}
 
-AI coding tools have made it possible for a single engineer to build in a weekend what used to take a team a quarter. The bottleneck has shifted: the hard part is no longer writing code --- it is knowing what to build and why. Engineers and solo founders using Claude Code, Cursor, and similar tools ship fast, but most lack formal product training. They skip customer definition, skip competitive analysis, skip unit economics --- and discover after burning through tokens and weeks of building that the product does not resonate.
+AI coding tools have made it possible for a single engineer to build in a weekend what used to take a team a quarter. The bottleneck has shifted: the hard part is no longer writing code --- it is knowing what to build and why (see p.\,\pageref{faq:customer-evidence}). Engineers and solo founders using Claude Code, Cursor, and similar tools ship fast, but most lack formal product training. They skip customer definition, skip competitive analysis, skip unit economics --- and discover after burning through tokens and weeks of building that the product does not resonate.
 
 The consequences are visible. Analysts at HFS Research estimate the Global 2000 carry \$1.5--2 trillion in accumulated technical debt~\cite{hfs2024techdebt}, and AI-generated code is adding to the pile faster than ever. Thousands of startups built during the current vibe coding wave already face significant rebuilds --- not because the code is bad, but because the code solves the wrong problem with confidence.
 
@@ -172,7 +172,7 @@ Today, an engineer who wants product discipline has three options: hire a produc
 
 From these answers, Claude generates a complete PR/FAQ document: a one-page mock press release describing the product as if it has already shipped, followed by external FAQs (what a customer would ask) and internal FAQs (what leadership, finance, and engineering would ask). The document is evaluated against Marty Cagan's four risks framework~\cite{cagan2018inspired} --- value, usability, feasibility, and viability --- producing an honest assessment of whether the product is worth building.
 
-The output is a LaTeX-compiled PDF: a clean, professional artifact suitable for sharing with co-founders, investors, or advisors. It is not a disposable brainstorm. It is a decision-making document designed to be read, debated, and revised.
+The output is a LaTeX-compiled PDF (see p.\,\pageref{faq:why-latex}): a clean, professional artifact suitable for sharing with co-founders, investors, or advisors. It is not a disposable brainstorm. It is a decision-making document designed to be read, debated, and revised.
 
 \prsection{Customer Quote}
 
@@ -189,7 +189,7 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
 \prsection{Spokesperson Quote}
 
 \begin{spokespersonquote}
-``Engineers are the best product thinkers in the room --- they just don't always have the frameworks. We built \texttt{prfaq} because the engineers using Claude Code every day are also the ones making product decisions, and they deserve a tool that meets them where they already work. The PR/FAQ process has been proven at Amazon for two decades~\cite{bryar2021workingbackwards}. We didn't invent it. We made it accessible inside a terminal.''
+``Engineers are the best product thinkers in the room --- they just don't always have the frameworks. We built \texttt{prfaq} because the engineers using Claude Code every day are also the ones making product decisions (see p.\,\pageref{faq:tam}), and they deserve a tool that meets them where they already work. The PR/FAQ process has been proven at Amazon for two decades~\cite{bryar2021workingbackwards}. We didn't invent it. We made it accessible inside a terminal.''
 
 \raggedleft --- \textbf{punt-labs}
 \end{spokespersonquote}
@@ -230,7 +230,7 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
   No. The plugin generates the LaTeX source and compiles it automatically. You never see or edit LaTeX unless you choose to. You need a TeX distribution installed (TeX Live or similar), which the installer checks for and provides setup instructions if missing.
 \end{faqpair}
 
-\begin{faqpair}{Why LaTeX instead of Markdown?}
+\begin{faqpair}{Why LaTeX instead of Markdown?}\label{faq:why-latex}
   Three reasons. First, a PR/FAQ is a decision document --- it gets shared with co-founders, investors, and advisors. LaTeX produces professionally typeset PDFs with consistent typography, precise layout, and visual credibility that Markdown-to-PDF pipelines do not match. The medium signals that the thinking is serious. Second, LaTeX's structured environments (\texttt{faqpair}, \texttt{riskitem}, \texttt{customerquote}) give the LLM a precise grammar to write into --- the AI reads and writes \texttt{.tex}, the human reads the compiled \texttt{.pdf}. This separation means the source format can be rich and semantic without burdening the author. Third, LaTeX's package ecosystem (biblatex for citations, mdframed for callout boxes, enumitem for structured lists) provides extensibility that Markdown lacks without custom renderers.
 
   The trade-off is friction: LaTeX requires a TeX distribution ($\sim$4\,GB), and users unfamiliar with it may find compilation errors intimidating. The installer mitigates this with automated setup, and the plugin handles all LaTeX generation --- the user never writes \texttt{.tex} directly. This is a two-way door: if user feedback shows the TeX dependency is a meaningful adoption barrier, adding a Markdown output mode is straightforward since the content generation is format-independent. The structured thinking matters more than the output format.
@@ -254,15 +254,15 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
 
 \subsubsection*{Value \& Market}
 
-\begin{faqpair}{What is the total addressable market?}
+\begin{faqpair}{What is the total addressable market?}\label{faq:tam}
   The primary market is engineers and solo founders using AI coding tools to build products. As of early 2026, over 80\% of professional developers use AI coding assistants regularly (daily or weekly)~\cite{stackoverflow2025survey}. Claude Code has surpassed \$2B in annualized revenue~\cite{anthropic2026revenue} and is among the fastest-growing AI coding tools. The subset of these users who are making product decisions --- solo founders, indie hackers, startup engineers, and technical co-founders --- numbers in the hundreds of thousands. This is not a TAM-based revenue argument (the plugin is free); it is a reach argument. A useful, free plugin in a fast-growing ecosystem reaches users through organic discovery.
 \end{faqpair}
 
-\begin{faqpair}{What evidence do we have that customers want this?}
+\begin{faqpair}{What evidence do we have that customers want this?}\label{faq:customer-evidence}
   Three categories of indirect evidence, but no primary customer data yet. First, the ``vibe coding'' phenomenon: thousands of products are being built at speed without product discipline, and rebuilds are already visible across startup communities and engineering forums. Second, the explosion of ``how to think about product as an engineer'' content --- books, courses, and newsletters targeting technical founders suggest unmet demand for product skills in developer contexts. Third, the Working Backwards process itself has two decades of validation at Amazon~\cite{bryar2021workingbackwards}, where it is mandatory for new product proposals. The gap is not whether the framework works --- it is accessibility. Engineers do not attend PM workshops. They install plugins. \textit{Note: we have not yet validated that engineers want product frameworks delivered inside their terminal. Five to ten customer discovery interviews would significantly strengthen this evidence base.}
 \end{faqpair}
 
-\begin{faqpair}{Who are the competitors and why will we win?}
+\begin{faqpair}{Who are the competitors and why will we win?}\label{faq:competitors}
   The nearest competitor is not a product management tool --- it is the user pasting a PR/FAQ template into Claude.ai or any AI chat and having a free-form conversation. This works for experienced practitioners who already know the framework. What it lacks: structured reference guides that catch common mistakes, the four risks evaluation framework, automated peer review against cognitive biases, LaTeX compilation to a shareable PDF, and a repeatable process that improves across uses. The plugin encodes twenty years of Working Backwards practice into a reusable workflow; a blank chat starts from zero every time.
 
   Beyond that, traditional competitors include product management tools (Productboard, Aha!, Notion templates) and business planning tools (Lean Canvas generators). None of these are integrated into a developer's coding environment. They all require context-switching: leave the terminal, open a browser, fill in a form. A Claude Code plugin runs in the same session where the engineer builds software --- the mental model shift from ``coding'' to ``product thinking'' happens in a single command, not a tab switch.
