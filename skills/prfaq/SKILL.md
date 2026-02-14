@@ -39,7 +39,7 @@ Before starting the full workflow, check if a `prfaq.tex` file already exists in
 
 3. **Edit surgically.** Only modify the sections the user wants changed. Read the existing `.tex` file, make targeted edits, and preserve everything else. Do not regenerate the entire document.
 
-4. **Recompile and review.** After edits, run the compile script and present the changes for review. Offer further iteration.
+4. **Recompile and review.** After edits, run the compile script and present the changes for review. Offer to re-run the peer reviewer (Phase 3c) on the revised document. Offer further iteration.
 
 If the user explicitly asks to start a new PR/FAQ (not revise), proceed to the full workflow below even if a document exists.
 
@@ -137,6 +137,21 @@ Each feature entry should be a short name followed by a rationale (why it's in t
 
 Append the FAQ, risk assessment, and feature appendix sections to the `.tex` file. Share with the user for review.
 
+### Phase 3c: Peer Review
+
+Invoke the `peer-reviewer` agent to critically evaluate the completed draft. Use the Task tool with `subagent_type: "prfaq:peer-reviewer"`, passing the path to the `.tex` file.
+
+The peer reviewer reads the draft, loads all reference guides (including the Kahneman decision quality framework), checks available evidence in `./research/` and via web search, and returns structured feedback: critical issues, warnings, strengths, and recommendations.
+
+**Resolution loop:**
+
+1. Present the review results to the user.
+2. For each flag, the user (or you on their behalf) decides: **accept** (revise the section), **reject** (explain why the flag doesn't apply), or **escalate** (it's a product decision the user must make).
+3. For accepted issues, revise the `.tex` file and re-run the peer reviewer.
+4. Proceed to Phase 4 when the assessment is PASS or when the user is satisfied with ITERATE status.
+
+If the assessment is REJECT with critical issues, do not proceed to compilation until the critical issues are resolved or the user explicitly overrides.
+
 ### Phase 4: Compile
 
 Run the compile script to produce the PDF:
@@ -174,3 +189,4 @@ Detailed guidance for each phase is in the reference files:
 - `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/faq-structure.md` — FAQ section guide (external + internal)
 - `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/four-risks.md` — Cagan four risks framework, review criteria, decision outcomes
 - `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/common-mistakes.md` — Anti-patterns and failure modes
+- `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/decision-quality.md` — Kahneman decision quality checklist for peer review
