@@ -3,6 +3,10 @@
 *.out
 *.toc
 *.synctex.gz
+*.bbl
+*.bcf
+*.blg
+*.run.xml
 *.fls
 *.fdb_latexmk
 .DS_Store

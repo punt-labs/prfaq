@@ -62,7 +62,15 @@ Before asking the user any questions, look for primary research that should grou
 
 4. **Web research.** Once you understand the product domain (from research files or the user's initial description), offer to search the web for supporting market data, competitor information, and industry trends. Use WebSearch if the user agrees. This is especially valuable for TAM estimates, competitive landscape, and trend data.
 
-5. **Carry forward.** Compile all discovered research into a working context that you reference throughout Phases 1–5. Specifically thread research evidence into:
+5. **Generate bibliography entries.** For each research source discovered, create a biblatex entry in a `.bib` file in the same directory as the `.tex` file, using the same basename (e.g., `prfaq.tex` → `prfaq.bib`, `docs/proposal.tex` → `docs/proposal.bib`). Use appropriate entry types:
+   - Local research files → `@report` or `@misc` with title and year
+   - Web sources → `@online` or `@misc` with `url` and access date
+   - Books or papers → `@book` or `@article` with standard fields
+   - Interviews or surveys → `@misc` with participant count and methodology note
+
+   Note the citation key for each entry — you will use `\cite{key}` during drafting.
+
+6. **Carry forward.** Compile all discovered research into a working context that you reference throughout Phases 1–5. Specifically thread research evidence into:
    - **Problem section** — evidence of customer pain
    - **Customer evidence FAQ** — primary data over inferred claims
    - **TAM/market FAQ** — real market sizing where available
@@ -100,7 +108,9 @@ Write each section of the press release using the user's discovery answers:
 7. **Spokesperson quote** — A fictional internal quote explaining vision and design philosophy
 8. **Call to action** — Where to go, when available, pricing model
 
-Write the LaTeX content into a `.tex` file in the user's project directory (default: `prfaq.tex` in the project root, or a path the user specifies). Replace all placeholder text in the template with generated content.
+Write the LaTeX content into a `.tex` file in the user's project directory (default: `prfaq.tex` in the project root, or a path the user specifies). Replace all placeholder text in the template with generated content. Uncomment the `\addbibresource` line in the preamble and set it to the `.bib` filename.
+
+When writing any factual claim — market sizes, statistics, customer behaviors, competitor capabilities, framework attributions — use `\cite{key}` referencing the corresponding `.bib` entry. If a claim has no source, write `[CITATION NEEDED]` as a visible marker and flag it for the user during review.
 
 After writing, share each section with the user for review. Ask for corrections before proceeding.
 
@@ -122,6 +132,14 @@ Generate two categories of FAQs:
 - **Value & Market** — TAM, customer evidence, competitive landscape
 - **Technical** — Architecture risks, timeline, dependencies
 - **Business** — Revenue model, unit economics, success metrics
+
+Internal FAQs are the evidence-heavy part of the document. Every factual assertion should use `\cite{key}`:
+- **TAM FAQ** — cite market research, surveys, financial disclosures for every number
+- **Customer evidence FAQ** — cite each source of evidence (interviews, surveys, usage data)
+- **Competitive FAQ** — cite competitor documentation or third-party analysis
+- **Timeline FAQ** — cite reference class examples for similar projects
+
+If a `.bib` entry doesn't exist for a claim, create one. If no source exists at all, mark `[CITATION NEEDED]`.
 
 After the FAQs, fill in the four risks assessment (Value, Usability, Feasibility, Viability) based on everything gathered so far.
 

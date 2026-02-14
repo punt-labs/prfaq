@@ -25,6 +25,7 @@ REQUIRED_PACKAGES=(
   hyperref        # Hyperlinks and PDF metadata
   titlesec        # Section heading styles
   changepage      # adjustwidth for indented FAQ answers
+  biblatex        # Citation support
 )
 
 info()   { printf '\033[0;34m%s\033[0m\n' "$*"; }
@@ -174,6 +175,13 @@ else
   else
     info "  You can install TeX later. The plugin will still generate .tex files."
   fi
+fi
+
+if command -v biber &>/dev/null; then
+  ok "biber found (bibliography processing)"
+else
+  warn "biber not found — citations will show as [?] in compiled PDFs"
+  info "  Install via: tlmgr install biber (or included in texlive-full / MacTeX)"
 fi
 
 if [[ ${#MISSING_PACKAGES[@]} -gt 0 ]]; then

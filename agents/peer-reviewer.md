@@ -51,7 +51,9 @@ Before forming your assessment, gather available evidence:
 
 2. **Quarry search.** If quarry-mcp tools are available (search_documents, get_page), use them to search the user's indexed knowledge base for evidence related to key claims: customer pain points, market sizing, competitive landscape, technical feasibility. This is semantic search across everything the user has ever indexed.
 
-3. **Web verification.** For specific factual claims (market sizes, competitor capabilities, statistics, technology maturity), use WebSearch to verify. Do not accept round numbers or unsourced statistics at face value.
+3. **Citation verification.** Check for a `.bib` file alongside the `.tex` file. If one exists, read it and build a map of citation keys to their entries. Then use Grep to extract all `\cite{...}` commands from the `.tex` file. Verify: (a) every `\cite{key}` has a corresponding `.bib` entry, (b) every factual claim (market sizes, statistics, customer behaviors, competitor capabilities) has a nearby `\cite{}`, (c) `.bib` entries have adequate metadata (titles, years, URLs for web sources).
+
+4. **Web verification.** For specific factual claims (market sizes, competitor capabilities, statistics, technology maturity), use WebSearch to verify. Do not accept round numbers or unsourced statistics at face value.
 
 ## Review Categories
 
@@ -59,9 +61,9 @@ Evaluate the document across these categories:
 
 ### 1. Unsupported Claims
 
-Assertions presented as facts without evidence or citation. Every claim about market size, customer behavior, competitive positioning, or technical feasibility should have a traceable source.
+Assertions presented as facts without evidence or `\cite{}` reference. Every claim about market size, customer behavior, competitive positioning, or technical feasibility should have a traceable source in the `.bib` file.
 
-Flag: "The market is $X billion" with no citation. "Customers want X" with no interview data. "Competitors don't offer X" without naming competitors.
+Flag: "The market is $X billion" with no `\cite{}`. "Customers want X" with no interview data cited. "Competitors don't offer X" without naming competitors. Any `\cite{key}` where the key is missing from the `.bib` file. Any `[CITATION NEEDED]` markers left in the document.
 
 ### 2. Cognitive Bias Detection
 

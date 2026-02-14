@@ -42,8 +42,13 @@
   urlcolor=SectionBlue,
   pdfauthor={punt-labs},
   pdftitle={prfaq --- PR/FAQ},
+  citecolor=SectionBlue,
   pdfsubject={Working Backwards --- Product Discovery},
 }
+
+% ── Bibliography ─────────────────────────────────────────────────────────────
+\usepackage[style=numeric,backend=biber,sorting=none]{biblatex}
+\addbibresource{prfaq.bib}
 
 % ── Section styling ───────────────────────────────────────────────────────────
 \usepackage{titlesec}
@@ -157,7 +162,7 @@ SAN FRANCISCO --- Today, punt-labs released \texttt{prfaq}, a free, open-source 
 
 AI coding tools have made it possible for a single engineer to build in a weekend what used to take a team a quarter. The bottleneck has shifted: the hard part is no longer writing code --- it is knowing what to build and why. Engineers and solo founders using Claude Code, Cursor, and similar tools ship fast, but most lack formal product training. They skip customer definition, skip competitive analysis, skip unit economics --- and discover after burning through tokens and weeks of building that the product does not resonate.
 
-The consequences are visible. Analysts at HFS Research estimate the Global 2000 carry \$1.5--2 trillion in accumulated technical debt, and AI-generated code is adding to the pile faster than ever. Thousands of startups built during the current vibe coding wave already face significant rebuilds --- not because the code is bad, but because the code solves the wrong problem with confidence.
+The consequences are visible. Analysts at HFS Research estimate the Global 2000 carry \$1.5--2 trillion in accumulated technical debt~\cite{hfs2024techdebt}, and AI-generated code is adding to the pile faster than ever. Thousands of startups built during the current vibe coding wave already face significant rebuilds --- not because the code is bad, but because the code solves the wrong problem with confidence.
 
 Today, an engineer who wants product discipline has three options: hire a product manager they cannot afford, read a book and try to apply frameworks manually, or just iterate --- ship something, get feedback, ship again. Iteration works. Some of the best developer tools started as something an engineer built for themselves, and others appreciated. But iteration has real costs: every cycle burns tokens, burns calendar time marketing to early users, and burns the founder's energy. Getting customer feedback is often the actual bottleneck. Plenty of engineers would develop stronger product sense if the frameworks were more accessible --- available in the workflow where they already build, not in a book or a workshop they will never attend.
 
@@ -165,7 +170,7 @@ Today, an engineer who wants product discipline has three options: hire a produc
 
 \texttt{prfaq} brings product thinking directly into the engineer's development environment. By typing \texttt{/prfaq} in any Claude Code session, the engineer starts a structured conversation: Claude asks about the target customer, the problem, the competitive landscape, and the business model. It asks hard questions --- the kind a product manager would ask before greenlighting a project.
 
-From these answers, Claude generates a complete PR/FAQ document: a one-page mock press release describing the product as if it has already shipped, followed by external FAQs (what a customer would ask) and internal FAQs (what leadership, finance, and engineering would ask). The document is evaluated against Marty Cagan's four risks framework --- value, usability, feasibility, and viability --- producing an honest assessment of whether the product is worth building.
+From these answers, Claude generates a complete PR/FAQ document: a one-page mock press release describing the product as if it has already shipped, followed by external FAQs (what a customer would ask) and internal FAQs (what leadership, finance, and engineering would ask). The document is evaluated against Marty Cagan's four risks framework~\cite{cagan2018inspired} --- value, usability, feasibility, and viability --- producing an honest assessment of whether the product is worth building.
 
 The output is a LaTeX-compiled PDF: a clean, professional artifact suitable for sharing with co-founders, investors, or advisors. It is not a disposable brainstorm. It is a decision-making document designed to be read, debated, and revised.
 
@@ -184,7 +189,7 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
 \prsection{Spokesperson Quote}
 
 \begin{spokespersonquote}
-``Engineers are the best product thinkers in the room --- they just don't always have the frameworks. We built \texttt{prfaq} because the engineers using Claude Code every day are also the ones making product decisions, and they deserve a tool that meets them where they already work. The PR/FAQ process has been proven at Amazon for two decades. We didn't invent it. We made it accessible inside a terminal.''
+``Engineers are the best product thinkers in the room --- they just don't always have the frameworks. We built \texttt{prfaq} because the engineers using Claude Code every day are also the ones making product decisions, and they deserve a tool that meets them where they already work. The PR/FAQ process has been proven at Amazon for two decades~\cite{bryar2021workingbackwards}. We didn't invent it. We made it accessible inside a terminal.''
 
 \raggedleft --- \textbf{punt-labs}
 \end{spokespersonquote}
@@ -250,11 +255,11 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
 \subsubsection*{Value \& Market}
 
 \begin{faqpair}{What is the total addressable market?}
-  The primary market is engineers and solo founders using AI coding tools to build products. As of early 2026, over 80\% of professional developers use AI coding assistants regularly (daily or weekly), according to the 2025 Stack Overflow Developer Survey. Claude Code has surpassed \$2B in annualized revenue and is among the fastest-growing AI coding tools. The subset of these users who are making product decisions --- solo founders, indie hackers, startup engineers, and technical co-founders --- numbers in the hundreds of thousands. This is not a TAM-based revenue argument (the plugin is free); it is a reach argument. A useful, free plugin in a fast-growing ecosystem reaches users through organic discovery.
+  The primary market is engineers and solo founders using AI coding tools to build products. As of early 2026, over 80\% of professional developers use AI coding assistants regularly (daily or weekly)~\cite{stackoverflow2025survey}. Claude Code has surpassed \$2B in annualized revenue~\cite{anthropic2026revenue} and is among the fastest-growing AI coding tools. The subset of these users who are making product decisions --- solo founders, indie hackers, startup engineers, and technical co-founders --- numbers in the hundreds of thousands. This is not a TAM-based revenue argument (the plugin is free); it is a reach argument. A useful, free plugin in a fast-growing ecosystem reaches users through organic discovery.
 \end{faqpair}
 
 \begin{faqpair}{What evidence do we have that customers want this?}
-  Three categories of indirect evidence, but no primary customer data yet. First, the ``vibe coding'' phenomenon: thousands of products are being built at speed without product discipline, and rebuilds are already visible across startup communities and engineering forums. Second, the explosion of ``how to think about product as an engineer'' content --- books, courses, and newsletters targeting technical founders suggest unmet demand for product skills in developer contexts. Third, the Working Backwards process itself has two decades of validation at Amazon, where it is mandatory for new product proposals. The gap is not whether the framework works --- it is accessibility. Engineers do not attend PM workshops. They install plugins. \textit{Note: we have not yet validated that engineers want product frameworks delivered inside their terminal. Five to ten customer discovery interviews would significantly strengthen this evidence base.}
+  Three categories of indirect evidence, but no primary customer data yet. First, the ``vibe coding'' phenomenon: thousands of products are being built at speed without product discipline, and rebuilds are already visible across startup communities and engineering forums. Second, the explosion of ``how to think about product as an engineer'' content --- books, courses, and newsletters targeting technical founders suggest unmet demand for product skills in developer contexts. Third, the Working Backwards process itself has two decades of validation at Amazon~\cite{bryar2021workingbackwards}, where it is mandatory for new product proposals. The gap is not whether the framework works --- it is accessibility. Engineers do not attend PM workshops. They install plugins. \textit{Note: we have not yet validated that engineers want product frameworks delivered inside their terminal. Five to ten customer discovery interviews would significantly strengthen this evidence base.}
 \end{faqpair}
 
 \begin{faqpair}{Who are the competitors and why will we win?}
@@ -377,5 +382,11 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
   \item \textbf{Project management features} --- no task tracking, no roadmap views, no sprint planning. The plugin produces a decision document, not a project plan. Users who need project management have Linear, Jira, or beads.
   \item \textbf{Alternative LLM backends} --- the plugin is a Claude Code plugin. Supporting OpenAI, Gemini, or local models would fragment the prompt engineering, dilute quality, and multiply the testing surface for no clear user benefit.
 \end{itemize}
+
+% ══════════════════════════════════════════════════════════════════════════════
+% REFERENCES
+% ══════════════════════════════════════════════════════════════════════════════
+
+\printbibliography[title={References}]
 
 \end{document}

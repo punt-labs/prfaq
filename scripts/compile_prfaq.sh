@@ -23,6 +23,17 @@ BASE="$(basename "$TEX_FILE" .tex)"
 
 echo "Compiling $TEX_FILE ..."
 pdflatex -interaction=nonstopmode -output-directory="$DIR" "$TEX_FILE" > /dev/null 2>&1
+
+# Run biber for bibliography if a .bib file exists alongside the .tex file
+if [[ -f "$DIR/$BASE.bib" ]]; then
+  if command -v biber &>/dev/null; then
+    (cd "$DIR" && biber "$BASE") > /dev/null 2>&1 || echo "Warning: biber failed — citations may show as [?]" >&2
+  else
+    echo "Warning: biber not found — citations will show as [?]" >&2
+  fi
+  pdflatex -interaction=nonstopmode -output-directory="$DIR" "$TEX_FILE" > /dev/null 2>&1
+fi
+
 pdflatex -interaction=nonstopmode -output-directory="$DIR" "$TEX_FILE" > /dev/null 2>&1
 
 if [[ -f "$DIR/$BASE.pdf" ]]; then

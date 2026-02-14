@@ -40,10 +40,15 @@
   colorlinks=true,
   linkcolor=SectionBlue,
   urlcolor=SectionBlue,
+  citecolor=SectionBlue,
   pdfauthor={},
   pdftitle={PR/FAQ},
   pdfsubject={Working Backwards — Product Discovery},
 }
+
+% ── Bibliography ─────────────────────────────────────────────────────────────
+\usepackage[style=numeric,backend=biber,sorting=none]{biblatex}
+% \addbibresource{prfaq.bib}  % Set filename when using citations
 
 % ── Section styling ───────────────────────────────────────────────────────────
 \usepackage{titlesec}
@@ -318,5 +323,11 @@ Features explicitly excluded. Naming what you won't build is as important as nam
   \item FEATURE — WHY NOT
   \item FEATURE — WHY NOT
 \end{itemize}
+
+% ══════════════════════════════════════════════════════════════════════════════
+% REFERENCES
+% ══════════════════════════════════════════════════════════════════════════════
+
+\printbibliography[title={References}]
 
 \end{document}
