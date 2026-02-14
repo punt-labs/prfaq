@@ -24,9 +24,36 @@ Guide the user through the Amazon Working Backwards process to produce a profess
 
 ## Workflow
 
+### Phase 0: Research Discovery
+
+Before asking the user any questions, look for primary research that should ground the entire document.
+
+1. **Scan for research materials.** Use Glob to check for `./research/**/*` in the project root. If the directory exists, list the files found (PDFs, markdown, text, etc.).
+
+2. **If research files are found:**
+   - Read and summarize each file (prioritize `.md`, `.txt`, `.pdf`; skip binary files that aren't PDFs).
+   - Present a summary to the user: "I found these research sources in `./research/`. Here's what they contain..." Ask which are relevant to this PR/FAQ.
+   - Extract key data points: customer quotes, pain points, market sizing, competitive intel, usage metrics, survey results.
+
+3. **If no research directory exists:**
+   - Ask the user: "Do you have primary research — customer interviews, survey data, market analysis, competitive intelligence, or usage analytics — that should inform this PR/FAQ? If so, you can place files in `./research/` or paste key findings directly."
+   - If the user provides data inline, capture and organize it the same way.
+
+4. **Web research.** Once you understand the product domain (from research files or the user's initial description), offer to search the web for supporting market data, competitor information, and industry trends. Use WebSearch if the user agrees. This is especially valuable for TAM estimates, competitive landscape, and trend data.
+
+5. **Carry forward.** Compile all discovered research into a working context that you reference throughout Phases 1–5. Specifically thread research evidence into:
+   - **Problem section** — evidence of customer pain
+   - **Customer evidence FAQ** — primary data over inferred claims
+   - **TAM/market FAQ** — real market sizing where available
+   - **Competitive landscape FAQ** — named competitors and positioning
+   - **Risk assessment** — note which risk assessments are grounded in primary data vs. inferred
+   - Flag any claims in the final document that are unsupported by available evidence.
+
 ### Phase 1: Discovery
 
-Before writing anything, gather the inputs that make a PR/FAQ credible. Ask the user these questions (adapt based on what they've already shared):
+Before writing anything, gather the inputs that make a PR/FAQ credible. If Phase 0 found research, use it to sharpen these questions — ask about specific customer segments, pain points, or competitors surfaced in the research rather than asking generic questions.
+
+Ask the user these questions (adapt based on what they've already shared and what research revealed):
 
 1. **Customer** — Who is the specific target customer? What is their role, context, and daily reality?
 2. **Problem** — What problem does this customer have today? How do they currently cope? What makes existing solutions inadequate?
