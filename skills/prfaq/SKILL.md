@@ -60,17 +60,19 @@ Before asking the user any questions, look for primary research that should grou
    - Ask the user: "Do you have primary research — customer interviews, survey data, market analysis, competitive intelligence, or usage analytics — that should inform this PR/FAQ? If so, you can place files in `./research/` or paste key findings directly."
    - If the user provides data inline, capture and organize it the same way.
 
-4. **Web research.** Once you understand the product domain (from research files or the user's initial description), offer to search the web for supporting market data, competitor information, and industry trends. Use WebSearch if the user agrees. This is especially valuable for TAM estimates, competitive landscape, and trend data.
+4. **Invoke the researcher agent.** Use the Task tool with `subagent_type: "prfaq:researcher"`. Pass the user's product description and any specific claims or topics to investigate. The researcher autonomously discovers `./research/` files, searches the web, and queries any available MCP data providers (quarry-mcp, financial data servers, etc.).
 
-5. **Generate bibliography entries.** For each research source discovered, create a biblatex entry in a `.bib` file in the same directory as the `.tex` file, using the same basename (e.g., `prfaq.tex` → `prfaq.bib`, `docs/proposal.tex` → `docs/proposal.bib`). Use appropriate entry types:
-   - Local research files → `@report` or `@misc` with title and year
-   - Web sources → `@online` or `@misc` with `url` and access date
-   - Books or papers → `@book` or `@article` with standard fields
-   - Interviews or surveys → `@misc` with participant count and methodology note
+   The researcher returns three sections:
+   - **Evidence Found** — per-claim verdicts (supported/contradicted/unsupported) with sources and recommendations
+   - **Bibliography Entries** — ready-to-append biblatex entries
+   - **Research Gaps** — claims where no evidence was found, with suggested actions
 
-   Note the citation key for each entry — you will use `\cite{key}` during drafting.
+   After receiving the results:
+   - Create the `.bib` file (same directory and basename as the `.tex` file — e.g., `prfaq.tex` → `prfaq.bib`) with the bibliography entries the researcher returned.
+   - Present the findings to the user: what was supported, what was contradicted, what gaps remain.
+   - The user can also invoke the researcher standalone later via `/prfaq research` to verify specific claims or find additional evidence.
 
-6. **Carry forward.** Compile all discovered research into a working context that you reference throughout Phases 1–5. Specifically thread research evidence into:
+5. **Carry forward.** Compile all discovered research into a working context that you reference throughout Phases 1–5. Specifically thread research evidence into:
    - **Problem section** — evidence of customer pain
    - **Customer evidence FAQ** — primary data over inferred claims
    - **TAM/market FAQ** — real market sizing where available
