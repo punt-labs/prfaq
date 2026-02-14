@@ -208,40 +208,118 @@ else
   ok "Cloned to $INSTALL_DIR"
 fi
 
-# ── Register in marketplace.json ─────────────────────────────────────────────
+# ── Read metadata from plugin.json ─────────────────────────────────────────
+
+PLUGIN_JSON="$INSTALL_DIR/.claude-plugin/plugin.json"
+if [[ -f "$PLUGIN_JSON" ]] && command -v jq &>/dev/null; then
+  PLUGIN_VERSION=$(jq -r '.version // "0.0.0"' "$PLUGIN_JSON")
+  PLUGIN_DESCRIPTION=$(jq -r '.description // ""' "$PLUGIN_JSON")
+  ok "Plugin version: $PLUGIN_VERSION"
+else
+  PLUGIN_VERSION="0.0.0"
+  PLUGIN_DESCRIPTION="Amazon Working Backwards PR/FAQ process — generate professional LaTeX documents for product discovery and decision-making"
+  warn "Could not read plugin.json — using defaults"
+fi
+
+# ── Registration ─────────────────────────────────────────────────────────────
 
 header "Registration"
 
+# Determine defaults for author: git config > generic
+DEFAULT_NAME="local"
+DEFAULT_EMAIL="local@localhost"
+
 MARKETPLACE_DIR="$(dirname "$MARKETPLACE")"
+if command -v git &>/dev/null; then
+  GIT_NAME=$(git config user.name 2>/dev/null || true)
+  GIT_EMAIL=$(git config user.email 2>/dev/null || true)
+  [[ -n "$GIT_NAME" ]] && DEFAULT_NAME="$GIT_NAME"
+  [[ -n "$GIT_EMAIL" ]] && DEFAULT_EMAIL="$GIT_EMAIL"
+fi
+
+if [[ -t 0 ]]; then
+  printf '\033[0;34m  Author name [%s]: \033[0m' "$DEFAULT_NAME"
+  read -r AUTHOR_NAME </dev/tty
+  [[ -z "$AUTHOR_NAME" ]] && AUTHOR_NAME="$DEFAULT_NAME"
+  printf '\033[0;34m  Author email [%s]: \033[0m' "$DEFAULT_EMAIL"
+  read -r AUTHOR_EMAIL </dev/tty
+  [[ -z "$AUTHOR_EMAIL" ]] && AUTHOR_EMAIL="$DEFAULT_EMAIL"
+else
+  AUTHOR_NAME="$DEFAULT_NAME"
+  AUTHOR_EMAIL="$DEFAULT_EMAIL"
+fi
+ok "Author: $AUTHOR_NAME <$AUTHOR_EMAIL>"
+
+# ── Create or update marketplace.json ────────────────────────────────────────
+
 if [[ ! -f "$MARKETPLACE" ]]; then
   info "Creating marketplace.json..."
   mkdir -p "$MARKETPLACE_DIR"
-  cat > "$MARKETPLACE" <<'MANIFEST'
+  if command -v jq &>/dev/null; then
+    jq -n \
+      --arg name "$AUTHOR_NAME" \
+      --arg email "$AUTHOR_EMAIL" \
+      '{
+        "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+        "name": "local",
+        "description": "Local plugins",
+        "owner": {"name": $name, "email": $email},
+        "plugins": []
+      }' > "$MARKETPLACE"
+  else
+    cat > "$MARKETPLACE" <<MANIFEST
 {
-  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "\$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "local",
   "description": "Local plugins",
   "owner": {
-    "name": "local",
-    "email": "local@localhost"
+    "name": "$AUTHOR_NAME",
+    "email": "$AUTHOR_EMAIL"
   },
   "plugins": []
 }
 MANIFEST
+  fi
   ok "Created $MARKETPLACE"
 fi
 
 if grep -q "\"$PLUGIN_NAME\"" "$MARKETPLACE" 2>/dev/null; then
-  ok "Already registered in marketplace.json"
+  if command -v jq &>/dev/null; then
+    CURRENT_VERSION=$(jq -r --arg name "$PLUGIN_NAME" \
+      '.plugins[] | select(.name == $name) | .version' "$MARKETPLACE")
+    if [[ "$CURRENT_VERSION" != "$PLUGIN_VERSION" ]]; then
+      TMPFILE="$(mktemp)"
+      jq --arg name "$PLUGIN_NAME" \
+         --arg version "$PLUGIN_VERSION" \
+         --arg desc "$PLUGIN_DESCRIPTION" \
+         --arg author_name "$AUTHOR_NAME" \
+         --arg author_email "$AUTHOR_EMAIL" \
+         '(.plugins[] | select(.name == $name)) |= . + {
+           "version": $version,
+           "description": $desc,
+           "author": {"name": $author_name, "email": $author_email}
+         }' "$MARKETPLACE" > "$TMPFILE"
+      mv "$TMPFILE" "$MARKETPLACE"
+      ok "Updated marketplace entry: $CURRENT_VERSION → $PLUGIN_VERSION"
+    else
+      ok "Already registered (v$PLUGIN_VERSION)"
+    fi
+  else
+    ok "Already registered in marketplace.json"
+  fi
 else
   if command -v jq &>/dev/null; then
     TMPFILE="$(mktemp)"
     jq --arg name "$PLUGIN_NAME" \
+       --arg version "$PLUGIN_VERSION" \
+       --arg desc "$PLUGIN_DESCRIPTION" \
+       --arg author_name "$AUTHOR_NAME" \
+       --arg author_email "$AUTHOR_EMAIL" \
        '.plugins += [{
          "name": $name,
-         "description": "Amazon Working Backwards PR/FAQ process — generate professional LaTeX documents for product discovery and decision-making",
-         "version": "0.8.0",
-         "author": {"name": "punt-labs", "email": "hello@punt-labs.com"},
+         "description": $desc,
+         "version": $version,
+         "author": {"name": $author_name, "email": $author_email},
          "source": ("./plugins/" + $name),
          "category": "development"
        }]' "$MARKETPLACE" > "$TMPFILE"
@@ -251,6 +329,20 @@ else
     warn "jq not found — add the plugin entry to $MARKETPLACE manually"
     info "  See https://github.com/punt-labs/prfaq#installation"
   fi
+fi
+
+# ── Clean stale cache versions ───────────────────────────────────────────────
+
+CACHE_DIR="$HOME/.claude/plugins/cache/local/$PLUGIN_NAME"
+if [[ -d "$CACHE_DIR" ]]; then
+  for version_dir in "$CACHE_DIR"/*/; do
+    [[ -d "$version_dir" ]] || continue
+    version_name=$(basename "$version_dir")
+    if [[ "$version_name" != "$PLUGIN_VERSION" ]]; then
+      rm -rf "$version_dir"
+      ok "Removed stale cache: v$version_name"
+    fi
+  done
 fi
 
 # ── Summary ──────────────────────────────────────────────────────────────────

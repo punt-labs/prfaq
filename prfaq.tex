@@ -157,7 +157,7 @@ SAN FRANCISCO --- Today, punt-labs released \texttt{prfaq}, a free, open-source 
 
 AI coding tools have made it possible for a single engineer to build in a weekend what used to take a team a quarter. The bottleneck has shifted: the hard part is no longer writing code --- it is knowing what to build and why. Engineers and solo founders using Claude Code, Cursor, and similar tools ship fast, but most lack formal product training. They skip customer definition, skip competitive analysis, skip unit economics --- and discover after burning through tokens and weeks of building that the product does not resonate.
 
-The consequences are measurable. Industry analysts estimate that \$1.5 trillion in technical debt will accumulate by 2027 from AI-generated code, much of it from products that solve the wrong problem or serve an undefined customer. Roughly 8,000 startups built during the current vibe coding wave will require significant rebuilds. The failure mode is not bad code --- it is code that solves the wrong problem with confidence.
+The consequences are visible. Analysts at HFS Research estimate the Global 2000 carry \$1.5--2 trillion in accumulated technical debt, and AI-generated code is adding to the pile faster than ever. Thousands of startups built during the current vibe coding wave already face significant rebuilds --- not because the code is bad, but because the code solves the wrong problem with confidence.
 
 Today, an engineer who wants product discipline has three options: hire a product manager they cannot afford, read a book and try to apply frameworks manually, or just iterate --- ship something, get feedback, ship again. Iteration works. Some of the best developer tools started as something an engineer built for themselves, and others appreciated. But iteration has real costs: every cycle burns tokens, burns calendar time marketing to early users, and burns the founder's energy. Getting customer feedback is often the actual bottleneck. Plenty of engineers would develop stronger product sense if the frameworks were more accessible --- available in the workflow where they already build, not in a book or a workshop they will never attend.
 
@@ -225,6 +225,14 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
   No. The plugin generates the LaTeX source and compiles it automatically. You never see or edit LaTeX unless you choose to. You need a TeX distribution installed (TeX Live or similar), which the installer checks for and provides setup instructions if missing.
 \end{faqpair}
 
+\begin{faqpair}{What happens to my data?}
+  Everything runs locally. The plugin is a set of prompt files and a LaTeX template --- it does not phone home, collect telemetry, or store your data anywhere. Your PR/FAQ content is processed by Claude Code using your existing Anthropic API relationship. The generated \texttt{.tex} file and compiled PDF stay on your machine. Data handling is governed entirely by Claude Code's existing privacy model and your Anthropic terms of service.
+\end{faqpair}
+
+\begin{faqpair}{How much does it cost?}
+  Free. \texttt{prfaq} is open source under a permissive license. There is no paid tier, no freemium upsell, and no planned monetization. You do need an active Claude Code subscription or API access, which is a separate cost from Anthropic. The plugin itself adds zero cost.
+\end{faqpair}
+
 \begin{faqpair}{Can I iterate on the document?}
   Yes. The plugin generates a \texttt{.tex} file in your project directory. You can re-run the process, edit sections, or ask Claude to revise specific parts. The Working Backwards process is designed for rapid iteration --- the point is to iterate on a one-page document instead of iterating on a shipped product.
 \end{faqpair}
@@ -236,15 +244,17 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
 \subsubsection*{Value \& Market}
 
 \begin{faqpair}{What is the total addressable market?}
-  The primary market is engineers and solo founders using AI coding tools to build products. As of early 2026, over 90\% of US-based developers use AI coding assistants daily. Claude Code specifically has reached an estimated \$1--2B in annual recurring revenue and is the fastest-growing AI coding tool by several independent surveys. The subset of these users who are making product decisions --- solo founders, indie hackers, startup engineers, and technical co-founders --- numbers in the hundreds of thousands. This is not a TAM-based revenue argument (the plugin is free); it is a reach argument. A useful, free plugin in a fast-growing ecosystem reaches users through organic discovery.
+  The primary market is engineers and solo founders using AI coding tools to build products. As of early 2026, over 80\% of professional developers use AI coding assistants regularly (daily or weekly), according to the 2025 Stack Overflow Developer Survey. Claude Code has surpassed \$2B in annualized revenue and is among the fastest-growing AI coding tools. The subset of these users who are making product decisions --- solo founders, indie hackers, startup engineers, and technical co-founders --- numbers in the hundreds of thousands. This is not a TAM-based revenue argument (the plugin is free); it is a reach argument. A useful, free plugin in a fast-growing ecosystem reaches users through organic discovery.
 \end{faqpair}
 
 \begin{faqpair}{What evidence do we have that customers want this?}
-  Three categories of evidence. First, the ``vibe coding'' phenomenon: industry data shows thousands of products being built at speed without product discipline, with analysts tracking 8,000+ startups expected to need significant rebuilds due to lack of upfront product thinking. Second, the explosion of ``how to think about product as an engineer'' content --- books, courses, and newsletters targeting technical founders suggest unmet demand for product skills in developer contexts. Third, the Working Backwards process itself has two decades of validation at Amazon, where it is mandatory for new product proposals. The gap is not whether the framework works --- it is accessibility. Engineers do not attend PM workshops. They install plugins.
+  Three categories of indirect evidence, but no primary customer data yet. First, the ``vibe coding'' phenomenon: thousands of products are being built at speed without product discipline, and rebuilds are already visible across startup communities and engineering forums. Second, the explosion of ``how to think about product as an engineer'' content --- books, courses, and newsletters targeting technical founders suggest unmet demand for product skills in developer contexts. Third, the Working Backwards process itself has two decades of validation at Amazon, where it is mandatory for new product proposals. The gap is not whether the framework works --- it is accessibility. Engineers do not attend PM workshops. They install plugins. \textit{Note: we have not yet validated that engineers want product frameworks delivered inside their terminal. Five to ten customer discovery interviews would significantly strengthen this evidence base.}
 \end{faqpair}
 
 \begin{faqpair}{Who are the competitors and why will we win?}
-  Direct competitors are product management tools (Productboard, Aha!, Notion templates) and business planning tools (Lean Canvas generators, business model canvas apps). None of these are integrated into a developer's coding environment. They all require context-switching: leave the terminal, open a browser, fill in a form. The structural advantage is integration. A Claude Code plugin runs in the same session where the engineer builds software. The mental model shift from ``coding'' to ``product thinking'' happens in a single command, not a tab switch. If competitors respond, they would need to build Claude Code plugins themselves --- which validates the distribution channel.
+  The nearest competitor is not a product management tool --- it is the user pasting a PR/FAQ template into Claude.ai or any AI chat and having a free-form conversation. This works for experienced practitioners who already know the framework. What it lacks: structured reference guides that catch common mistakes, the four risks evaluation framework, automated peer review against cognitive biases, LaTeX compilation to a shareable PDF, and a repeatable process that improves across uses. The plugin encodes twenty years of Working Backwards practice into a reusable workflow; a blank chat starts from zero every time.
+
+  Beyond that, traditional competitors include product management tools (Productboard, Aha!, Notion templates) and business planning tools (Lean Canvas generators). None of these are integrated into a developer's coding environment. They all require context-switching: leave the terminal, open a browser, fill in a form. A Claude Code plugin runs in the same session where the engineer builds software --- the mental model shift from ``coding'' to ``product thinking'' happens in a single command, not a tab switch.
 \end{faqpair}
 
 \subsubsection*{Technical}
@@ -255,6 +265,10 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
 
 \begin{faqpair}{What dependencies exist on other teams or systems?}
   The plugin depends on Anthropic's Claude Code plugin system for loading and execution, and on a local TeX distribution for PDF compilation. Both are external dependencies outside our control. The Claude Code plugin API is stable (v1), and TeX Live is a mature, 30-year-old ecosystem. If Anthropic changes the plugin format, the migration would be straightforward --- the plugin is a handful of files with simple structure. If TeX Live is unavailable, the plugin still generates the \texttt{.tex} source file; only PDF compilation is affected.
+\end{faqpair}
+
+\begin{faqpair}{If this succeeds, what breaks first?}
+  Nothing at the infrastructure level --- the plugin is stateless, runs locally, and requires no servers. At scale, the pressures are human, not technical: (1) GitHub issue volume --- at 1,000+ users, support requests and feature demands will exceed solo maintainer capacity; mitigation is clear contribution guidelines and aggressive scope discipline (see Won't Do list); (2) prompt maintenance --- as Claude models evolve, skill prompts may need tuning to maintain output quality; (3) backwards compatibility --- if Anthropic changes the plugin system, the plugin must migrate; the simple file-based architecture makes this low-risk; (4) community expectations --- a popular free tool attracts requests for features that contradict the design philosophy (dashboards, collaboration, other LLM support). The Won't Do list exists to make these decisions in advance, not under pressure.
 \end{faqpair}
 
 \begin{faqpair}{What is the estimated development timeline?}
@@ -283,8 +297,16 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
   Three shifts converged. First, AI coding tools reached mainstream adoption in 2025--2026, creating a large population of engineers who can build products independently but lack product discipline. Second, Claude Code's plugin system matured, making it possible to deliver structured workflows inside the developer's existing tool. Third, the consequences of ``vibe coding without product thinking'' are becoming visible --- failed launches, rebuilds, wasted months --- creating demand for lightweight product frameworks that do not require hiring a PM or leaving the terminal.
 \end{faqpair}
 
+\begin{faqpair}{What is the customer acquisition strategy?}
+  Distribution is the product strategy for a free plugin. Primary channels: (1) GitHub discoverability --- README, topics, and stars drive organic search traffic; (2) developer community seeding --- posts on Hacker News, Reddit r/ClaudeAI, and Twitter/X targeting the ``vibe coding'' audience; (3) content marketing --- the plugin's own PR/FAQ serves as a case study and demo artifact; (4) word-of-mouth --- engineers who find the plugin useful share the PDF output, which includes a link back to the repository. There is no paid acquisition. If organic channels do not work within 6 months, the distribution hypothesis is wrong and should be revisited.
+\end{faqpair}
+
 \begin{faqpair}{What are we not building?}
-  We are not building a SaaS product management platform. We are not building a competitor to Jira, Linear, Productboard, or Notion. We are not adding collaboration features, dashboards, or analytics. We are not building a web interface. The plugin is a single-player tool that runs locally, produces a document, and gets out of the way. Scope discipline is the feature.
+  We are not building a SaaS product management platform. We are not building a competitor to Jira, Linear, Productboard, or Notion. We are not adding collaboration features, dashboards, or analytics. We are not building a web interface. The plugin is a single-player tool that runs locally, produces a document, and gets out of the way. Scope discipline is the feature. See the Feature Appendix for the full Must Do / Should Do / Won't Do breakdown.
+\end{faqpair}
+
+\begin{faqpair}{It is one year from now and prfaq failed. What went wrong?}
+  Most likely failure scenario: engineers do not want product discipline, even when it is free and frictionless. The vibe coding audience builds for the joy of building, and a tool that asks ``what evidence do you have that customers want this?'' feels like a buzzkill, not a feature. Second scenario: the Claude Code plugin ecosystem does not grow --- if Anthropic deprioritizes plugins or the marketplace never materializes, distribution collapses. Third scenario: the output quality is not high enough to share with stakeholders --- if the generated PR/FAQ reads like AI slop rather than a credible decision document, users will not trust it for real decisions. Fourth scenario: the PR/FAQ process is too heavyweight for the target audience --- engineers want a quick sanity check, not a formal document, and a lighter-weight alternative captures the market.
 \end{faqpair}
 
 % ══════════════════════════════════════════════════════════════════════════════
@@ -312,5 +334,42 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
 
 \riskitem{Viability --- \textcolor{RiskGreen}{Low}}{No revenue target, no operational cost, no support burden. Strategic asset for learning plugin development patterns and building ecosystem presence. The only viability risk is opportunity cost, which is minimal given the small codebase (under 20 files, no dependencies beyond TeX).}
 \end{mdframed}
+
+% ══════════════════════════════════════════════════════════════════════════════
+% FEATURE APPENDIX
+% ══════════════════════════════════════════════════════════════════════════════
+
+\section*{Feature Appendix}
+
+\subsection*{Must Do (V1)}
+
+\begin{itemize}[nosep]
+  \item Interactive discovery workflow --- structured questions that guide the user from idea to document
+  \item Complete PR/FAQ document generation --- press release, external FAQs, internal FAQs, four risks assessment
+  \item LaTeX compilation to professional PDF --- shareable artifact, not a disposable brainstorm
+  \item Reference guides --- encoded best practices for PR structure, FAQ structure, four risks, and common mistakes
+  \item Revise mode --- surgical edits to an existing document without regenerating from scratch
+  \item Peer review agent --- automated critique against Working Backwards principles and cognitive bias checklist
+\end{itemize}
+
+\subsection*{Should Do (Future Iterations)}
+
+\begin{itemize}[nosep]
+  \item Research sub-agent --- scan local \texttt{./research/} directory and optional external data sources for evidence
+  \item Biblatex citation system --- academic-style citations for claims, linking evidence to assertions
+  \item Unit economics reference guide --- structured framework for products with revenue models
+  \item Principal engineer reference guide --- deeper feasibility and technical risk evaluation
+  \item UX bar raiser reference guide --- usability risk ownership and evaluation
+  \item Judgment-to-FAQ cross-referencing --- link flagged judgment calls to FAQ answers that explain reasoning
+\end{itemize}
+
+\subsection*{Won't Do}
+
+\begin{itemize}[nosep]
+  \item \textbf{Web dashboard or SaaS platform} --- the plugin runs locally inside Claude Code. Adding a web layer would introduce infrastructure, authentication, and hosting costs that contradict the zero-ops design. If users want to share documents, they share the PDF.
+  \item \textbf{Collaboration or multi-user editing} --- PR/FAQ is a single-author process by design. The document is written by one person, then reviewed by others. Real-time collaboration would encourage design-by-committee, which the Working Backwards process explicitly avoids.
+  \item \textbf{Project management features} --- no task tracking, no roadmap views, no sprint planning. The plugin produces a decision document, not a project plan. Users who need project management have Linear, Jira, or beads.
+  \item \textbf{Alternative LLM backends} --- the plugin is a Claude Code plugin. Supporting OpenAI, Gemini, or local models would fragment the prompt engineering, dilute quality, and multiply the testing surface for no clear user benefit.
+\end{itemize}
 
 \end{document}
