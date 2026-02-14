@@ -115,32 +115,12 @@
   \vspace{0.5em}%
 }
 
-% ── riskmatrix — four-risks assessment table ─────────────────────────────────
-\newcommand{\riskmatrix}[4]{%
-  \vspace{1em}%
-  \begin{mdframed}[
-    linewidth=0.5pt,
-    linecolor=QuoteBorder,
-    backgroundcolor=BoxBg,
-    innerleftmargin=10pt,
-    innerrightmargin=10pt,
-    innertopmargin=10pt,
-    innerbottommargin=10pt,
-  ]
-  {\bfseries\color{SectionBlue}Four Risks Assessment}\par
-  \vspace{0.5em}
-  \begin{tabularx}{\linewidth}{@{}l X@{}}
-    \toprule
-    \textbf{Risk} & \textbf{Assessment} \\
-    \midrule
-    \textbf{Value}       & #1 \\
-    \textbf{Usability}   & #2 \\
-    \textbf{Feasibility} & #3 \\
-    \textbf{Viability}   & #4 \\
-    \bottomrule
-  \end{tabularx}
-  \end{mdframed}
-  \vspace{1em}%
+% ── riskitem — single risk assessment entry ───────────────────────────────────
+\newcommand{\riskitem}[2]{%
+  \vspace{0.6em}%
+  \noindent\textbf{\color{SectionBlue}#1}\par
+  \vspace{0.2em}%
+  \noindent #2\par
 }
 
 % ── adjustwidth (for faqpair indentation) ────────────────────────────────────
@@ -283,10 +263,60 @@ DATE with PRICING MODEL.
 
 \section*{Risk Assessment}
 
-\riskmatrix
-  {VALUE RISK ASSESSMENT — Will customers buy/choose this?}
-  {USABILITY RISK ASSESSMENT — Can customers figure out how to use it?}
-  {FEASIBILITY RISK ASSESSMENT — Can we build it with available resources?}
-  {VIABILITY RISK ASSESSMENT — Does it work for the business?}
+\begin{mdframed}[
+  linewidth=0.5pt,
+  linecolor=QuoteBorder,
+  backgroundcolor=BoxBg,
+  innerleftmargin=12pt,
+  innerrightmargin=12pt,
+  innertopmargin=10pt,
+  innerbottommargin=10pt,
+]
+{\bfseries\color{SectionBlue}Four Risks Assessment}
+
+\riskitem{Value --- \textcolor{RiskAmber}{RATING}}{VALUE RISK ASSESSMENT — Will customers buy/choose this?}
+
+\riskitem{Usability --- \textcolor{RiskGreen}{RATING}}{USABILITY RISK ASSESSMENT — Can customers figure out how to use it?}
+
+\riskitem{Feasibility --- \textcolor{RiskGreen}{RATING}}{FEASIBILITY RISK ASSESSMENT — Can we build it with available resources?}
+
+\riskitem{Viability --- \textcolor{RiskGreen}{RATING}}{VIABILITY RISK ASSESSMENT — Does it work for the business?}
+\end{mdframed}
+
+% ══════════════════════════════════════════════════════════════════════════════
+% FEATURE APPENDIX
+% ══════════════════════════════════════════════════════════════════════════════
+
+\section*{Feature Appendix}
+
+Defines the scope boundary for the product. Every feature is explicitly categorized to prevent scope creep and force prioritization decisions upfront.
+
+\subsection*{Must Do}
+
+Features that are essential for launch. Without these, the product does not solve the core problem.
+
+\begin{itemize}[leftmargin=1.5em]
+  \item FEATURE — RATIONALE
+  \item FEATURE — RATIONALE
+  \item FEATURE — RATIONALE
+\end{itemize}
+
+\subsection*{Should Do}
+
+Features that meaningfully improve the product but are not launch-blocking. Candidates for fast follow-up.
+
+\begin{itemize}[leftmargin=1.5em]
+  \item FEATURE — RATIONALE
+  \item FEATURE — RATIONALE
+\end{itemize}
+
+\subsection*{Won't Do}
+
+Features explicitly excluded. Naming what you won't build is as important as naming what you will — it prevents scope creep and clarifies the product's identity.
+
+\begin{itemize}[leftmargin=1.5em]
+  \item FEATURE — WHY NOT
+  \item FEATURE — WHY NOT
+\end{itemize}
 
 \end{document}

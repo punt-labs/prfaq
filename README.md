@@ -36,18 +36,20 @@ The plugin generates `.tex` files regardless — you can install TeX later.
 git clone https://github.com/punt-labs/prfaq.git ~/.claude/plugins/local-plugins/plugins/prfaq
 ```
 
-Then add to `~/.claude/plugins/local-plugins/.claude-plugin/marketplace.json`:
+Then register the plugin in `~/.claude/plugins/local-plugins/.claude-plugin/marketplace.json` by adding an entry to the `plugins` array:
 
 ```json
 {
   "name": "prfaq",
   "description": "Amazon Working Backwards PR/FAQ process",
-  "version": "0.1.0",
-  "author": { "name": "punt-labs" },
+  "version": "0.8.0",
+  "author": { "name": "punt-labs", "email": "hello@punt-labs.com" },
   "source": "./plugins/prfaq",
   "category": "development"
 }
 ```
+
+The automated installer handles this registration automatically.
 
 ## Usage
 
@@ -57,8 +59,11 @@ In any Claude Code session:
 /prfaq
 ```
 
-The skill walks you through five phases:
+If a `prfaq.tex` already exists, the skill enters **revise mode** — you can refine the product, incorporate new research, add FAQs, or update risk assessments without starting over.
 
+For a new document, the skill walks you through six phases:
+
+0. **Research Discovery** — Scans `./research/` for primary data, offers web research
 1. **Discovery** — Gathers customer, problem, and market context
 2. **Draft PR** — Generates the press release sections
 3. **Draft FAQ** — Generates external and internal FAQs, evaluates against four risks
@@ -80,6 +85,7 @@ The PR/FAQ document includes:
 - **External FAQs** — Customer-facing questions and answers
 - **Internal FAQs** — Business-facing questions organized by value/market, technical, and business risk
 - **Four Risks Assessment** — Cagan framework evaluation: value, usability, feasibility, viability
+- **Feature Appendix** — Scope boundary: must do, should do, won't do
 
 ## License
 

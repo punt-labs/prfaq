@@ -240,7 +240,7 @@ else
        '.plugins += [{
          "name": $name,
          "description": "Amazon Working Backwards PR/FAQ process — generate professional LaTeX documents for product discovery and decision-making",
-         "version": "0.1.0",
+         "version": "0.8.0",
          "author": {"name": "punt-labs", "email": "hello@punt-labs.com"},
          "source": ("./plugins/" + $name),
          "category": "development"

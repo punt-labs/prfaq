@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+if ! command -v pdflatex &>/dev/null; then
+  echo "Error: pdflatex not found. Install a TeX distribution or run the prfaq installer:" >&2
+  echo "  curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/main/install.sh | bash" >&2
+  exit 1
+fi
+
 if [[ $# -ne 1 ]]; then
   echo "Usage: compile_prfaq.sh <file.tex>" >&2
   exit 1
