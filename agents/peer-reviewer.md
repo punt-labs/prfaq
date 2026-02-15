@@ -40,6 +40,9 @@ Load the evaluation frameworks. Read these reference guides:
 3. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/common-mistakes.md` — Six anti-patterns in PR/FAQ writing.
 4. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/pr-structure.md` — Section-by-section press release quality standards.
 5. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/faq-structure.md` — Required FAQ questions and evidence standards.
+6. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/unit-economics.md` — Unit economics evaluation for viability risk: CAC, LTV, payback period, margin analysis.
+7. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/principal-engineer.md` — Principal engineer lens for feasibility risk: architecture trade-offs, irreversible decisions, operational complexity.
+8. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/ux-bar-raiser.md` — UX bar raiser lens for usability risk: customer journey, cognitive load, mental model alignment, error recovery.
 
 Then read the .tex file to review. If no specific file is provided, search for `prfaq.tex` in the project root using Glob.
 
