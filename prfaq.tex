@@ -120,14 +120,6 @@
   \vspace{0.5em}%
 }
 
-% ── riskitem — single risk assessment entry ───────────────────────────────────
-\newcommand{\riskitem}[2]{%
-  \vspace{0.6em}%
-  \noindent\textbf{\color{SectionBlue}#1}\par
-  \vspace{0.2em}%
-  \noindent #2\par
-}
-
 % ── adjustwidth (for faqpair indentation) ────────────────────────────────────
 \usepackage{changepage}
 
@@ -231,7 +223,7 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
 \end{faqpair}
 
 \begin{faqpair}{Why LaTeX instead of Markdown?}\label{faq:why-latex}
-  Three reasons. First, a PR/FAQ is a decision document --- it gets shared with co-founders, investors, and advisors. LaTeX produces professionally typeset PDFs with consistent typography, precise layout, and visual credibility that Markdown-to-PDF pipelines do not match. The medium signals that the thinking is serious. Second, LaTeX's structured environments (\texttt{faqpair}, \texttt{riskitem}, \texttt{customerquote}) give the LLM a precise grammar to write into --- the AI reads and writes \texttt{.tex}, the human reads the compiled \texttt{.pdf}. This separation means the source format can be rich and semantic without burdening the author. Third, LaTeX's package ecosystem (biblatex for citations, mdframed for callout boxes, enumitem for structured lists) provides extensibility that Markdown lacks without custom renderers.
+  Three reasons. First, a PR/FAQ is a decision document --- it gets shared with co-founders, investors, and advisors. LaTeX produces professionally typeset PDFs with consistent typography, precise layout, and visual credibility that Markdown-to-PDF pipelines do not match. The medium signals that the thinking is serious. Second, LaTeX's structured environments (\texttt{faqpair}, \texttt{customerquote}, \texttt{spokespersonquote}) give the LLM a precise grammar to write into --- the AI reads and writes \texttt{.tex}, the human reads the compiled \texttt{.pdf}. This separation means the source format can be rich and semantic without burdening the author. Third, LaTeX's package ecosystem (biblatex for citations, mdframed for callout boxes, enumitem for structured lists) provides extensibility that Markdown lacks without custom renderers.
 
   The trade-off is friction: LaTeX requires a TeX distribution ($\sim$4\,GB), and users unfamiliar with it may find compilation errors intimidating. The installer mitigates this with automated setup, and the plugin handles all LaTeX generation --- the user never writes \texttt{.tex} directly. This is a two-way door: if user feedback shows the TeX dependency is a meaningful adoption barrier, adding a Markdown output mode is straightforward since the content generation is format-independent. The structured thinking matters more than the output format.
 \end{faqpair}
@@ -332,25 +324,18 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
 
 \section*{Risk Assessment}
 
-\begin{mdframed}[
-  linewidth=0.5pt,
-  linecolor=QuoteBorder,
-  backgroundcolor=BoxBg,
-  innerleftmargin=12pt,
-  innerrightmargin=12pt,
-  innertopmargin=10pt,
-  innerbottommargin=10pt,
-]
-{\bfseries\color{SectionBlue}Four Risks Assessment}
-
-\riskitem{Value --- \textcolor{RiskAmber}{Medium}}{Engineers and solo founders demonstrably lack product discipline, and the consequences (wasted builds, failed launches) are real and growing. However, the evidence is market-level, not customer-level --- we have not yet interviewed individual users who say ``I would use a PR/FAQ plugin in my terminal.'' The demand for the \textit{framework} is proven (Amazon, two decades). The demand for \textit{this delivery mechanism} is hypothesized. Risk mitigation: the plugin is free, so the adoption barrier is low --- users risk minutes, not money.}
-
-\riskitem{Usability --- \textcolor{RiskGreen}{Low}}{One-line install, one slash command to start. Claude guides the entire process interactively. No configuration, no account creation. The LaTeX dependency is the main friction point; the installer checks for it. Time to value is under one hour.}
-
-\riskitem{Feasibility --- \textcolor{RiskGreen}{Low}}{The plugin is built and functional. No backend, no infrastructure, no ongoing operational cost. The hard engineering problem (interactive AI guidance) is solved by Claude itself. The plugin is structured prompts and a document template.}
-
-\riskitem{Viability --- \textcolor{RiskAmber}{Medium}}{No revenue target and no infrastructure cost, but maintainer time is the binding constraint. At current scale the maintenance burden is negligible. At the 500-star target, GitHub issues, community engagement, and prompt maintenance will require an estimated 4--8 hours per week --- meaningful for a solo maintainer with other punt-labs priorities. Mitigation: clear contribution guidelines, aggressive scope discipline (see Won't Do list), and a standing policy to recruit community co-maintainers if weekly issue volume exceeds what one person can handle.}
-\end{mdframed}
+\renewcommand{\arraystretch}{1.6}
+\begin{tabularx}{\textwidth}{@{} l l X @{}}
+\toprule
+\textbf{\color{SectionBlue}Risk} & \textbf{\color{SectionBlue}Rating} & \textbf{\color{SectionBlue}Assessment} \\
+\midrule
+Value      & \textcolor{RiskAmber}{Medium} & Market-level evidence strong (proven framework, growing audience). Customer-level evidence absent --- no interviews confirming demand for this delivery mechanism. Plugin is free, so adoption barrier is low. \\
+Usability  & \textcolor{RiskGreen}{Low}    & One-line install, one slash command, Claude guides interactively. TeX dependency is the main friction; installer mitigates. Time to value under one hour. \\
+Feasibility & \textcolor{RiskGreen}{Low}   & Built and functional. No backend, no infrastructure. Hard problem (interactive AI guidance) solved by Claude itself. \\
+Viability  & \textcolor{RiskAmber}{Medium} & Zero infrastructure cost but maintainer time is the binding constraint. At 500+ stars, estimated 4--8 hrs/week on issues, community, and prompt maintenance. Mitigation: contribution guidelines, scope discipline, community co-maintainers at scale. \\
+\bottomrule
+\end{tabularx}
+\renewcommand{\arraystretch}{1.0}
 
 % ══════════════════════════════════════════════════════════════════════════════
 % FEATURE APPENDIX

@@ -122,14 +122,6 @@
   \vspace{0.5em}%
 }
 
-% ── riskitem — single risk assessment entry ───────────────────────────────────
-\newcommand{\riskitem}[2]{%
-  \vspace{0.6em}%
-  \noindent\textbf{\color{SectionBlue}#1}\par
-  \vspace{0.2em}%
-  \noindent #2\par
-}
-
 % ── adjustwidth (for faqpair indentation) ────────────────────────────────────
 \usepackage{changepage}
 
@@ -270,25 +262,18 @@ DATE with PRICING MODEL.
 
 \section*{Risk Assessment}
 
-\begin{mdframed}[
-  linewidth=0.5pt,
-  linecolor=QuoteBorder,
-  backgroundcolor=BoxBg,
-  innerleftmargin=12pt,
-  innerrightmargin=12pt,
-  innertopmargin=10pt,
-  innerbottommargin=10pt,
-]
-{\bfseries\color{SectionBlue}Four Risks Assessment}
-
-\riskitem{Value --- \textcolor{RiskAmber}{RATING}}{VALUE RISK ASSESSMENT — Will customers buy/choose this?}
-
-\riskitem{Usability --- \textcolor{RiskGreen}{RATING}}{USABILITY RISK ASSESSMENT — Can customers figure out how to use it?}
-
-\riskitem{Feasibility --- \textcolor{RiskGreen}{RATING}}{FEASIBILITY RISK ASSESSMENT — Can we build it with available resources?}
-
-\riskitem{Viability --- \textcolor{RiskGreen}{RATING}}{VIABILITY RISK ASSESSMENT — Does it work for the business?}
-\end{mdframed}
+\renewcommand{\arraystretch}{1.6}
+\begin{tabularx}{\textwidth}{@{} l l X @{}}
+\toprule
+\textbf{\color{SectionBlue}Risk} & \textbf{\color{SectionBlue}Rating} & \textbf{\color{SectionBlue}Assessment} \\
+\midrule
+Value      & \textcolor{RiskAmber}{RATING} & Will customers buy or choose to use this? \\
+Usability  & \textcolor{RiskGreen}{RATING} & Can customers figure out how to use it? \\
+Feasibility & \textcolor{RiskGreen}{RATING} & Can we build it with available resources? \\
+Viability  & \textcolor{RiskGreen}{RATING} & Does it work for the business? \\
+\bottomrule
+\end{tabularx}
+\renewcommand{\arraystretch}{1.0}
 
 % ══════════════════════════════════════════════════════════════════════════════
 % FEATURE APPENDIX
