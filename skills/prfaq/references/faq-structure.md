@@ -81,3 +81,36 @@ Internal FAQs answer questions leadership, finance, and engineering would ask. T
 
 13. **What are we not building?**
     Explicitly state what is out of scope for V1. This demonstrates prioritization discipline and prevents scope creep during development.
+
+## LaTeX Environments
+
+### FAQ Pairs
+
+Each FAQ is written inside a `faqpair` environment that takes the question as its argument. FAQs are numbered automatically (Q1, Q2, Q3...) across all sections. Add `\label{faq:slug}` after `\begin{faqpair}` to make a FAQ referenceable. Use `\faqref{faq:slug}` from the press release or other FAQs to create clickable "FAQ 7" links.
+
+```latex
+\begin{faqpair}{What is the total addressable market?}\label{faq:tam}
+  TAM analysis with supporting data and \cite{key} citations.
+\end{faqpair}
+```
+
+When the press release makes a judgment call, cross-reference the FAQ that explains the reasoning: `(see \faqref{faq:tam})`.
+
+### Feature Appendix
+
+The Feature Appendix follows the FAQ and risk assessment sections. Each feature entry uses `\featureitem{Name}{Rationale}` inside an `enumerate` environment. Features are numbered continuously (F1, F2, F3...) across Must Do, Should Do, and Won't Do categories. Add `\label{feat:slug}` after each `\featureitem` to make it referenceable. Use `\featureref{feat:slug}` from other sections to create clickable "Feature 3" links.
+
+```latex
+\subsection*{Must Do}
+
+\begin{enumerate}[nosep,leftmargin=2.5em]
+  \featureitem{Discovery workflow}{structured questions that guide the user}\label{feat:discovery}
+  \featureitem{PDF compilation}{shareable artifact, not a disposable brainstorm}\label{feat:latex}
+\end{enumerate}
+```
+
+Three categories, no others:
+
+- **Must Do** — Essential for launch. Without these, the product does not solve the core problem.
+- **Should Do** — Meaningfully improve the product but not launch-blocking. Fast follow-up candidates.
+- **Won't Do** — Explicitly excluded. Naming what you won't build prevents scope creep and clarifies the product's identity. The Won't Do rationale should explain *why not*.
