@@ -132,6 +132,47 @@ To apply revisions, run: /prfaq:feedback [first directive]
 
 The revision queue items must be specific enough to work as `/prfaq:feedback` input. Not "fix the TAM" but "Reframe TAM FAQ around viral distribution model instead of traditional market sizing. The denominator should be active Claude Code users, not all developers."
 
+### Phase 3b: Persist the Summary
+
+After presenting the summary to the user, write it to a markdown file in the same directory as the `.tex` document.
+
+**Filename:** `meeting-summary-YYYY-MM-DD.md` using today's date. If a file with that name already exists, append a counter: `meeting-summary-YYYY-MM-DD-2.md`, `meeting-summary-YYYY-MM-DD-3.md`, etc.
+
+**Contents:** The file should contain the full meeting output as structured markdown:
+
+```markdown
+# PR/FAQ Review Meeting Summary
+**Date:** YYYY-MM-DD
+**Document:** [filename]
+**Scope:** [Full meeting / Critical only / Selected items]
+
+## Decisions
+
+| # | Hot Spot | Severity | Decision | Rationale |
+|---|----------|----------|----------|-----------|
+| 1 | [description] | CRITICAL | REVISE | [rationale] |
+| 2 | ... | ... | ... | ... |
+
+## Revision Queue (for /prfaq:feedback)
+
+### Directive 1: [Short title]
+[Full feedback directive text]
+
+### Directive 2: [Short title]
+[Full feedback directive text]
+
+## Deferred Items
+- [Item] — [what needs to happen before deciding]
+
+## Research Completed
+[If any researcher agents were invoked during the meeting, summarize findings here]
+
+## Notes
+[Any observations about the meeting process itself]
+```
+
+Tell the user where the file was saved. This file is the durable record of the meeting — it survives session closure and can be referenced by future `/prfaq:feedback` runs.
+
 ## Synthesis Guidelines
 
 ### Making Personas Disagree With Each Other
