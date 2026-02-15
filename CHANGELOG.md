@@ -4,6 +4,23 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-02-15
+
+### Added
+- `/prfaq:meeting` command — simulated Amazon-style PR/FAQ review meeting with four agentic personas
+  - **Wei** (Principal Engineer) — feasibility risk, technical honesty, "What's the denominator?"
+  - **Priya** (Target Customer) — value risk, customer reality, "Which of those developers am I?"
+  - **Alex** (Skeptical Executive) — strategic fit, devil's advocate, "Compared to what?"
+  - **Dana** (Builder-Visionary) — ambition risk, cost of inaction, "You're thinking too small."
+- Persona distinctness via three techniques: structural response constraints, information asymmetry (different reference guides per persona), and voice direction (verbal tics, emotional register)
+- Meeting flow: pre-meeting scan → agenda selection → parallel persona debate → user decision → cascade consequences → decisions log
+- Decisions log output feeds directly into `/prfaq:feedback` for automated revision
+- `meeting-guide.md` reference guide for meeting orchestration
+- Amazon Leadership Principle weighting across all personas (caution vs. ambition tension)
+
+### Changed
+- SKILL.md documents the review → meeting → feedback pipeline as related commands
+
 ## [0.5.0] - 2026-02-15
 
 ### Added
@@ -70,6 +87,7 @@ First tagged release.
 - Plugin cache not clearing on reinstall (stale cache hid new agents)
 - FAQ paragraph indentation inconsistency in `faqpair` environment
 
-[Unreleased]: https://github.com/punt-labs/prfaq/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/punt-labs/prfaq/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/punt-labs/prfaq/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/punt-labs/prfaq/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/punt-labs/prfaq/releases/tag/v0.4.0
