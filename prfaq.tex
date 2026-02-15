@@ -234,7 +234,11 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
 \end{faqpair}
 
 \begin{faqpair}{How much does it cost?}
-  Free. \texttt{prfaq} is open source under a permissive license. There is no paid tier, no freemium upsell, and no planned monetization. You do need an active Claude Code subscription or API access, which is a separate cost from Anthropic. The plugin itself adds zero cost.
+  Free. \texttt{prfaq} is open source under a permissive license. There is no paid tier, no freemium upsell, and no planned monetization. The plugin itself adds zero cost. You do need an active Claude Code subscription or API access, which is a separate cost from Anthropic.
+
+  For API users, the underlying token cost is small. A full PR/FAQ session --- discovery conversation, document generation, and peer review --- cumulatively consumes roughly 100--200K input tokens and 20--40K output tokens across multiple turns (context is re-sent each turn). At Sonnet pricing (\$3/\$15 per million tokens), that is approximately \$0.60--1.20 per initial draft. Each feedback cycle is lighter: roughly 40--80K cumulative input tokens and 10--20K output tokens, or about \$0.25--0.55 per round. A typical document through three or four revision cycles costs under \$4 in total token spend. Opus sessions cost roughly 1.7$\times$ more.
+
+  For comparison, a product consultant charges \$150--300 per hour and a PR/FAQ workshop runs \$2,000--5,000. Claude Code subscribers on the Pro plan (\$20/month), Max 5$\times$ (\$100/month), or Max 20$\times$ (\$200/month) pay nothing incremental --- the token usage falls within the subscription's included allowance.
 \end{faqpair}
 
 \begin{faqpair}{Can I iterate on the document?}
