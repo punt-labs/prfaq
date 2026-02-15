@@ -4,8 +4,7 @@
 \usepackage[margin=1in]{geometry}
 
 % ── Pagination ────────────────────────────────────────────────────────────────
-\widowpenalty=10000          % No widow lines (last line alone at page top)
-\clubpenalty=10000           % No orphan lines (first line alone at page bottom)
+\usepackage[all]{nowidow}    % Require ≥2 lines on each side of a page break
 \brokenpenalty=10000         % No hyphenated words across page breaks
 \raggedbottom                % Allow uneven page bottoms rather than stretching
 
@@ -33,6 +32,7 @@
 
 % ── Lists ─────────────────────────────────────────────────────────────────────
 \usepackage{enumitem}
+\usepackage{needspace}
 
 % ── Hyperlinks ────────────────────────────────────────────────────────────────
 \usepackage{hyperref}
@@ -111,9 +111,10 @@
 % ── faqpair — numbered Q&A pair with bold question ─────────────────────────
 \newcounter{faqnum}
 \newenvironment{faqpair}[1]{%
+  \needspace{4\baselineskip}%
   \vspace{0.5em}%
   \refstepcounter{faqnum}%
-  \noindent\textbf{\color{SectionBlue}Q\thefaqnum: #1}\par%
+  \noindent\textbf{\color{SectionBlue}Q\thefaqnum: #1}\par\nopagebreak[4]%
   \vspace{0.2em}%
   \begin{adjustwidth}{1em}{0pt}%
   \setlength{\parindent}{0pt}%
@@ -204,7 +205,7 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
 \subsection*{External FAQs}
 
 \begin{faqpair}{What is prfaq and who is it for?}
-  \texttt{prfaq} is a free Claude Code plugin that guides builders and founders through the Amazon Working Backwards PR/FAQ process. It is for anyone who uses AI tools to create products and wants to validate an idea before committing weeks or months of development time. Whether you are an engineer, a technical founder, or a non-technical builder who uses Claude Code as a sparring partner --- if you make product decisions, this tool is for you.
+  \texttt{prfaq} is a free Claude Code plugin that guides engineers and founders through the Amazon Working Backwards PR/FAQ process. The primary audience is technical builders who use AI coding tools to create products and want to validate an idea before committing weeks or months of development time. As Claude Code's user base expands beyond professional engineers~\cite{nyt2026claudecode}, features like \texttt{/prfaq:import} --- which enriches an existing document rather than generating one from scratch --- extend the plugin's reach to non-technical users who adopt Claude Code as a thinking partner.
 \end{faqpair}
 
 \begin{faqpair}{How is this different from using a PR/FAQ template?}
@@ -252,11 +253,13 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
 \subsubsection*{Value \& Market}
 
 \begin{faqpair}{What is the total addressable market?}\label{faq:tam}
-  The primary market is builders and founders who use AI coding tools to create products. This audience is broader than professional engineers. As of early 2026, 84\% of professional developers use or plan to use AI tools in their workflows, with 51\% relying on them daily~\cite{stackoverflow2025survey}. But Claude Code's trajectory --- surpassing \$2.5B in annualized revenue~\cite{anthropic2026revenue} and doubling since January --- suggests the tool is crossing the chasm beyond traditional developers to product-minded founders, consultants, and operators who use AI as a building and thinking partner. The subset of Claude Code users who make product decisions --- founders, indie hackers, startup engineers, technical co-founders, and increasingly non-technical builders --- is large and growing, though exact counts are not publicly available. Additionally, the \texttt{/prfaq:import} flow serves users who adopt Claude Code as a sparring partner for strategic thinking, not just code generation. This is not a TAM-based revenue argument (the plugin is free); it is a reach argument. A useful, free plugin in a fast-growing ecosystem reaches users through organic discovery, and the audience grows as Claude Code's user base diversifies.
+  The primary market is engineers and technical founders who use AI coding tools to create products. As of early 2026, 84\% of professional developers use or plan to use AI tools in their workflows, with 51\% relying on them daily~\cite{stackoverflow2025survey}. Claude Code's trajectory --- surpassing \$2.5B in annualized revenue~\cite{anthropic2026revenue} and doubling since January --- indicates a large and growing base, though exact user counts are not publicly available. The subset who make product decisions --- founders, indie hackers, startup engineers, and technical co-founders --- is the primary audience.
+
+  A secondary audience is emerging. Claude Code is increasingly adopted by non-programmers: a \textit{New York Times} profile documented a school administrator, photographer, prosecutor, finance professor, and welding business owner all building functional tools with Claude Code and no prior coding experience~\cite{nyt2026claudecode}. As this crossover accelerates, features like \texttt{/prfaq:import} extend the plugin's reach to users who adopt Claude Code as a strategic thinking partner, not just a code generator. This is not a TAM-based revenue argument (the plugin is free); it is a reach argument. The primary audience is technical builders today, with organic growth into the broader Claude Code user base over time.
 \end{faqpair}
 
 \begin{faqpair}{What evidence do we have that customers want this?}\label{faq:customer-evidence}
-  Three categories of indirect evidence, but no primary customer data yet. First, the ``vibe coding'' phenomenon: thousands of products are being built at speed without product discipline, and rebuilds are already visible across startup communities and forums. Second, the explosion of ``how to think about product'' content targeting builders --- books, courses, and newsletters suggest unmet demand for product skills among people who build with AI tools but lack formal product training. Third, the Working Backwards process itself has two decades of validation at Amazon~\cite{bryar2021workingbackwards}, where it is mandatory for new product proposals. The gap is not whether the framework works --- it is accessibility. Builders do not attend PM workshops. They install plugins. \textit{Note: we have not yet validated that builders want product frameworks delivered inside Claude Code. Five to ten customer discovery interviews --- spanning both engineers and non-technical builders --- would significantly strengthen this evidence base.}
+  Three categories of indirect evidence, but no primary customer data yet. First, the ``vibe coding'' phenomenon: thousands of products are being built at speed without product discipline, and rebuilds are already visible across startup communities and forums. Second, the explosion of ``how to think about product'' content targeting builders --- books, courses, and newsletters suggest unmet demand for product skills among people who build with AI tools but lack formal product training. Third, the Working Backwards process itself has two decades of validation at Amazon~\cite{bryar2021workingbackwards}, where it is mandatory for new product proposals. The gap is not whether the framework works --- it is accessibility. Builders do not attend PM workshops. They install plugins. \textit{Note: we have not yet validated that technical builders want product frameworks delivered inside Claude Code. Five to ten customer discovery interviews with engineers and technical founders would significantly strengthen this evidence base. As the non-technical audience grows~\cite{nyt2026claudecode}, a separate round of interviews with that segment would inform whether \texttt{/prfaq:import} resonates.}
 \end{faqpair}
 
 \begin{faqpair}{Who are the competitors and why will we win?}\label{faq:competitors}
@@ -306,7 +309,7 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
 \end{faqpair}
 
 \begin{faqpair}{Why now? What has changed?}
-  Three shifts converged. First, AI coding tools reached mainstream adoption in 2025--2026, creating a large population of builders who can create products independently but lack product discipline --- and this population now extends beyond professional engineers to founders, operators, and domain experts who use AI as a building partner. Second, Claude Code's plugin system matured, making it possible to deliver structured workflows inside the builder's existing tool. Third, the consequences of ``vibe coding without product thinking'' are becoming visible --- failed launches, rebuilds, wasted months --- creating demand for lightweight product frameworks that do not require hiring a PM or leaving the terminal.
+  Three shifts converged. First, AI coding tools reached mainstream adoption in 2025--2026, creating a large population of engineers and technical founders who can build products independently but lack product discipline. Second, Claude Code's plugin system matured, making it possible to deliver structured workflows inside the developer's existing tool. Third, the consequences of ``vibe coding without product thinking'' are becoming visible --- failed launches, rebuilds, wasted months --- creating demand for lightweight product frameworks that do not require hiring a PM or leaving the terminal. A fourth tailwind is emerging: Claude Code is crossing over to non-technical users~\cite{nyt2026claudecode}, which expands the potential audience beyond the initial technical core.
 \end{faqpair}
 
 \begin{faqpair}{What is the customer acquisition strategy?}
@@ -334,7 +337,7 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
 \toprule
 \textbf{\color{SectionBlue}Risk} & \textbf{\color{SectionBlue}Rating} & \textbf{\color{SectionBlue}Assessment} \\
 \midrule
-Value      & \textcolor{RiskAmber}{Medium} & Market-level evidence strong (proven framework, growing and diversifying audience). Customer-level evidence absent --- no interviews confirming demand for this delivery mechanism from either engineers or non-technical builders. Plugin is free, so adoption barrier is low. \\
+Value      & \textcolor{RiskAmber}{Medium} & Market-level evidence strong (proven framework, large technical audience). Customer-level evidence absent --- no interviews confirming demand for this delivery mechanism from engineers and technical founders. Plugin is free, so adoption barrier is low. \\
 Usability  & \textcolor{RiskGreen}{Low}    & One-line install, one slash command, Claude guides interactively. TeX dependency is the main friction; installer mitigates. Time to value under one hour. \\
 Feasibility & \textcolor{RiskGreen}{Low}   & Built and functional. No backend, no infrastructure. Hard problem (interactive AI guidance) solved by Claude itself. \\
 Viability  & \textcolor{RiskAmber}{Medium} & Zero infrastructure cost but maintainer time is the binding constraint. At 500+ stars, estimated 4--8 hrs/week on issues, community, and prompt maintenance. Mitigation: contribution guidelines, scope discipline, community co-maintainers at scale. \\

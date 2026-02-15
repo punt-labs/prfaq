@@ -4,8 +4,7 @@
 \usepackage[margin=1in]{geometry}
 
 % ── Pagination ────────────────────────────────────────────────────────────────
-\widowpenalty=10000          % No widow lines (last line alone at page top)
-\clubpenalty=10000           % No orphan lines (first line alone at page bottom)
+\usepackage[all]{nowidow}    % Require ≥2 lines on each side of a page break
 \brokenpenalty=10000         % No hyphenated words across page breaks
 \raggedbottom                % Allow uneven page bottoms rather than stretching
 
@@ -33,6 +32,7 @@
 
 % ── Lists ─────────────────────────────────────────────────────────────────────
 \usepackage{enumitem}
+\usepackage{needspace}
 
 % ── Hyperlinks ────────────────────────────────────────────────────────────────
 \usepackage{hyperref}
@@ -113,9 +113,10 @@
 % Then cross-reference from the press release: (see \faqref{faq:slug})
 \newcounter{faqnum}
 \newenvironment{faqpair}[1]{%
+  \needspace{4\baselineskip}%
   \vspace{0.5em}%
   \refstepcounter{faqnum}%
-  \noindent\textbf{\color{SectionBlue}Q\thefaqnum: #1}\par%
+  \noindent\textbf{\color{SectionBlue}Q\thefaqnum: #1}\par\nopagebreak[4]%
   \vspace{0.2em}%
   \begin{adjustwidth}{1em}{0pt}%
   \setlength{\parindent}{0pt}%
