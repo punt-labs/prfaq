@@ -1,0 +1,166 @@
+# Meeting Guide
+
+How `/prfaq:meeting` works — loaded by the main skill to orchestrate the meeting flow.
+
+## What This Meeting Is
+
+A simulated Amazon-style PR/FAQ review meeting. Four named personas with competing priorities debate the weak spots in the user's document. The user is the PM and final decision-maker. The output is a decisions log — not more feedback, but explicit tradeoff decisions that feed into `/prfaq:feedback` for automated revision.
+
+The value is not "better feedback" (the peer-reviewer already gives good feedback). The value is **forcing explicit tradeoff decisions** that the author would otherwise leave implicit.
+
+## The Cast
+
+| Persona | Agent | Lens | Primary LPs | Verbal Signature |
+|---------|-------|------|-------------|-----------------|
+| **Wei** (Principal Engineer) | `meeting-engineer` | Feasibility risk | Dive Deep, Highest Standards | "What's the denominator?" |
+| **Priya** (Target Customer) | `meeting-customer` | Value risk / customer reality | Customer Obsession, Bias for Action | "Which of those developers am I?" |
+| **Alex** (Skeptical Executive) | `meeting-executive` | Value risk / strategic fit | Have Backbone, Earn Trust | "Compared to what?" |
+| **Dana** (Builder-Visionary) | `meeting-builder` | Ambition risk / cost of inaction | Think Big, Invent and Simplify | "You're thinking too small." |
+
+The key tension: Wei + Alex pull toward caution. Dana pulls toward ambition. Priya grounds both sides in customer reality. The user resolves the tension.
+
+## Meeting Flow
+
+### Phase 0: Pre-Meeting Scan
+
+Identify **hot spots** — sections where the document is weakest. These are judgment calls with real tradeoffs, not formatting issues.
+
+How to find hot spots:
+1. Read the full `.tex` document
+2. Check for `[CITATION NEEDED]` markers — each is a hot spot
+3. Look for claims without `\cite{}` references
+4. Check risk ratings — any risk rated Low with weak supporting evidence
+5. Look for vague language: "significant", "many", "rapidly growing"
+6. Check FAQ answers that are thin (1-2 sentences) on questions that deserve depth
+7. Look for the gap between press release confidence and FAQ hedging
+
+Rank each hot spot:
+- **Critical** — undermines the core argument (must address)
+- **Warning** — weakens the document but doesn't invalidate it (should address)
+- **Suggestion** — could improve (nice to have)
+
+Aim for 5-8 hot spots total. More than 8 makes the meeting too long. Fewer than 3 means the document might not need a meeting.
+
+### Phase 1: Agenda & Scope Selection
+
+Present the agenda and let the user choose scope:
+
+```
+MEETING AGENDA
+
+ CRITICAL (must address):
+  1. [Hot spot 1 — one-line description]
+  2. [Hot spot 2 — one-line description]
+
+ WARNING (should address):
+  3. [Hot spot 3]
+  4. [Hot spot 4]
+
+ SUGGESTION (nice to have):
+  5. [Hot spot 5]
+```
+
+Offer scope options via AskUserQuestion:
+- **Full meeting** — all items
+- **Critical only** — just the critical items
+- **Pick specific items** — user chooses
+- **Skip meeting** — show a written report instead (run peer-reviewer)
+
+The user always has an exit ramp. Never trap them in a meeting.
+
+### Phase 2: Debate Per Hot Spot
+
+For each agenda item, run this cycle:
+
+**Step 1: Show the claim.** Quote the specific text from the document that's under discussion. Give the user context before the debate starts.
+
+**Step 2: Launch persona agents in parallel.** Use the Task tool to invoke all four persona agents as background tasks. Each receives:
+- The hot spot description
+- The relevant document section (quoted)
+- The meeting state so far (previous decisions, if any)
+- Their agent-specific prompt (structural constraints + voice + reference guides)
+
+**Step 3: Synthesize the debate.** When all agents return, DO NOT just concatenate their responses. Instead:
+
+1. Read all four positions
+2. Identify who agrees and who disagrees — and on what specific point
+3. Find the most interesting disagreement (often Wei vs Dana, or Priya vs Alex)
+4. Write a dramatic narrative that shows the personas engaging with each other's points:
+   - Lead with the strongest critique
+   - Show the counter-argument
+   - Escalate to the irreconcilable disagreement
+   - Make it clear what the user needs to decide
+
+The narrative should feel like eavesdropping on a real meeting — not reading four separate reports.
+
+**Synthesis voice guidelines:**
+- Use persona names and verbal tics in dialogue
+- Let personas respond to each other: "Wei pushes back on Dana's simplification..."
+- Find the moment where two reasonable positions can't both be true
+- The disagreement should be substantive — about the product, not about each other
+- Humor is welcome when it's grounded in truth (a pointed observation, not a joke)
+
+**Step 4: Present the decision.** Use AskUserQuestion with these options:
+- **Revise** — flag this section for revision (queued for `/prfaq:feedback`)
+- **Keep as-is** — current text stands, move on
+- **Research** — invoke researcher agent to find evidence for this claim
+- **Defer** — needs more thinking, address later
+
+**Step 5: Show cascade consequences.** After the decision, identify what other sections are affected using the dependency graph from the feedback agent's Section Dependency Graph. Show: "This decision affects N other sections: [list]. These will be included in the revision queue."
+
+### Phase 3: Post-Meeting Summary
+
+After all agenda items are resolved (or the user exits early), present the summary:
+
+```
+MEETING SUMMARY
+
+Decisions made: N
+  1. [Hot spot] — [REVISE/KEEP/DEFER] (rationale)
+  2. ...
+
+Revision queue (for /prfaq:feedback):
+  - "[Specific feedback directive for item 1]"
+  - "[Specific feedback directive for item 2]"
+  ...
+
+Deferred items:
+  - [Item] — [what needs to happen before deciding]
+
+To apply revisions, run: /prfaq:feedback [first directive]
+```
+
+The revision queue items must be specific enough to work as `/prfaq:feedback` input. Not "fix the TAM" but "Reframe TAM FAQ around viral distribution model instead of traditional market sizing. The denominator should be active Claude Code users, not all developers."
+
+## Synthesis Guidelines
+
+### Making Personas Disagree With Each Other
+
+The most valuable debates happen when personas challenge each other, not just the document. Look for these natural tensions:
+
+- **Wei vs Dana**: Wei says "this is technically harder than you think" / Dana says "you're overcomplicating it — ship the simple version"
+- **Priya vs Alex**: Priya says "real customers need this" / Alex says "wanting it and paying for it are different"
+- **Wei vs Priya**: Wei says "the architecture won't scale" / Priya says "I don't care about scale, I care about it working today"
+- **Dana vs Alex**: Dana says "the market is bigger than you think" / Alex says "I've heard that before"
+
+### Writing Dramatic Moments
+
+The debate should have genuine moments of insight. Look for:
+
+1. **The gotcha** — one persona's point directly undermines another's position
+2. **The reframe** — one persona reframes the question in a way that changes everything
+3. **The concession** — a persona admits the other has a point (rare and powerful)
+4. **The escalation** — a concern gets worse when you look deeper
+
+### What NOT to Do
+
+- Don't have personas agree too easily ("I agree with Wei that...")
+- Don't have personas disagree on trivia
+- Don't use their names as labels — weave them into the narrative
+- Don't summarize what each persona said — dramatize the conflict
+- Don't invent disagreements that don't exist — if they genuinely agree, say so briefly and move on
+- Don't make Dana a cheerleader — she has standards too
+
+## Early Exit
+
+If the user wants to leave the meeting early (AskUserQuestion option or explicit request), immediately produce the post-meeting summary with whatever decisions have been made. Mark unaddressed items as "Not discussed" — not "Deferred" (which implies a decision to defer).
