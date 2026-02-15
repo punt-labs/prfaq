@@ -1,6 +1,6 @@
 # Press Release Structure
 
-A Working Backwards press release is a one-page document written as if the product has already launched. It is written in the customer's language, not engineering jargon. Every sentence must earn its place.
+A Working Backwards press release is a short document (typically one to two pages) written as if the product has already launched. It is written in the customer's language, not engineering jargon. Every sentence must earn its place.
 
 ## Headline
 

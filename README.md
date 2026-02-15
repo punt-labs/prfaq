@@ -4,7 +4,7 @@ A Claude Code plugin that guides you through the Amazon Working Backwards PR/FAQ
 
 ## What It Does
 
-`prfaq` turns product thinking into a terminal command. Type `/prfaq` in any Claude Code session and Claude walks you through a structured conversation: who is the customer, what is their problem, why is this solution different, what are the risks. From your answers, it generates a complete PR/FAQ document — a one-page mock press release followed by detailed FAQs — compiled to a polished PDF.
+`prfaq` turns product thinking into a terminal command. Type `/prfaq` in any Claude Code session and Claude walks you through a structured conversation: who is the customer, what is their problem, why is this solution different, what are the risks. From your answers, it generates a complete PR/FAQ document — a mock press release followed by detailed FAQs — compiled to a polished PDF.
 
 The output is a decision-making artifact, not a brainstorm. It is designed to be read, debated, and revised before committing to building anything.
 
@@ -94,7 +94,7 @@ To review an existing document without running the full workflow:
 
 ## What Is Working Backwards?
 
-Working Backwards is Amazon's product discovery process: write a 1-page mock press release and detailed FAQ *before* building anything. This forces clarity about customer value, surfaces risks early, and creates a shared decision-making artifact.
+Working Backwards is Amazon's product discovery process: write a mock press release and detailed FAQ *before* building anything. This forces clarity about customer value, surfaces risks early, and creates a shared decision-making artifact.
 
 The PR/FAQ document includes:
 

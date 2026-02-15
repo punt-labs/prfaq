@@ -168,7 +168,7 @@ Today, a builder who wants product discipline has three options: hire a product 
 
 \texttt{prfaq} brings product thinking directly into the builder's environment. By typing \texttt{/prfaq} in any Claude Code session, the user starts a structured conversation: Claude asks about the target customer, the problem, the competitive landscape, and the business model. It asks hard questions --- the kind a product manager would ask before greenlighting a project.
 
-From these answers, Claude generates a complete PR/FAQ document: a one-page mock press release describing the product as if it has already shipped, followed by external FAQs (what a customer would ask) and internal FAQs (what leadership, finance, and engineering would ask). The document is evaluated against Marty Cagan's four risks framework~\cite{cagan2018inspired} --- value, usability, feasibility, and viability --- producing an honest assessment of whether the product is worth building.
+From these answers, Claude generates a complete PR/FAQ document: a mock press release describing the product as if it has already shipped, followed by external FAQs (what a customer would ask) and internal FAQs (what leadership, finance, and engineering would ask). The document is evaluated against Marty Cagan's four risks framework~\cite{cagan2018inspired} --- value, usability, feasibility, and viability --- producing an honest assessment of whether the product is worth building.
 
 The output is a LaTeX-compiled PDF (see \faqref{faq:why-latex}): a clean, professional artifact suitable for sharing with co-founders, investors, or advisors. It is not a disposable brainstorm. It is a decision-making document designed to be read, debated, and revised.
 
@@ -214,6 +214,7 @@ Install with one command: \texttt{curl -fsSL https://punt-labs.github.io/prfaq/i
 
 % ── External FAQs (Customer-facing) ──────────────────────────────────────────
 
+\newpage
 \subsection*{External FAQs}
 
 \begin{faqpair}{What is prfaq and who is it for?}
@@ -229,7 +230,7 @@ Install with one command: \texttt{curl -fsSL https://punt-labs.github.io/prfaq/i
 \end{faqpair}
 
 \begin{faqpair}{What does the output look like?}
-  A professionally typeset PDF compiled from LaTeX. The document includes a one-page press release, external and internal FAQs, and a four-risks assessment. It is designed to be shared with co-founders, investors, or advisors --- not a throwaway brainstorm document.
+  A professionally typeset PDF compiled from LaTeX. The document includes a press release, external and internal FAQs, and a four-risks assessment. It is designed to be shared with co-founders, investors, or advisors --- not a throwaway brainstorm document.
 \end{faqpair}
 
 \begin{faqpair}{Do I need to know LaTeX?}
@@ -255,11 +256,12 @@ Install with one command: \texttt{curl -fsSL https://punt-labs.github.io/prfaq/i
 \end{faqpair}
 
 \begin{faqpair}{Can I iterate on the document?}
-  Yes. Type \texttt{/prfaq:feedback} with a directional instruction --- ``reframe the problem around compliance risk'' or ``the TAM is too small'' --- and the plugin traces cascading effects across the document and surgically redrafts every affected section. Each feedback cycle recompiles the PDF and runs peer review automatically. You can also edit the \texttt{.tex} file directly or re-run the full discovery process. The Working Backwards process is designed for rapid iteration --- the point is to iterate on a one-page document instead of iterating on a shipped product.
+  Yes. Type \texttt{/prfaq:feedback} with a directional instruction --- ``reframe the problem around compliance risk'' or ``the TAM is too small'' --- and the plugin traces cascading effects across the document and surgically redrafts every affected section. Each feedback cycle recompiles the PDF and runs peer review automatically. You can also edit the \texttt{.tex} file directly or re-run the full discovery process. The Working Backwards process is designed for rapid iteration --- the point is to iterate on a short document instead of iterating on a shipped product.
 \end{faqpair}
 
 % ── Internal FAQs (Business-facing) ──────────────────────────────────────────
 
+\newpage
 \subsection*{Internal FAQs}
 
 \needspace{5\baselineskip}
@@ -347,6 +349,7 @@ Install with one command: \texttt{curl -fsSL https://punt-labs.github.io/prfaq/i
 % FOUR RISKS ASSESSMENT
 % ══════════════════════════════════════════════════════════════════════════════
 
+\newpage
 \section*{Risk Assessment}
 
 \renewcommand{\arraystretch}{1.6}
@@ -366,6 +369,7 @@ Viability  & \textcolor{RiskAmber}{Medium} & Zero infrastructure cost but mainta
 % FEATURE APPENDIX
 % ══════════════════════════════════════════════════════════════════════════════
 
+\newpage
 \section*{Feature Appendix}
 
 \subsection*{Must Do (V1)}
