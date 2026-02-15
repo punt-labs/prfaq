@@ -143,7 +143,7 @@
 % ── Headline block ───────────────────────────────────────────────────────────
 \begin{center}
   {\LARGE\bfseries\color{SectionBlue} Free Claude Code Plugin Brings Amazon's\\PR/FAQ Process to Engineers and Founders} \\[0.8em]
-  {\large\color{AccentGray} punt-labs releases prfaq, an open-source tool that guides product discovery\\inside the terminal, producing a professionally typeset decision document in under an hour}
+  {\large\color{AccentGray} punt-labs releases prfaq, an open-source tool to generate, import, and iterate on\\product discovery documents inside the terminal}
 \end{center}
 
 \vspace{0.5em}
@@ -154,7 +154,7 @@
 
 \section*{Press Release}
 
-SAN FRANCISCO --- Today, punt-labs released \texttt{prfaq}, a free, open-source Claude Code plugin that guides builders and founders through Amazon's Working Backwards PR/FAQ process to evaluate product ideas before building them. Unlike blog posts, templates, or workshops that sit outside the builder's workflow (see \faqref{faq:competitors}), \texttt{prfaq} runs as a slash command inside the same Claude Code session where the user already works. Builders who ship products at unprecedented speed can now apply the same rigor to deciding \textit{which} products to ship.
+SAN FRANCISCO --- Today, punt-labs released \texttt{prfaq}, a free, open-source Claude Code plugin that guides engineers and founders through Amazon's Working Backwards PR/FAQ process to evaluate product ideas before building them. The plugin provides three commands --- \texttt{/prfaq} to generate a new document from scratch, \texttt{/prfaq:import} to structure and enrich an existing draft, and \texttt{/prfaq:feedback} to iterate based on pointed feedback --- all inside the same Claude Code session where the user already works (see \faqref{faq:competitors}). Engineers who ship products at unprecedented speed can now apply the same rigor to deciding \textit{which} products to ship.
 
 \prsection{Problem}
 
@@ -172,6 +172,8 @@ From these answers, Claude generates a complete PR/FAQ document: a one-page mock
 
 The output is a LaTeX-compiled PDF (see \faqref{faq:why-latex}): a clean, professional artifact suitable for sharing with co-founders, investors, or advisors. It is not a disposable brainstorm. It is a decision-making document designed to be read, debated, and revised.
 
+Generation is step one. \texttt{/prfaq:feedback} takes pointed direction --- ``focus on CTOs, not solo devs'' or ``the TAM is too large'' --- and surgically redrafts every affected section, tracing cascading effects through the document so the user iterates on substance rather than formatting. For builders who already have a draft from a workshop, a Google Doc, or their own process, \texttt{/prfaq:import} ingests the existing document, structures it against the PR/FAQ framework, researches evidence for unsupported claims, and compiles a professional output --- an on-ramp that meets users where they are rather than asking them to start over. Together, the three commands form a complete product-thinking workflow inside the terminal: generate, import, and iterate.
+
 \prsection{Customer Quote}
 
 \begin{customerquote}
@@ -182,12 +184,18 @@ The output is a LaTeX-compiled PDF (see \faqref{faq:why-latex}): a clean, profes
 
 \prsection{Getting Started}
 
-Getting started with \texttt{prfaq} takes three steps. First, run the one-line installer: \texttt{curl -fsSL https://punt-labs.github.io/prfaq/install | bash}. This clones the plugin repository and registers it with Claude Code automatically. Second, open any Claude Code session and type \texttt{/prfaq}. Third, answer the discovery questions --- Claude guides the conversation, asks follow-ups, and drafts the PR/FAQ document. Within an hour, the user has a compiled PDF that forces clarity on customer, problem, differentiation, and business model. No account required, no subscription, no configuration.
+Install with one command: \texttt{curl -fsSL https://punt-labs.github.io/prfaq/install | bash}. No account required, no subscription, no configuration. Then choose your path:
+
+\textbf{Starting fresh?} Type \texttt{/prfaq}. Claude asks discovery questions about the target customer, problem, differentiation, and business model, then drafts a complete PR/FAQ document. Within an hour, the user has a compiled PDF.
+
+\textbf{Already have a draft?} Type \texttt{/prfaq:import} and paste or point to an existing document --- plain text, Markdown, or raw \texttt{.tex}. The plugin structures it against the framework, researches evidence for unsupported claims, and compiles a professional PDF with gap analysis.
+
+\textbf{Want to iterate?} Type \texttt{/prfaq:feedback} followed by a directional instruction. The plugin traces cascading effects and surgically redrafts every affected section.
 
 \prsection{Spokesperson Quote}
 
 \begin{spokespersonquote}
-``The people building products with AI are making product decisions every day --- they just don't always have the frameworks. We built \texttt{prfaq} because the builders using Claude Code are also the ones deciding what to build and for whom (see \faqref{faq:tam}), and they deserve a tool that meets them where they already work. The PR/FAQ process has been proven at Amazon for two decades~\cite{bryar2021workingbackwards}. We didn't invent it. We made it accessible inside a terminal.''
+``The people building products with AI are making product decisions every day --- they just don't always have the frameworks. We built \texttt{prfaq} because the engineers and founders using Claude Code are also the ones deciding what to build and for whom, and they deserve a tool that meets them where they already work. The PR/FAQ process has been proven at Amazon for two decades. We didn't invent it. We made it accessible inside a terminal.''
 
 \raggedleft --- \textbf{Jason Freeman}, Founder, punt-labs
 \end{spokespersonquote}
@@ -247,7 +255,7 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
 \end{faqpair}
 
 \begin{faqpair}{Can I iterate on the document?}
-  Yes. The plugin generates a \texttt{.tex} file in your project directory. You can re-run the process, edit sections, or ask Claude to revise specific parts. The Working Backwards process is designed for rapid iteration --- the point is to iterate on a one-page document instead of iterating on a shipped product.
+  Yes. Type \texttt{/prfaq:feedback} with a directional instruction --- ``reframe the problem around compliance risk'' or ``the TAM is too small'' --- and the plugin traces cascading effects across the document and surgically redrafts every affected section. Each feedback cycle recompiles the PDF and runs peer review automatically. You can also edit the \texttt{.tex} file directly or re-run the full discovery process. The Working Backwards process is designed for rapid iteration --- the point is to iterate on a one-page document instead of iterating on a shipped product.
 \end{faqpair}
 
 % ── Internal FAQs (Business-facing) ──────────────────────────────────────────
@@ -277,7 +285,9 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
 \subsubsection*{Technical}
 
 \begin{faqpair}{What are the major technical risks?}
-  The technical risks are minimal. The plugin is a set of markdown files (skill definition and reference guides) plus a LaTeX template and a shell script. It requires no backend, no API, no database, no infrastructure. The primary technical dependency is the Claude Code plugin system, which is stable and well-documented. The LaTeX dependency requires users to have a TeX distribution installed, which is a mild friction point for users who do not already have one. Mitigation: the installer checks for TeX and provides platform-specific setup instructions.
+  For the shipped core (\texttt{/prfaq}, \texttt{/prfaq:feedback}), technical risks are minimal. The plugin is a set of markdown files plus a LaTeX template and a shell script. No backend, no API, no database. The primary technical dependency is the Claude Code plugin system, which is stable and well-documented. The LaTeX dependency requires users to have a TeX distribution installed, which is a mild friction point; the installer mitigates with platform-specific setup instructions.
+
+  The planned \texttt{/prfaq:meeting} feature introduces genuine technical risk. Multi-agent orchestration --- running distinct persona agents (target customer, principal engineer, unit economics reviewer, UX bar raiser, skeptical executive) with visible debate --- depends on Claude Code's ability to manage concurrent agent threads with distinct system prompts. Persona fidelity is the hard problem: each agent must stay in character, disagree substantively (not performatively), and produce debate that is genuinely useful rather than theatrical. If persona quality is not high enough, the feature degrades from ``simulated review meeting'' to ``five versions of the same generic feedback.'' Mitigation: prototype with two personas first, validate debate quality, then scale to the full panel.
 \end{faqpair}
 
 \begin{faqpair}{What dependencies exist on other teams or systems?}
@@ -289,7 +299,7 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
 \end{faqpair}
 
 \begin{faqpair}{What is the estimated development timeline?}
-  The plugin is built. Initial development took one session. Ongoing work is iterative: improving the skill prompts based on real usage, expanding reference material, and potentially adding alternative output formats. There is no multi-month roadmap because there is no infrastructure to build.
+  The core plugin (\texttt{/prfaq} and \texttt{/prfaq:feedback}) is built and shipping. Remaining V1 work is \texttt{/prfaq:import}, which requires document parsing across multiple input formats (plain text, Markdown, Google Doc paste, raw \texttt{.tex}) and gap analysis logic --- estimated at one to two development sessions. The V2 feature (\texttt{/prfaq:meeting}) is the most technically ambitious: multi-agent orchestration with distinct persona prompts, visible debate threading, and decision synthesis. Estimated at three to five sessions of iterative development and prompt tuning. There is still no infrastructure to build --- all complexity is in prompt engineering and skill orchestration.
 \end{faqpair}
 
 \needspace{5\baselineskip}
@@ -330,7 +340,7 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
 \end{faqpair}
 
 \begin{faqpair}{It is one year from now and prfaq failed. What went wrong?}
-  Most likely failure scenario: builders do not want product discipline, even when it is free and frictionless. The vibe coding audience builds for the joy of building, and a tool that asks ``what evidence do you have that customers want this?'' feels like a buzzkill, not a feature. Second scenario: the plugin does not surface in a crowded marketplace --- the Claude Code plugin ecosystem is growing rapidly, and discoverability is poor. If users cannot find \texttt{prfaq} among hundreds of alternatives, organic adoption stalls regardless of quality. Third scenario: the output quality is not high enough to share with stakeholders --- if the generated PR/FAQ reads like AI slop rather than a credible decision document, users will not trust it for real decisions. Fourth scenario: the PR/FAQ process is too heavyweight for the target audience --- builders want a quick sanity check, not a formal document, and a lighter-weight alternative captures the market.
+  Most likely failure scenario: builders do not want product discipline, even when it is free and frictionless. The vibe coding audience builds for the joy of building, and a tool that asks ``what evidence do you have that customers want this?'' feels like a buzzkill, not a feature. Second scenario: the plugin does not surface in a crowded marketplace --- the Claude Code plugin ecosystem is growing rapidly, and discoverability is poor. If users cannot find \texttt{prfaq} among hundreds of alternatives, organic adoption stalls regardless of quality. Third scenario: the output quality is not high enough to share with stakeholders --- if the generated PR/FAQ reads like AI slop rather than a credible decision document, users will not trust it for real decisions. Fourth scenario: the PR/FAQ process is too heavyweight for the target audience --- builders want a quick sanity check, not a formal document, and a lighter-weight alternative captures the market. Fifth scenario: scope overreach --- the planned meeting simulation (\texttt{/prfaq:meeting}) requires multi-agent orchestration and persona fidelity that proves harder than expected, consuming maintainer time that should go toward polishing the core generation and iteration workflow.
 \end{faqpair}
 
 % ══════════════════════════════════════════════════════════════════════════════
@@ -346,7 +356,7 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
 \midrule
 Value      & \textcolor{RiskAmber}{Medium} & Market-level evidence strong (proven framework, large technical audience). Customer-level evidence absent --- no interviews confirming demand for this delivery mechanism from engineers and technical founders. Plugin is free, so adoption barrier is low. \\
 Usability  & \textcolor{RiskGreen}{Low}    & One-line install, one slash command, Claude guides interactively. TeX dependency is the main friction; installer mitigates. Time to value under one hour. \\
-Feasibility & \textcolor{RiskGreen}{Low}   & Built and functional. No backend, no infrastructure. Hard problem (interactive AI guidance) solved by Claude itself. \\
+Feasibility & \textcolor{RiskGreen}{Low}   & Core plugin built and functional. No backend, no infrastructure. V1 remaining work (\texttt{/prfaq:import}) is straightforward parsing. V2 meeting simulation carries localized execution risk in multi-agent persona fidelity, but does not gate the core product. \\
 Viability  & \textcolor{RiskAmber}{Medium} & Zero infrastructure cost but maintainer time is the binding constraint. At 500+ stars, estimated 4--8 hrs/week on issues, community, and prompt maintenance. Mitigation: contribution guidelines, scope discipline, community co-maintainers at scale. \\
 \bottomrule
 \end{tabularx}
@@ -364,25 +374,18 @@ Viability  & \textcolor{RiskAmber}{Medium} & Zero infrastructure cost but mainta
   \item Interactive discovery workflow --- structured questions that guide the user from idea to document
   \item Complete PR/FAQ document generation --- press release, external FAQs, internal FAQs, four risks assessment
   \item LaTeX compilation to professional PDF --- shareable artifact, not a disposable brainstorm
-  \item Reference guides --- encoded best practices for PR structure, FAQ structure, four risks, and common mistakes
-  \item Revise mode --- surgical edits to an existing document without regenerating from scratch
+  \item Reference guides --- encoded best practices for PR structure, FAQ structure, four risks, common mistakes, unit economics, feasibility, and usability
   \item Peer review agent --- automated critique against Working Backwards principles and cognitive bias checklist
-\end{itemize}
-
-\subsection*{Done (Shipped in v0.4.0)}
-
-\begin{itemize}[nosep]
-  \item Research sub-agent --- scans local \texttt{./research/} directory, quarry-mcp indexes, and the web for evidence
+  \item Research sub-agent --- scans local \texttt{./research/} directory, indexed documents, and the web for evidence
   \item Biblatex citation system --- academic-style citations for claims, linking evidence to assertions
-  \item Unit economics reference guide --- structured framework for viability risk evaluation
-  \item Principal engineer reference guide --- feasibility risk: architecture trade-offs, irreversible decisions, operational complexity
-  \item UX bar raiser reference guide --- usability risk: customer journey, cognitive load, mental model alignment
-  \item Judgment-to-FAQ cross-referencing --- \texttt{\textbackslash pageref\{faq:...\}} links from press release to FAQ justifications
+  \item \texttt{/prfaq:feedback} --- directed iteration from pointed user feedback; traces cascading effects via section dependency graph and surgically redrafts affected sections
+  \item \texttt{/prfaq:import} --- ingest an existing PR/FAQ draft (plain text, Markdown, or raw \texttt{.tex}), parse and structure it against the framework, research evidence for unsupported claims, format into the LaTeX template with proper environments and citations, compile to PDF, and present a gap analysis
 \end{itemize}
 
-\subsection*{Should Do (Future Iterations)}
+\subsection*{Should Do (V2)}
 
 \begin{itemize}[nosep]
+  \item \texttt{/prfaq:meeting} --- simulate an Amazon-style PR/FAQ review meeting. The document is reviewed page by page, FAQ by FAQ, with agentic personas (target customer, principal engineer, unit economics reviewer, UX bar raiser, skeptical executive). Agent debate is visible to the user. Main Claude facilitates and synthesizes debate into pointed decision questions. The user is the PM and final decision-maker. Decisions feed into \texttt{/prfaq:feedback} for automated iteration. This is the most ambitious planned feature and carries meaningful execution risk in multi-agent orchestration and persona fidelity.
   \item Markdown output mode --- alternative to LaTeX for users without a TeX distribution
   \item Comparative analysis mode --- evaluate two competing product ideas side-by-side
   \item Template customization --- allow users to override the LaTeX template for branding
