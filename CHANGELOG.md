@@ -4,32 +4,43 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-02-15
+
 ### Added
 - `/prfaq:feedback` command and agent for directed iteration from user feedback
   - Interprets directional feedback (e.g., "wrong persona", "TAM too large")
   - Traces cascading effects across all affected sections via dependency graph
   - Surgically redrafts affected content, recompiles PDF, auto-runs peer review
 - Numbered FAQ questions (Q1, Q2, etc.) with `\faqref{faq:slug}` cross-reference command
+- Numbered Feature Appendix entries (F1, F2, etc.) with `\featureitem{Name}{Rationale}` and `\featureref{feat:slug}` cross-reference command
 - Press-release-style headline block (headline + sub-headlines) replacing cover-page title format
+- `\newpage` before major sections: External FAQs, Internal FAQs, Risk Assessment, Feature Appendix, References
+- Widow/orphan prevention: `nowidow` package and `needspace` package for FAQ pairs and section headings
 - Three new reference guides for peer review:
   - `unit-economics.md` — viability risk lens (CAC, LTV, payback period, margins)
   - `principal-engineer.md` — feasibility risk lens (architecture trade-offs, irreversible decisions)
   - `ux-bar-raiser.md` — usability risk lens (customer journey, cognitive load, error recovery)
+- LaTeX environment documentation in `faq-structure.md` reference guide
 
 ### Changed
 - Risk assessment uses `tabularx` table format instead of `mdframed` + `\riskitem` blocks
 - FAQ cross-references now use `\faqref{faq:slug}` (renders as clickable "FAQ 7") instead of `\pageref` (page numbers)
 - Headline block follows wire format (headline announcing the news, sub-headlines with supporting detail) instead of centered product-name/subtitle/date
+- Press release described as "short document (typically one to two pages)" instead of "one-page document"
 - Peer reviewer agent loads all 8 reference guides (was 5)
+- Installer checks for `needspace` and `nowidow` LaTeX packages
 
 ### Removed
 - `\riskitem` command (replaced by `tabularx` table rows)
 - `\prsection{Summary}` (lede paragraph now follows the headline block directly)
 - `\pageref`-based cross-references (replaced by `\faqref`)
+- Horizontal rules below headline block and section titles
 
 ### Fixed
 - Peer review findings in dogfood PR/FAQ: corrected Stack Overflow stat, Anthropic revenue figure, HFS citation, customer quote specificity, spokesperson attribution, pre-mortem scenario
 - Viability risk upgraded from Low to Medium (maintainer time is the binding constraint)
+- FAQ question titles no longer strand at page bottom (needspace + nopagebreak)
+- Paragraph indentation within faqpair answers suppressed
 
 ## [0.4.0] - 2026-02-15
 
@@ -59,5 +70,6 @@ First tagged release.
 - Plugin cache not clearing on reinstall (stale cache hid new agents)
 - FAQ paragraph indentation inconsistency in `faqpair` environment
 
-[Unreleased]: https://github.com/punt-labs/prfaq/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/punt-labs/prfaq/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/punt-labs/prfaq/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/punt-labs/prfaq/releases/tag/v0.4.0

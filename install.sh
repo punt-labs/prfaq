@@ -22,6 +22,8 @@ REQUIRED_PACKAGES=(
   mdframed        # Framed environments (quote boxes, risk box)
   tikz            # Required by mdframed framemethod=tikz
   enumitem        # List customization
+  nowidow         # Widow/orphan prevention
+  needspace       # Reserve space before headings and FAQ pairs
   hyperref        # Hyperlinks and PDF metadata
   titlesec        # Section heading styles
   changepage      # adjustwidth for indented FAQ answers
