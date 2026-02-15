@@ -53,17 +53,23 @@
 % ── Section styling ───────────────────────────────────────────────────────────
 \usepackage{titlesec}
 \titleformat{\section}
-  {\Large\bfseries\color{SectionBlue}}
+  {\needspace{6\baselineskip}\Large\bfseries\color{SectionBlue}}
   {}
   {0pt}
   {}
-  [\vspace{-0.5em}\textcolor{QuoteBorder}{\rule{\textwidth}{0.4pt}}]
 
 \titleformat{\subsection}
-  {\large\bfseries\color{AccentGray}}
+  {\needspace{5\baselineskip}\large\bfseries\color{AccentGray}}
   {}
   {0pt}
   {}
+
+\titleformat{\subsubsection}
+  {\normalsize\bfseries\color{AccentGray}}
+  {}
+  {0pt}
+  {}
+\titlespacing*{\subsubsection}{0pt}{1em}{0.5em}[0pt]
 
 % ══════════════════════════════════════════════════════════════════════════════
 % Custom environments
@@ -136,13 +142,11 @@
 
 % ── Headline block ───────────────────────────────────────────────────────────
 \begin{center}
-  {\LARGE\bfseries\color{SectionBlue} punt-labs Releases prfaq, a Free Claude Code Plugin\\That Brings Amazon's PR/FAQ Process to Builders} \\[0.8em]
-  {\large\color{AccentGray} Open-source plugin guides builders and founders through product discovery\\inside the terminal, producing a professionally typeset decision document in under an hour}
+  {\LARGE\bfseries\color{SectionBlue} Free Claude Code Plugin Brings Amazon's\\PR/FAQ Process to Engineers and Founders} \\[0.8em]
+  {\large\color{AccentGray} punt-labs releases prfaq, an open-source tool that guides product discovery\\inside the terminal, producing a professionally typeset decision document in under an hour}
 \end{center}
 
-\vspace{1em}
-\textcolor{QuoteBorder}{\rule{\textwidth}{0.8pt}}
-\vspace{1em}
+\vspace{0.5em}
 
 % ══════════════════════════════════════════════════════════════════════════════
 % PRESS RELEASE
@@ -250,6 +254,7 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
 
 \subsection*{Internal FAQs}
 
+\needspace{5\baselineskip}
 \subsubsection*{Value \& Market}
 
 \begin{faqpair}{What is the total addressable market?}\label{faq:tam}
@@ -268,6 +273,7 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
   Beyond that, traditional competitors include product management tools (Productboard, Aha!, Notion templates) and business planning tools (Lean Canvas generators). None of these are integrated into the builder's working environment. They all require context-switching: leave the current tool, open a browser, fill in a form. A Claude Code plugin runs in the same session where the builder already works --- the shift from ``building'' to ``product thinking'' happens in a single command, not a tab switch.
 \end{faqpair}
 
+\needspace{5\baselineskip}
 \subsubsection*{Technical}
 
 \begin{faqpair}{What are the major technical risks?}
@@ -286,6 +292,7 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
   The plugin is built. Initial development took one session. Ongoing work is iterative: improving the skill prompts based on real usage, expanding reference material, and potentially adding alternative output formats. There is no multi-month roadmap because there is no infrastructure to build.
 \end{faqpair}
 
+\needspace{5\baselineskip}
 \subsubsection*{Business}
 
 \begin{faqpair}{What is the revenue model?}

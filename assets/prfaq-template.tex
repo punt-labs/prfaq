@@ -53,17 +53,23 @@
 % ── Section styling ───────────────────────────────────────────────────────────
 \usepackage{titlesec}
 \titleformat{\section}
-  {\Large\bfseries\color{SectionBlue}}
+  {\needspace{6\baselineskip}\Large\bfseries\color{SectionBlue}}
   {}
   {0pt}
   {}
-  [\vspace{-0.5em}\textcolor{QuoteBorder}{\rule{\textwidth}{0.4pt}}]
 
 \titleformat{\subsection}
-  {\large\bfseries\color{AccentGray}}
+  {\needspace{5\baselineskip}\large\bfseries\color{AccentGray}}
   {}
   {0pt}
   {}
+
+\titleformat{\subsubsection}
+  {\normalsize\bfseries\color{AccentGray}}
+  {}
+  {0pt}
+  {}
+\titlespacing*{\subsubsection}{0pt}{1em}{0.5em}[0pt]
 
 % ══════════════════════════════════════════════════════════════════════════════
 % Custom environments
@@ -138,8 +144,9 @@
 
 % ── Headline block ───────────────────────────────────────────────────────────
 % Modeled on standard press release wire format:
-%   Headline — the news (what happened)
-%   Sub-headline(s) — supporting detail (why it matters, key numbers)
+%   Headline — the news (what happened). Lead with the news, not the org name.
+%     If the org name is lowercase-stylized, move it to the sub-headline.
+%   Sub-headline(s) — supporting detail (who, why it matters, key numbers)
 %   Dateline — CITY — Date
 \begin{center}
   {\LARGE\bfseries\color{SectionBlue} HEADLINE: THE NEWS IN ONE SENTENCE} \\[0.8em]
@@ -147,9 +154,7 @@
   {\large\color{AccentGray} Optional second sub-headline for additional context}
 \end{center}
 
-\vspace{1em}
-\textcolor{QuoteBorder}{\rule{\textwidth}{0.8pt}}
-\vspace{1em}
+\vspace{0.5em}
 
 % ══════════════════════════════════════════════════════════════════════════════
 % PRESS RELEASE
