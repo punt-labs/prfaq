@@ -162,7 +162,7 @@ SAN FRANCISCO --- Today, punt-labs released \texttt{prfaq}, a free, open-source 
 
 AI coding tools have made it possible for a single engineer to build in a weekend what used to take a team a quarter. The bottleneck has shifted: the hard part is no longer writing code --- it is knowing what to build and why (see p.\,\pageref{faq:customer-evidence}). Engineers and solo founders using Claude Code, Cursor, and similar tools ship fast, but most lack formal product training. They skip customer definition, skip competitive analysis, skip unit economics --- and discover after burning through tokens and weeks of building that the product does not resonate.
 
-The consequences are visible. Analysts at HFS Research estimate the Global 2000 carry \$1.5--2 trillion in accumulated technical debt~\cite{hfs2024techdebt}, and AI-generated code is adding to the pile faster than ever. Thousands of startups built during the current vibe coding wave already face significant rebuilds --- not because the code is bad, but because the code solves the wrong problem with confidence.
+The consequences are visible at both ends of the market. Analysts at HFS Research estimate the Global 2000 carry \$1.5--2 trillion in accumulated technical debt~\cite{hfs2024techdebt}. At the startup end, AI-generated code introduces its own quality burden: 66\% of developers report spending more time fixing ``almost-right'' AI output than they save~\cite{stackoverflow2025survey}. Many startups built during the current vibe coding wave already face significant rebuilds --- not because the code is bad, but because the code solves the wrong problem with confidence.
 
 Today, an engineer who wants product discipline has three options: hire a product manager they cannot afford, read a book and try to apply frameworks manually, or just iterate --- ship something, get feedback, ship again. Iteration works. Some of the best developer tools started as something an engineer built for themselves, and others appreciated. But iteration has real costs: every cycle burns tokens, burns calendar time marketing to early users, and burns the founder's energy. Getting customer feedback is often the actual bottleneck. Plenty of engineers would develop stronger product sense if the frameworks were more accessible --- available in the workflow where they already build, not in a book or a workshop they will never attend.
 
@@ -179,7 +179,7 @@ The output is a LaTeX-compiled PDF (see p.\,\pageref{faq:why-latex}): a clean, p
 \begin{customerquote}
 \textit{``I kept building MVPs that nobody used. I'd spend three weeks coding, show it to people, and get polite shrugs. \texttt{prfaq} made me realize I was solving my own problem, not my customer's. The PR/FAQ took forty-five minutes and saved me a month of wasted work. The hardest question it asked was `what evidence do you have that customers want this?' I didn't have any. That was the answer.''}
 
-\raggedleft --- \textbf{Marcus Okonkwo}, Solo Founder, SyncPilot
+\raggedleft --- \textbf{Marcus Okonkwo}, Solo Founder, SyncPilot (field-service scheduling)
 \end{customerquote}
 
 \prsection{Getting Started}
@@ -191,7 +191,7 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
 \begin{spokespersonquote}
 ``Engineers are the best product thinkers in the room --- they just don't always have the frameworks. We built \texttt{prfaq} because the engineers using Claude Code every day are also the ones making product decisions (see p.\,\pageref{faq:tam}), and they deserve a tool that meets them where they already work. The PR/FAQ process has been proven at Amazon for two decades~\cite{bryar2021workingbackwards}. We didn't invent it. We made it accessible inside a terminal.''
 
-\raggedleft --- \textbf{punt-labs}
+\raggedleft --- \textbf{Jason Freeman}, Founder, punt-labs
 \end{spokespersonquote}
 
 \prsection{Call to Action}
@@ -255,7 +255,7 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
 \subsubsection*{Value \& Market}
 
 \begin{faqpair}{What is the total addressable market?}\label{faq:tam}
-  The primary market is engineers and solo founders using AI coding tools to build products. As of early 2026, over 80\% of professional developers use AI coding assistants regularly (daily or weekly)~\cite{stackoverflow2025survey}. Claude Code has surpassed \$2B in annualized revenue~\cite{anthropic2026revenue} and is among the fastest-growing AI coding tools. The subset of these users who are making product decisions --- solo founders, indie hackers, startup engineers, and technical co-founders --- numbers in the hundreds of thousands. This is not a TAM-based revenue argument (the plugin is free); it is a reach argument. A useful, free plugin in a fast-growing ecosystem reaches users through organic discovery.
+  The primary market is engineers and solo founders using AI coding tools to build products. As of early 2026, 80\% of professional developers now use AI tools in their workflows, with 51\% relying on them daily~\cite{stackoverflow2025survey}. Claude Code has surpassed \$2.5B in annualized revenue~\cite{anthropic2026revenue} and is among the fastest-growing AI coding tools. The subset of these users who are making product decisions --- solo founders, indie hackers, startup engineers, and technical co-founders --- numbers in the hundreds of thousands. This is not a TAM-based revenue argument (the plugin is free); it is a reach argument. A useful, free plugin in a fast-growing ecosystem reaches users through organic discovery.
 \end{faqpair}
 
 \begin{faqpair}{What evidence do we have that customers want this?}\label{faq:customer-evidence}
@@ -292,6 +292,10 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
   There is none. \texttt{prfaq} is free and open source under a permissive license. The strategic value is threefold: (1) it is a proving ground for the Claude Code plugin development pattern, informing future commercial plugins; (2) it builds reputation and visibility in the Claude Code ecosystem; (3) it creates a feedback loop for understanding how engineers approach product thinking, which informs other products at punt-labs.
 \end{faqpair}
 
+\begin{faqpair}{What does the cost structure look like at steady state?}
+  \texttt{prfaq} has zero infrastructure cost --- no servers, no databases, no APIs. The real cost is maintainer time. At current scale (pre-launch): approximately 2 hours per week on development and prompt refinement. At the 500-star target: an estimated 4--8 hours per week covering issue triage, community engagement, prompt maintenance as Claude models evolve, and occasional LaTeX template updates. At 1,000+ users: maintainer capacity becomes the constraint. At that point, the project either recruits community co-maintainers or narrows support scope to bug fixes only. The opportunity cost is hours not spent on other punt-labs projects. This is acceptable while the plugin serves as a learning vehicle for Claude Code plugin development; it should be re-evaluated if other punt-labs priorities require the same hours.
+\end{faqpair}
+
 \begin{faqpair}{What are the key metrics for success?}
   Three metrics, measured via GitHub analytics and community signals:
 
@@ -309,7 +313,9 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
 \end{faqpair}
 
 \begin{faqpair}{What is the customer acquisition strategy?}
-  Distribution is the product strategy for a free plugin. Primary channels: (1) GitHub discoverability --- README, topics, and stars drive organic search traffic; (2) developer community seeding --- posts on Hacker News, Reddit r/ClaudeAI, and Twitter/X targeting the ``vibe coding'' audience; (3) content marketing --- the plugin's own PR/FAQ serves as a case study and demo artifact; (4) word-of-mouth --- engineers who find the plugin useful share the PDF output, which includes a link back to the repository. There is no paid acquisition. If organic channels do not work within 6 months, the distribution hypothesis is wrong and should be revisited.
+  Distribution is the product strategy for a free plugin. Primary channels: (1) GitHub discoverability --- README, topics, and stars drive organic search traffic; (2) developer community seeding --- posts on Hacker News, Reddit r/ClaudeAI, and Twitter/X targeting the ``vibe coding'' audience; (3) content marketing --- the plugin's own PR/FAQ serves as a case study and demo artifact; (4) word-of-mouth --- engineers who find the plugin useful share the PDF output, which includes a link back to the repository. There is no paid acquisition.
+
+  Estimated time investment: 2--4 hours per week on community engagement for the first 3 months. Conversion assumption: a front-page Hacker News post reaches approximately 50K views and converts at roughly 0.1\%, yielding around 50 installs per post. These numbers are testable hypotheses, not forecasts. If organic channels do not work within 6 months, the distribution hypothesis is wrong and should be revisited.
 \end{faqpair}
 
 \begin{faqpair}{What are we not building?}
@@ -317,7 +323,7 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
 \end{faqpair}
 
 \begin{faqpair}{It is one year from now and prfaq failed. What went wrong?}
-  Most likely failure scenario: engineers do not want product discipline, even when it is free and frictionless. The vibe coding audience builds for the joy of building, and a tool that asks ``what evidence do you have that customers want this?'' feels like a buzzkill, not a feature. Second scenario: the Claude Code plugin ecosystem does not grow --- if Anthropic deprioritizes plugins or the marketplace never materializes, distribution collapses. Third scenario: the output quality is not high enough to share with stakeholders --- if the generated PR/FAQ reads like AI slop rather than a credible decision document, users will not trust it for real decisions. Fourth scenario: the PR/FAQ process is too heavyweight for the target audience --- engineers want a quick sanity check, not a formal document, and a lighter-weight alternative captures the market.
+  Most likely failure scenario: engineers do not want product discipline, even when it is free and frictionless. The vibe coding audience builds for the joy of building, and a tool that asks ``what evidence do you have that customers want this?'' feels like a buzzkill, not a feature. Second scenario: the plugin does not surface in a crowded marketplace --- the Claude Code ecosystem already has 800+ plugins across official and community marketplaces, and discoverability is poor. If users cannot find \texttt{prfaq} among hundreds of alternatives, organic adoption stalls regardless of quality. Third scenario: the output quality is not high enough to share with stakeholders --- if the generated PR/FAQ reads like AI slop rather than a credible decision document, users will not trust it for real decisions. Fourth scenario: the PR/FAQ process is too heavyweight for the target audience --- engineers want a quick sanity check, not a formal document, and a lighter-weight alternative captures the market.
 \end{faqpair}
 
 % ══════════════════════════════════════════════════════════════════════════════
@@ -343,7 +349,7 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
 
 \riskitem{Feasibility --- \textcolor{RiskGreen}{Low}}{The plugin is built and functional. No backend, no infrastructure, no ongoing operational cost. The hard engineering problem (interactive AI guidance) is solved by Claude itself. The plugin is structured prompts and a document template.}
 
-\riskitem{Viability --- \textcolor{RiskGreen}{Low}}{No revenue target, no operational cost, no support burden. Strategic asset for learning plugin development patterns and building ecosystem presence. The only viability risk is opportunity cost, which is minimal given the small codebase (under 20 files, no dependencies beyond TeX).}
+\riskitem{Viability --- \textcolor{RiskAmber}{Medium}}{No revenue target and no infrastructure cost, but maintainer time is the binding constraint. At current scale the maintenance burden is negligible. At the 500-star target, GitHub issues, community engagement, and prompt maintenance will require an estimated 4--8 hours per week --- meaningful for a solo maintainer with other punt-labs priorities. Mitigation: clear contribution guidelines, aggressive scope discipline (see Won't Do list), and a standing policy to recruit community co-maintainers if weekly issue volume exceeds what one person can handle.}
 \end{mdframed}
 
 % ══════════════════════════════════════════════════════════════════════════════
@@ -363,15 +369,23 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
   \item Peer review agent --- automated critique against Working Backwards principles and cognitive bias checklist
 \end{itemize}
 
+\subsection*{Done (Shipped in v0.4.0)}
+
+\begin{itemize}[nosep]
+  \item Research sub-agent --- scans local \texttt{./research/} directory, quarry-mcp indexes, and the web for evidence
+  \item Biblatex citation system --- academic-style citations for claims, linking evidence to assertions
+  \item Unit economics reference guide --- structured framework for viability risk evaluation
+  \item Principal engineer reference guide --- feasibility risk: architecture trade-offs, irreversible decisions, operational complexity
+  \item UX bar raiser reference guide --- usability risk: customer journey, cognitive load, mental model alignment
+  \item Judgment-to-FAQ cross-referencing --- \texttt{\textbackslash pageref\{faq:...\}} links from press release to FAQ justifications
+\end{itemize}
+
 \subsection*{Should Do (Future Iterations)}
 
 \begin{itemize}[nosep]
-  \item Research sub-agent --- scan local \texttt{./research/} directory and optional external data sources for evidence
-  \item Biblatex citation system --- academic-style citations for claims, linking evidence to assertions
-  \item Unit economics reference guide --- structured framework for products with revenue models
-  \item Principal engineer reference guide --- deeper feasibility and technical risk evaluation
-  \item UX bar raiser reference guide --- usability risk ownership and evaluation
-  \item Judgment-to-FAQ cross-referencing --- link flagged judgment calls to FAQ answers that explain reasoning
+  \item Markdown output mode --- alternative to LaTeX for users without a TeX distribution
+  \item Comparative analysis mode --- evaluate two competing product ideas side-by-side
+  \item Template customization --- allow users to override the LaTeX template for branding
 \end{itemize}
 
 \subsection*{Won't Do}
