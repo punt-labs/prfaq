@@ -16,9 +16,9 @@ Usability is not just the interface. It is the entire journey from first hearing
 
 ### 1. Awareness
 
-How does the customer first encounter this product? The press release subheading is the test: does it communicate the value in one sentence, in the customer's language?
+How does the customer first encounter this product? The press release headline and sub-headline are the test: do they communicate the news and the value in the customer's language?
 
-**Check:** Can a customer who reads only the heading and subheading decide whether to keep reading? If the subheading requires domain knowledge or jargon, awareness fails.
+**Check:** Can a customer who reads only the headline and sub-headline decide whether to keep reading? If either requires domain knowledge or jargon, awareness fails.
 
 ### 2. Evaluation
 

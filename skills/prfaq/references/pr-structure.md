@@ -2,25 +2,28 @@
 
 A Working Backwards press release is a one-page document written as if the product has already launched. It is written in the customer's language, not engineering jargon. Every sentence must earn its place.
 
-## Heading
+## Headline
 
-The product name. Choose a name the customer would use, not an internal codename.
+The news in one sentence. Written as a press release headline, not a product name. The headline announces what happened and why it matters.
 
-**Strong:** "Amazon Prime" — evocative, customer-facing
-**Weak:** "Project Velocity" — internal codename that means nothing to customers
+**Strong:** "Amazon Pharmacy Will Expand Same-Day Medication Delivery to Nearly 4,500 U.S. Cities and Towns by Year End"
+**Strong:** "punt-labs Releases prfaq, a Free Claude Code Plugin That Brings Amazon's PR/FAQ Process to Engineers"
+**Weak:** "Amazon Prime" — a product name, not a headline
+**Weak:** "Project Velocity" — an internal codename that announces nothing
 
-## Subheading
+## Sub-headlines
 
-One sentence describing who the customer is and what benefit they receive. This is the value proposition distilled to its essence.
+One or two sentences providing supporting detail: key numbers, scope, or context. The sub-headline expands the headline without repeating it.
 
+**Strong:** "Open-source plugin guides solo founders and engineers through product discovery inside the terminal, producing a professionally typeset decision document in under an hour"
 **Strong:** "Free two-day shipping for frequent Amazon shoppers"
 **Weak:** "A subscription-based logistics optimization program"
 
-The subheading must pass this test: if a customer reads only the heading and subheading, do they understand what this is and why they should care?
+The test: if a reader sees only the headline and sub-headline(s), do they understand what this is, who it's for, and why they should care?
 
-## Summary Paragraph
+## Lede Paragraph
 
-The entire PR/FAQ compressed into one paragraph. Structure: COMPANY announced PRODUCT, which provides BENEFIT to TARGET CUSTOMER. Unlike ALTERNATIVES, PRODUCT offers DIFFERENTIATOR, enabling customers to OUTCOME.
+The entire PR/FAQ compressed into one paragraph, opening with a dateline (CITY --- Date). Structure: COMPANY announced PRODUCT, which provides BENEFIT to TARGET CUSTOMER. Unlike ALTERNATIVES, PRODUCT offers DIFFERENTIATOR, enabling customers to OUTCOME.
 
 This paragraph must:
 - Name the specific customer (not "users" or "people")

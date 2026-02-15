@@ -101,8 +101,8 @@ Read the LaTeX template from `${CLAUDE_PLUGIN_ROOT}/assets/prfaq-template.tex`. 
 
 Write each section of the press release using the user's discovery answers:
 
-1. **Title block** — Product name, subtitle (value proposition), date, author, team
-2. **Summary paragraph** — The entire value proposition in one paragraph: who, what, why, how it differs
+1. **Headline block** — A press-release-style headline (the news in one sentence) followed by one or two sub-headlines (supporting detail, key numbers, scope). Modeled on wire format, not a document cover page.
+2. **Lede paragraph** — Dateline (CITY --- Date), then the entire value proposition in one paragraph: who, what, why, how it differs
 3. **Problem paragraph** — The customer's pain in concrete, measurable terms
 4. **Solution paragraph(s)** — How the product solves the problem, focusing on customer experience
 5. **Customer quote** — A fictional quote from the target customer expressing relief and outcome
