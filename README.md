@@ -1,12 +1,22 @@
 # prfaq
 
-A Claude Code plugin that guides you through the Amazon Working Backwards PR/FAQ process and produces professional LaTeX documents.
+A Claude Code plugin that brings Amazon's Working Backwards PR/FAQ process to engineers and founders — generate, review, stress-test, and iterate on product discovery documents inside the terminal.
 
 ## What It Does
 
 `prfaq` turns product thinking into a terminal command. Type `/prfaq` in any Claude Code session and Claude walks you through a structured conversation: who is the customer, what is their problem, why is this solution different, what are the risks. From your answers, it generates a complete PR/FAQ document — a mock press release followed by detailed FAQs — compiled to a polished PDF.
 
 The output is a decision-making artifact, not a brainstorm. It is designed to be read, debated, and revised before committing to building anything.
+
+Five commands form a complete product-thinking workflow:
+
+| Command | What it does |
+|---------|-------------|
+| `/prfaq` | Generate a new PR/FAQ from scratch (or revise an existing one) |
+| `/prfaq:feedback` | Apply pointed feedback — traces cascading effects and surgically redrafts |
+| `/prfaq:meeting` | Simulate an Amazon-style review meeting with four agentic personas |
+| `/prfaq:review` | Peer review against Working Backwards principles and cognitive biases |
+| `/prfaq:research` | Find evidence for claims using local files, web, and indexed documents |
 
 ## Installation
 
@@ -64,7 +74,7 @@ The automated installer handles this registration automatically.
 
 ## Usage
 
-In any Claude Code session:
+### Generate: `/prfaq`
 
 ```
 /prfaq
@@ -81,15 +91,49 @@ For a new document, the skill walks you through six phases:
 4. **Compile** — Produces a PDF via `pdflatex`
 5. **Review** — Evaluates against review criteria, identifies weaknesses, iterates
 
-To review an existing document without running the full workflow:
+### Iterate: `/prfaq:feedback`
 
 ```
-/prfaq review [path/to/prfaq.tex]
+/prfaq:feedback the TAM is too large — focus on solo builders, not enterprise teams
 ```
+
+Takes a directional instruction, traces cascading effects across all affected sections (press release, FAQs, risk assessment, feature appendix), and surgically redrafts. Each cycle recompiles the PDF and runs peer review automatically.
+
+### Stress-Test: `/prfaq:meeting`
+
+```
+/prfaq:meeting
+```
+
+Simulates an Amazon-style PR/FAQ review meeting with four agentic personas who debate the weak spots in your document:
+
+- **Wei** (Principal Engineer) — feasibility risk, technical honesty
+- **Priya** (Target Customer) — value risk, customer reality
+- **Alex** (Skeptical Executive) — strategic fit, devil's advocate
+- **Dana** (Builder-Visionary) — ambition risk, cost of inaction
+
+You are the PM and final decision-maker. The output is a decisions log with specific revision directives that feed into `/prfaq:feedback`.
+
+### Review: `/prfaq:review`
+
+```
+/prfaq:review [path/to/prfaq.tex]
+```
+
+Peer review against Working Backwards principles, Cagan's four risks framework, and a Kahneman-informed decision quality checklist. Flags unsupported claims, cognitive biases, vague language, and risk rating inconsistencies.
+
+### Research: `/prfaq:research`
+
+```
+/prfaq:research find evidence that developers lack product training
+```
+
+Searches local files, web sources, and indexed documents (via quarry-mcp) for evidence. Returns structured biblatex citations ready to add to your `.bib` file.
 
 ## Output
 
 - `prfaq.tex` — LaTeX source in your project directory
+- `prfaq.bib` — Bibliography with sourced citations
 - `prfaq.pdf` — Compiled PDF ready for review
 
 ## What Is Working Backwards?
@@ -103,6 +147,18 @@ The PR/FAQ document includes:
 - **Internal FAQs** — Business-facing questions organized by value/market, technical, and business risk
 - **Four Risks Assessment** — Cagan framework evaluation: value, usability, feasibility, viability
 - **Feature Appendix** — Scope boundary: must do, should do, won't do
+- **Bibliography** — Sourced citations for all factual claims
+
+## The Workflow
+
+The typical workflow is: **generate** → **review** → **meeting** → **feedback** → repeat.
+
+1. `/prfaq` generates the initial document from a structured conversation
+2. `/prfaq:review` gives you an adversarial peer review
+3. `/prfaq:meeting` stress-tests the document with four personas who disagree with each other
+4. `/prfaq:feedback` applies the meeting's decisions (or your own feedback) surgically
+
+Each step produces a compiled PDF. The document improves with each cycle.
 
 ## License
 
