@@ -56,7 +56,7 @@ Before forming your assessment, gather available evidence:
 
 3. **Citation verification.** Check for a `.bib` file alongside the `.tex` file. If one exists, read it and build a map of citation keys to their entries. Then use Grep to extract all `\cite{...}` commands from the `.tex` file. Verify: (a) every `\cite{key}` has a corresponding `.bib` entry, (b) every factual claim (market sizes, statistics, customer behaviors, competitor capabilities) has a nearby `\cite{}`, (c) `.bib` entries have adequate metadata (titles, years, URLs for web sources).
 
-4. **Judgment-to-FAQ cross-references.** Use Grep to extract all `\pageref{faq:...}` commands from the press release section and all `\label{faq:...}` from the FAQ section. Verify: (a) every `\pageref{faq:slug}` has a corresponding `\label{faq:slug}`, (b) judgment calls in the press release (claims about the market, design choices, positioning decisions) have cross-references to FAQs that explain the reasoning, (c) the referenced FAQ actually unpacks the judgment — not just restates it.
+4. **Judgment-to-FAQ cross-references.** Use Grep to extract all `\faqref{faq:...}` commands from the press release section and all `\label{faq:...}` from the FAQ section. Verify: (a) every `\faqref{faq:slug}` has a corresponding `\label{faq:slug}`, (b) judgment calls in the press release (claims about the market, design choices, positioning decisions) have cross-references to FAQs that explain the reasoning, (c) the referenced FAQ actually unpacks the judgment — not just restates it.
 
 5. **Web verification.** For specific factual claims (market sizes, competitor capabilities, statistics, technology maturity), use WebSearch to verify. Do not accept round numbers or unsourced statistics at face value.
 

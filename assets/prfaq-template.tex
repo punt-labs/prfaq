@@ -108,12 +108,14 @@
   skipbelow=\baselineskip,
 ]{spokespersonquote}
 
-% ── faqpair — Q&A pair with bold question ────────────────────────────────────
+% ── faqpair — numbered Q&A pair with bold question ─────────────────────────
 % Label FAQ pairs that explain judgment calls: \begin{faqpair}{Question}\label{faq:slug}
-% Then cross-reference from the press release: (see p.\,\pageref{faq:slug})
+% Then cross-reference from the press release: (see \faqref{faq:slug})
+\newcounter{faqnum}
 \newenvironment{faqpair}[1]{%
   \vspace{0.5em}%
-  \noindent\textbf{\color{SectionBlue}Q: #1}\par%
+  \refstepcounter{faqnum}%
+  \noindent\textbf{\color{SectionBlue}Q\thefaqnum: #1}\par%
   \vspace{0.2em}%
   \begin{adjustwidth}{1em}{0pt}%
   \setlength{\parindent}{0pt}%
@@ -121,6 +123,8 @@
   \end{adjustwidth}%
   \vspace{0.5em}%
 }
+% ── \faqref{faq:slug} — clickable "FAQ 3" reference ──────────────────────────
+\newcommand{\faqref}[1]{\hyperref[#1]{FAQ~\ref*{#1}}}
 
 % ── adjustwidth (for faqpair indentation) ────────────────────────────────────
 \usepackage{changepage}

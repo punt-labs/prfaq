@@ -108,10 +108,12 @@
   skipbelow=\baselineskip,
 ]{spokespersonquote}
 
-% ── faqpair — Q&A pair with bold question ────────────────────────────────────
+% ── faqpair — numbered Q&A pair with bold question ─────────────────────────
+\newcounter{faqnum}
 \newenvironment{faqpair}[1]{%
   \vspace{0.5em}%
-  \noindent\textbf{\color{SectionBlue}Q: #1}\par%
+  \refstepcounter{faqnum}%
+  \noindent\textbf{\color{SectionBlue}Q\thefaqnum: #1}\par%
   \vspace{0.2em}%
   \begin{adjustwidth}{1em}{0pt}%
   \setlength{\parindent}{0pt}%
@@ -119,6 +121,8 @@
   \end{adjustwidth}%
   \vspace{0.5em}%
 }
+% ── \faqref{faq:slug} — clickable "FAQ 3" reference ──────────────────────────
+\newcommand{\faqref}[1]{\hyperref[#1]{FAQ~\ref*{#1}}}
 
 % ── adjustwidth (for faqpair indentation) ────────────────────────────────────
 \usepackage{changepage}
@@ -152,7 +156,7 @@ SAN FRANCISCO --- Today, punt-labs released \texttt{prfaq}, a free, open-source 
 
 \prsection{Problem}
 
-AI coding tools have made it possible for a single engineer to build in a weekend what used to take a team a quarter. The bottleneck has shifted: the hard part is no longer writing code --- it is knowing what to build and why (see p.\,\pageref{faq:customer-evidence}). Engineers and solo founders using Claude Code, Cursor, and similar tools ship fast, but most lack formal product training. They skip customer definition, skip competitive analysis, skip unit economics --- and discover after burning through tokens and weeks of building that the product does not resonate.
+AI coding tools have made it possible for a single engineer to build in a weekend what used to take a team a quarter. The bottleneck has shifted: the hard part is no longer writing code --- it is knowing what to build and why (see \faqref{faq:customer-evidence}). Engineers and solo founders using Claude Code, Cursor, and similar tools ship fast, but most lack formal product training. They skip customer definition, skip competitive analysis, skip unit economics --- and discover after burning through tokens and weeks of building that the product does not resonate.
 
 The consequences are visible at both ends of the market. Analysts at HFS Research estimate the Global 2000 carry \$1.5--2 trillion in accumulated technical debt~\cite{hfs2024techdebt}. At the startup end, AI-generated code introduces its own quality burden: 66\% of developers report spending more time fixing ``almost-right'' AI output than they save~\cite{stackoverflow2025survey}. Many startups built during the current vibe coding wave already face significant rebuilds --- not because the code is bad, but because the code solves the wrong problem with confidence.
 
@@ -164,7 +168,7 @@ Today, an engineer who wants product discipline has three options: hire a produc
 
 From these answers, Claude generates a complete PR/FAQ document: a one-page mock press release describing the product as if it has already shipped, followed by external FAQs (what a customer would ask) and internal FAQs (what leadership, finance, and engineering would ask). The document is evaluated against Marty Cagan's four risks framework~\cite{cagan2018inspired} --- value, usability, feasibility, and viability --- producing an honest assessment of whether the product is worth building.
 
-The output is a LaTeX-compiled PDF (see p.\,\pageref{faq:why-latex}): a clean, professional artifact suitable for sharing with co-founders, investors, or advisors. It is not a disposable brainstorm. It is a decision-making document designed to be read, debated, and revised.
+The output is a LaTeX-compiled PDF (see \faqref{faq:why-latex}): a clean, professional artifact suitable for sharing with co-founders, investors, or advisors. It is not a disposable brainstorm. It is a decision-making document designed to be read, debated, and revised.
 
 \prsection{Customer Quote}
 
@@ -181,7 +185,7 @@ Getting started with \texttt{prfaq} takes three steps. First, run the one-line i
 \prsection{Spokesperson Quote}
 
 \begin{spokespersonquote}
-``Engineers are the best product thinkers in the room --- they just don't always have the frameworks. We built \texttt{prfaq} because the engineers using Claude Code every day are also the ones making product decisions (see p.\,\pageref{faq:tam}), and they deserve a tool that meets them where they already work. The PR/FAQ process has been proven at Amazon for two decades~\cite{bryar2021workingbackwards}. We didn't invent it. We made it accessible inside a terminal.''
+``Engineers are the best product thinkers in the room --- they just don't always have the frameworks. We built \texttt{prfaq} because the engineers using Claude Code every day are also the ones making product decisions (see \faqref{faq:tam}), and they deserve a tool that meets them where they already work. The PR/FAQ process has been proven at Amazon for two decades~\cite{bryar2021workingbackwards}. We didn't invent it. We made it accessible inside a terminal.''
 
 \raggedleft --- \textbf{Jason Freeman}, Founder, punt-labs
 \end{spokespersonquote}

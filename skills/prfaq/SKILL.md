@@ -114,7 +114,7 @@ Write the LaTeX content into a `.tex` file in the user's project directory (defa
 
 When writing any factual claim — market sizes, statistics, customer behaviors, competitor capabilities, framework attributions — use `\cite{key}` referencing the corresponding `.bib` entry. If a claim has no source, write `[CITATION NEEDED]` as a visible marker and flag it for the user during review.
 
-When the press release makes a judgment call — a claim about the market, a design choice, a positioning decision — cross-reference the FAQ that explains the reasoning: `(see p.\,\pageref{faq:slug})`. This links the assertion to its evidence. The corresponding FAQ should unpack the judgment: why we believe this, what evidence supports it, and what the risk is if we're wrong.
+When the press release makes a judgment call — a claim about the market, a design choice, a positioning decision — cross-reference the FAQ that explains the reasoning: `(see \faqref{faq:slug})`. This renders as a clickable "FAQ 7" link — the number tells the reader exactly which question to find. The corresponding FAQ should unpack the judgment: why we believe this, what evidence supports it, and what the risk is if we're wrong.
 
 After writing, share each section with the user for review. Ask for corrections before proceeding.
 
@@ -145,7 +145,7 @@ Internal FAQs are the evidence-heavy part of the document. Every factual asserti
 
 If a `.bib` entry doesn't exist for a claim, create one. If no source exists at all, mark `[CITATION NEEDED]`.
 
-Label each FAQ pair that explains a judgment call or provides supporting evidence for a press release claim: `\label{faq:slug}` immediately after `\begin{faqpair}{Question}`. Use descriptive slugs: `faq:customer-evidence`, `faq:tam`, `faq:competitors`, `faq:why-latex`. The press release should already reference these labels via `\pageref{faq:slug}`.
+Label each FAQ pair that explains a judgment call or provides supporting evidence for a press release claim: `\label{faq:slug}` immediately after `\begin{faqpair}{Question}`. Use descriptive slugs: `faq:customer-evidence`, `faq:tam`, `faq:competitors`, `faq:why-latex`. The press release should already reference these labels via `\faqref{faq:slug}`.
 
 After the FAQs, fill in the four risks assessment (Value, Usability, Feasibility, Viability) based on everything gathered so far.
 
