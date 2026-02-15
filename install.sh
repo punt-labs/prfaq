@@ -10,6 +10,18 @@ PLUGINS_DIR="$HOME/.claude/plugins/local-plugins/plugins"
 MARKETPLACE="$HOME/.claude/plugins/local-plugins/.claude-plugin/marketplace.json"
 INSTALL_DIR="$PLUGINS_DIR/$PLUGIN_NAME"
 
+# Resolve the latest release tag (vX.Y.Z) via git ls-remote
+resolve_latest_tag() {
+  git ls-remote --tags --sort=-v:refname "$REPO" 'v*' 2>/dev/null \
+    | head -1 \
+    | sed 's|.*refs/tags/||; s|\^{}||'
+}
+
+LATEST_TAG=$(resolve_latest_tag)
+if [[ -z "$LATEST_TAG" ]]; then
+  warn "Could not resolve latest release tag — will install from main"
+fi
+
 # LaTeX packages required by prfaq-template.tex
 REQUIRED_PACKAGES=(
   geometry        # Page margins
@@ -206,8 +218,14 @@ if [[ -d "$INSTALL_DIR" || -L "$INSTALL_DIR" ]]; then
     ok "Symlink detected at $INSTALL_DIR (developer mode)"
   elif [[ -d "$INSTALL_DIR/.git" ]]; then
     info "Existing installation found — updating..."
-    git -C "$INSTALL_DIR" pull --quiet
-    ok "Updated via git pull"
+    git -C "$INSTALL_DIR" fetch --tags --quiet
+    if [[ -n "$LATEST_TAG" ]]; then
+      git -C "$INSTALL_DIR" checkout --quiet "$LATEST_TAG" 2>/dev/null
+      ok "Updated to $LATEST_TAG"
+    else
+      git -C "$INSTALL_DIR" pull --quiet
+      ok "Updated via git pull"
+    fi
   else
     ok "Installed at $INSTALL_DIR"
   fi
@@ -215,7 +233,12 @@ else
   info "Cloning $REPO..."
   mkdir -p "$PLUGINS_DIR"
   git clone --quiet "$REPO" "$INSTALL_DIR"
-  ok "Cloned to $INSTALL_DIR"
+  if [[ -n "$LATEST_TAG" ]]; then
+    git -C "$INSTALL_DIR" checkout --quiet "$LATEST_TAG" 2>/dev/null
+    ok "Installed $LATEST_TAG to $INSTALL_DIR"
+  else
+    ok "Cloned to $INSTALL_DIR"
+  fi
 fi
 
 # ── Read metadata from plugin.json ─────────────────────────────────────────
