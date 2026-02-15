@@ -339,18 +339,14 @@ else
   fi
 fi
 
-# ── Clean stale cache versions ───────────────────────────────────────────────
+# ── Clear plugin cache ───────────────────────────────────────────────────────
+# The cache is derived state rebuilt from source on next Claude Code launch.
+# Always clear it so new agents, skills, and hooks are picked up.
 
 CACHE_DIR="$HOME/.claude/plugins/cache/local/$PLUGIN_NAME"
 if [[ -d "$CACHE_DIR" ]]; then
-  for version_dir in "$CACHE_DIR"/*/; do
-    [[ -d "$version_dir" ]] || continue
-    version_name=$(basename "$version_dir")
-    if [[ "$version_name" != "$PLUGIN_VERSION" ]]; then
-      rm -rf "$version_dir"
-      ok "Removed stale cache: v$version_name"
-    fi
-  done
+  rm -rf "$CACHE_DIR"
+  ok "Cleared plugin cache (will rebuild on next launch)"
 fi
 
 # ── Summary ──────────────────────────────────────────────────────────────────
