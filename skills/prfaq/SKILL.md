@@ -4,9 +4,9 @@ description: >
   This skill should be used when the user asks to "write a PR/FAQ",
   "prfaq", "working backwards", "product discovery", "evaluate a product idea",
   "press release FAQ", "test product value", "revise prfaq", "update prfaq",
-  "add research to prfaq", "add FAQs", or wants to use the
-  Amazon Working Backwards process to evaluate whether a product or
-  feature is worth building.
+  "add research to prfaq", "add FAQs", "run a meeting", "review meeting",
+  "stress test my prfaq", or wants to use the Amazon Working Backwards
+  process to evaluate whether a product or feature is worth building.
 ---
 
 # Working Backwards: PR/FAQ
@@ -213,6 +213,16 @@ Present the assessment honestly. Identify the weakest sections and suggest speci
 - **LaTeX file**: `prfaq.tex` (or user-specified path) in the project directory
 - **PDF**: Compiled PDF in the same directory as the `.tex` file
 
+## Related Commands
+
+After completing a PR/FAQ, the user can stress-test it with these commands:
+
+- **`/prfaq review`** — Static peer review. Returns a structured report (PASS/ITERATE/REJECT) with critical issues, warnings, and recommendations. Good for identifying problems.
+- **`/prfaq meeting`** — Interactive review meeting. Four personas (principal engineer, target customer, skeptical executive, builder-visionary) debate the document's hot spots. The user makes explicit tradeoff decisions at each disagreement. Good for forcing decisions. Output is a decisions log with specific revision directives.
+- **`/prfaq feedback`** — Directed iteration. Takes a specific feedback directive (from the user or from a meeting's revision queue), traces cascading effects, and surgically redrafts affected sections.
+
+**Typical flow:** `/prfaq` → `/prfaq review` → `/prfaq meeting` → `/prfaq feedback` (repeat until ready to build).
+
 ## Additional Resources
 
 Detailed guidance for each phase is in the reference files:
@@ -222,3 +232,4 @@ Detailed guidance for each phase is in the reference files:
 - `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/four-risks.md` — Cagan four risks framework, review criteria, decision outcomes
 - `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/common-mistakes.md` — Anti-patterns and failure modes
 - `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/decision-quality.md` — Kahneman decision quality checklist for peer review
+- `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/meeting-guide.md` — Meeting orchestration: personas, debate synthesis, decision flow
