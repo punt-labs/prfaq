@@ -133,6 +133,17 @@
 % ── \faqref{faq:slug} — clickable "FAQ 3" reference ──────────────────────────
 \newcommand{\faqref}[1]{\hyperref[#1]{FAQ~\ref*{#1}}}
 
+% ── \featureitem — numbered, referenceable feature entry ──────────────────────
+% Use inside enumerate: \featureitem{Name}{Rationale}\label{feat:slug}
+% Then cross-reference: (see \featureref{feat:slug})
+\newcounter{featurenum}
+\newcommand{\featureitem}[2]{%
+  \refstepcounter{featurenum}%
+  \item[\textbf{\color{SectionBlue}F\thefeaturenum.}]%
+  \textbf{#1} --- #2%
+}
+\newcommand{\featureref}[1]{\hyperref[#1]{Feature~\ref*{#1}}}
+
 % ── adjustwidth (for faqpair indentation) ────────────────────────────────────
 \usepackage{changepage}
 
@@ -302,29 +313,29 @@ Defines the scope boundary for the product. Every feature is explicitly categori
 
 Features that are essential for launch. Without these, the product does not solve the core problem.
 
-\begin{itemize}[leftmargin=1.5em]
-  \item FEATURE — RATIONALE
-  \item FEATURE — RATIONALE
-  \item FEATURE — RATIONALE
-\end{itemize}
+\begin{enumerate}[nosep,leftmargin=2.5em]
+  \featureitem{FEATURE}{RATIONALE}\label{feat:example-1}
+  \featureitem{FEATURE}{RATIONALE}\label{feat:example-2}
+  \featureitem{FEATURE}{RATIONALE}\label{feat:example-3}
+\end{enumerate}
 
 \subsection*{Should Do}
 
 Features that meaningfully improve the product but are not launch-blocking. Candidates for fast follow-up.
 
-\begin{itemize}[leftmargin=1.5em]
-  \item FEATURE — RATIONALE
-  \item FEATURE — RATIONALE
-\end{itemize}
+\begin{enumerate}[nosep,leftmargin=2.5em]
+  \featureitem{FEATURE}{RATIONALE}\label{feat:example-4}
+  \featureitem{FEATURE}{RATIONALE}\label{feat:example-5}
+\end{enumerate}
 
 \subsection*{Won't Do}
 
 Features explicitly excluded. Naming what you won't build is as important as naming what you will — it prevents scope creep and clarifies the product's identity.
 
-\begin{itemize}[leftmargin=1.5em]
-  \item FEATURE — WHY NOT
-  \item FEATURE — WHY NOT
-\end{itemize}
+\begin{enumerate}[nosep,leftmargin=2.5em]
+  \featureitem{FEATURE}{WHY NOT}\label{feat:example-6}
+  \featureitem{FEATURE}{WHY NOT}\label{feat:example-7}
+\end{enumerate}
 
 % ══════════════════════════════════════════════════════════════════════════════
 % REFERENCES

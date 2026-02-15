@@ -131,6 +131,17 @@
 % ── \faqref{faq:slug} — clickable "FAQ 3" reference ──────────────────────────
 \newcommand{\faqref}[1]{\hyperref[#1]{FAQ~\ref*{#1}}}
 
+% ── \featureitem — numbered, referenceable feature entry ──────────────────────
+% Use inside enumerate: \featureitem{Name}{Rationale}\label{feat:slug}
+% Then cross-reference: (see \featureref{feat:slug})
+\newcounter{featurenum}
+\newcommand{\featureitem}[2]{%
+  \refstepcounter{featurenum}%
+  \item[\textbf{\color{SectionBlue}F\thefeaturenum.}]%
+  \textbf{#1} --- #2%
+}
+\newcommand{\featureref}[1]{\hyperref[#1]{Feature~\ref*{#1}}}
+
 % ── adjustwidth (for faqpair indentation) ────────────────────────────────────
 \usepackage{changepage}
 
@@ -373,35 +384,35 @@ Viability  & \textcolor{RiskAmber}{Medium} & Zero infrastructure cost but mainta
 
 \subsection*{Must Do (V1)}
 
-\begin{itemize}[nosep]
-  \item Interactive discovery workflow --- structured questions that guide the user from idea to document
-  \item Complete PR/FAQ document generation --- press release, external FAQs, internal FAQs, four risks assessment
-  \item LaTeX compilation to professional PDF --- shareable artifact, not a disposable brainstorm
-  \item Reference guides --- encoded best practices for PR structure, FAQ structure, four risks, common mistakes, unit economics, feasibility, and usability
-  \item Peer review agent --- automated critique against Working Backwards principles and cognitive bias checklist
-  \item Research sub-agent --- scans local \texttt{./research/} directory, indexed documents, and the web for evidence
-  \item Biblatex citation system --- academic-style citations for claims, linking evidence to assertions
-  \item \texttt{/prfaq:feedback} --- directed iteration from pointed user feedback; traces cascading effects via section dependency graph and surgically redrafts affected sections
-  \item \texttt{/prfaq:import} --- ingest an existing PR/FAQ draft (plain text, Markdown, or raw \texttt{.tex}), parse and structure it against the framework, research evidence for unsupported claims, format into the LaTeX template with proper environments and citations, compile to PDF, and present a gap analysis
-\end{itemize}
+\begin{enumerate}[nosep,leftmargin=2.5em]
+  \featureitem{Interactive discovery workflow}{structured questions that guide the user from idea to document}\label{feat:discovery}
+  \featureitem{Complete PR/FAQ document generation}{press release, external FAQs, internal FAQs, four risks assessment}\label{feat:generation}
+  \featureitem{LaTeX compilation to professional PDF}{shareable artifact, not a disposable brainstorm}\label{feat:latex}
+  \featureitem{Reference guides}{encoded best practices for PR structure, FAQ structure, four risks, common mistakes, unit economics, feasibility, and usability}\label{feat:guides}
+  \featureitem{Peer review agent}{automated critique against Working Backwards principles and cognitive bias checklist}\label{feat:peer-review}
+  \featureitem{Research sub-agent}{scans local \texttt{./research/} directory, indexed documents, and the web for evidence}\label{feat:research}
+  \featureitem{Biblatex citation system}{academic-style citations for claims, linking evidence to assertions}\label{feat:citations}
+  \featureitem{\texttt{/prfaq:feedback}}{directed iteration from pointed user feedback; traces cascading effects via section dependency graph and surgically redrafts affected sections}\label{feat:feedback}
+  \featureitem{\texttt{/prfaq:import}}{ingest an existing PR/FAQ draft (plain text, Markdown, or raw \texttt{.tex}), parse and structure it against the framework, research evidence for unsupported claims, format into the LaTeX template with proper environments and citations, compile to PDF, and present a gap analysis}\label{feat:import}
+\end{enumerate}
 
 \subsection*{Should Do (V2)}
 
-\begin{itemize}[nosep]
-  \item \texttt{/prfaq:meeting} --- simulate an Amazon-style PR/FAQ review meeting. The document is reviewed page by page, FAQ by FAQ, with agentic personas (target customer, principal engineer, unit economics reviewer, UX bar raiser, skeptical executive). Agent debate is visible to the user. Main Claude facilitates and synthesizes debate into pointed decision questions. The user is the PM and final decision-maker. Decisions feed into \texttt{/prfaq:feedback} for automated iteration. This is the most ambitious planned feature and carries meaningful execution risk in multi-agent orchestration and persona fidelity.
-  \item Markdown output mode --- alternative to LaTeX for users without a TeX distribution
-  \item Comparative analysis mode --- evaluate two competing product ideas side-by-side
-  \item Template customization --- allow users to override the LaTeX template for branding
-\end{itemize}
+\begin{enumerate}[nosep,leftmargin=2.5em]
+  \featureitem{\texttt{/prfaq:meeting}}{simulate an Amazon-style PR/FAQ review meeting. The document is reviewed page by page, FAQ by FAQ, with agentic personas (target customer, principal engineer, unit economics reviewer, UX bar raiser, skeptical executive). Agent debate is visible to the user. Main Claude facilitates and synthesizes debate into pointed decision questions. The user is the PM and final decision-maker. Decisions feed into \texttt{/prfaq:feedback} for automated iteration. This is the most ambitious planned feature and carries meaningful execution risk in multi-agent orchestration and persona fidelity.}\label{feat:meeting}
+  \featureitem{Markdown output mode}{alternative to LaTeX for users without a TeX distribution}\label{feat:markdown}
+  \featureitem{Comparative analysis mode}{evaluate two competing product ideas side-by-side}\label{feat:comparative}
+  \featureitem{Template customization}{allow users to override the LaTeX template for branding}\label{feat:templates}
+\end{enumerate}
 
 \subsection*{Won't Do}
 
-\begin{itemize}[nosep]
-  \item \textbf{Web dashboard or SaaS platform} --- the plugin runs locally inside Claude Code. Adding a web layer would introduce infrastructure, authentication, and hosting costs that contradict the zero-ops design. If users want to share documents, they share the PDF.
-  \item \textbf{Collaboration or multi-user editing} --- PR/FAQ is a single-author process by design. The document is written by one person, then reviewed by others. Real-time collaboration would encourage design-by-committee, which the Working Backwards process explicitly avoids.
-  \item \textbf{Project management features} --- no task tracking, no roadmap views, no sprint planning. The plugin produces a decision document, not a project plan. Users who need project management have Linear, Jira, or beads.
-  \item \textbf{Alternative LLM backends} --- the plugin is a Claude Code plugin. Supporting OpenAI, Gemini, or local models would fragment the prompt engineering, dilute quality, and multiply the testing surface for no clear user benefit.
-\end{itemize}
+\begin{enumerate}[nosep,leftmargin=2.5em]
+  \featureitem{Web dashboard or SaaS platform}{the plugin runs locally inside Claude Code. Adding a web layer would introduce infrastructure, authentication, and hosting costs that contradict the zero-ops design. If users want to share documents, they share the PDF.}\label{feat:no-web}
+  \featureitem{Collaboration or multi-user editing}{PR/FAQ is a single-author process by design. The document is written by one person, then reviewed by others. Real-time collaboration would encourage design-by-committee, which the Working Backwards process explicitly avoids.}\label{feat:no-collab}
+  \featureitem{Project management features}{no task tracking, no roadmap views, no sprint planning. The plugin produces a decision document, not a project plan. Users who need project management have Linear, Jira, or beads.}\label{feat:no-pm}
+  \featureitem{Alternative LLM backends}{the plugin is a Claude Code plugin. Supporting OpenAI, Gemini, or local models would fragment the prompt engineering, dilute quality, and multiply the testing surface for no clear user benefit.}\label{feat:no-other-llm}
+\end{enumerate}
 
 % ══════════════════════════════════════════════════════════════════════════════
 % REFERENCES
