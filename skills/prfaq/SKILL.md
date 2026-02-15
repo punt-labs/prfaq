@@ -157,7 +157,15 @@ After the risk assessment, write the **Feature Appendix** — a scope boundary t
 - **Should Do** — Meaningfully improve the product but not launch-blocking. Fast follow-up candidates. Ask: "What would make it notably better but isn't strictly required?"
 - **Won't Do** — Explicitly excluded. Naming what you won't build prevents scope creep and clarifies the product's identity. Ask: "What are people likely to expect or request that you deliberately won't build, and why?"
 
-Each feature entry should be a short name followed by a rationale (why it's in this category). The Won't Do rationale should explain *why not* — is it out of scope, a distraction, technically infeasible, or a deliberate positioning choice?
+Each feature entry uses the `\featureitem{Name}{Rationale}` command inside an `enumerate` environment. Features are numbered continuously (F1, F2, F3...) across all three categories. Add `\label{feat:slug}` after each `\featureitem` to make it referenceable. Use `\featureref{feat:slug}` from other sections (press release, FAQs) to create clickable "Feature 3" links — the same pattern as `\faqref` for FAQ pairs. The Won't Do rationale should explain *why not* — is it out of scope, a distraction, technically infeasible, or a deliberate positioning choice?
+
+Example:
+```latex
+\begin{enumerate}[nosep,leftmargin=2.5em]
+  \featureitem{Discovery workflow}{structured questions that guide the user}\label{feat:discovery}
+  \featureitem{PDF compilation}{shareable artifact, not a disposable brainstorm}\label{feat:latex}
+\end{enumerate}
+```
 
 Append the FAQ, risk assessment, and feature appendix sections to the `.tex` file. Share with the user for review.
 
