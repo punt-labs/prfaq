@@ -30,6 +30,17 @@ sudo apt install texlive-full
 
 The plugin generates `.tex` files regardless — you can install TeX later.
 
+### Optional: quarry-mcp
+
+If you have [quarry-mcp](https://github.com/jmf-pobox/quarry-mcp) installed, the research agent will automatically search your indexed documents for evidence when writing or revising a PR/FAQ. Install it with:
+
+```bash
+pip install quarry-mcp
+quarry install
+```
+
+No additional configuration is needed — `quarry install` registers the MCP server with Claude Code.
+
 ### Manual Installation
 
 ```bash

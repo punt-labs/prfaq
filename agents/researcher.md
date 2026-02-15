@@ -45,7 +45,7 @@ Check for local research materials before going to the web:
 
 1. **`./research/` directory.** Use Glob to find `./research/**/*`. Read any `.md`, `.txt`, or `.pdf` files found. These are primary sources the user has collected — interviews, survey data, market reports, competitive analysis. Primary data always trumps web searches.
 
-2. **quarry-mcp (optional).** If `query_documents` or `search_documents` tools are available from a quarry-mcp server, use them to search the user's indexed knowledge base. Query with key terms from each claim. This provides semantic search across everything the user has ever indexed — research papers, articles, reports, notes.
+2. **quarry-mcp (optional).** If a `search_documents` tool is available from a quarry MCP server, use it to search the user's indexed knowledge base. Query with key terms from each claim — e.g., `search_documents(query="venture capital term sheet provisions", limit=10)`. Use the `collection` parameter only if the user specifies a collection to search. When citing quarry results, include the `document_name` and `page_number` from the result metadata so the reader can find the original source.
 
 3. **Other MCP data sources (optional).** Check if any of these tools are available and use them when relevant:
    - Financial data servers (SEC/EDGAR filings, market data)
