@@ -241,6 +241,8 @@ Present the assessment honestly. Identify the weakest sections and suggest speci
 
 ## Related Commands
 
+- **`/prfaq:import`** — Import an existing document (markdown, text, PDF) into the PR/FAQ template. Extracts content, maps to Working Backwards structure, researches claims, compiles PDF, and runs peer review. Accepts any product document and guides it toward PR/FAQ format. Gaps get `[TODO]` placeholders.
+
 After completing a PR/FAQ, the user can stress-test it with these commands:
 
 - **`/prfaq:review`** — Static peer review. Returns a structured report (PASS/ITERATE/REJECT) with critical issues, warnings, and recommendations. Good for identifying problems.
@@ -252,7 +254,7 @@ After completing a PR/FAQ, the user can stress-test it with these commands:
 
 - **`/prfaq:rate`** — Anonymous satisfaction feedback. Quick 1-5 rating with optional comment to help improve the plugin.
 
-**Typical flow:** `/prfaq` → `/prfaq:review` → `/prfaq:meeting` (or `:meeting-hive`) → `/prfaq:feedback` (repeat) → `/prfaq:streamline` (when ready to share).
+**Typical flow:** `/prfaq` (or `/prfaq:import`) → `/prfaq:review` → `/prfaq:meeting` (or `:meeting-hive`) → `/prfaq:feedback` (repeat) → `/prfaq:streamline` (when ready to share).
 
 ## Additional Resources
 

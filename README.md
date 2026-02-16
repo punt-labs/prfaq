@@ -8,11 +8,12 @@ A Claude Code plugin that brings Amazon's [Working Backwards](#what-is-working-b
 
 The output is a decision-making artifact, not a brainstorm. It is designed to be read, debated, and revised before committing to building anything.
 
-Eight commands form a complete product-thinking workflow:
+Nine commands form a complete product-thinking workflow:
 
 | Command | What it does |
 |---------|-------------|
 | `/prfaq` | Generate a new PR/FAQ from scratch (or revise an existing one) |
+| `/prfaq:import` | Import an existing document into the PR/FAQ template with research and review |
 | `/prfaq:feedback` | Apply pointed feedback — traces cascading effects and surgically redrafts |
 | `/prfaq:meeting` | Amazon-style review meeting with you and four agentic personas |
 | `/prfaq:meeting-hive` | Autonomous meeting — personas debate and decide without you moderating |
@@ -85,6 +86,16 @@ For a new document, the skill walks you through six phases:
 3. **Draft FAQ** — Generates external and internal FAQs, risk assessment, feature appendix, then runs an adversarial peer review using the Kahneman decision quality framework
 4. **Compile** — Produces a PDF via `pdflatex`
 5. **Review** — Evaluates against review criteria, identifies weaknesses, iterates
+
+### Import: `/prfaq:import`
+
+```
+/prfaq:import path/to/existing-document.md
+```
+
+Already have a PR/FAQ draft, product brief, or pitch deck? Import converts any document into the PR/FAQ template. It extracts your ideas, rewrites them in Working Backwards format, researches factual claims, compiles a PDF, and runs peer review. Sections the source document doesn't cover get `[TODO]` placeholders so you know exactly what to fill in next.
+
+Accepts `.md`, `.txt`, and `.pdf` files, or paste text directly as the argument.
 
 ### Iterate: `/prfaq:feedback`
 
@@ -248,9 +259,9 @@ The PR/FAQ document includes:
 
 ## The Workflow
 
-The typical workflow is: **generate** → **review** → **meeting** → **feedback** → repeat → **streamline** → share.
+The typical workflow is: **generate** (or **import**) → **review** → **meeting** → **feedback** → repeat → **streamline** → share.
 
-1. `/prfaq` generates the initial document from a structured conversation
+1. `/prfaq` generates the initial document from a structured conversation — or `/prfaq:import` converts an existing document
 2. `/prfaq:review` gives you an adversarial peer review
 3. `/prfaq:meeting` stress-tests with four personas where you make each call — or `/prfaq:meeting-hive` for autonomous consensus via claude-flow
 4. `/prfaq:feedback` applies the meeting's decisions (or your own feedback) surgically
