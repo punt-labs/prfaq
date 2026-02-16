@@ -235,6 +235,17 @@ else
   fi
 fi
 
+# Register claude-flow as an MCP server if installed and claude CLI is available
+if command -v claude-flow &>/dev/null && command -v claude &>/dev/null; then
+  if claude mcp get claude-flow &>/dev/null 2>&1; then
+    ok "claude-flow MCP server already registered"
+  else
+    info "Registering claude-flow as MCP server..."
+    claude mcp add claude-flow -- claude-flow mcp start
+    ok "claude-flow MCP server registered"
+  fi
+fi
+
 # ── Install plugin ───────────────────────────────────────────────────────────
 
 header "Plugin"
