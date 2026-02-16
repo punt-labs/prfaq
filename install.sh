@@ -458,15 +458,21 @@ if [[ -d "$CACHE_DIR" ]]; then
 fi
 
 # ── Register with Claude Code ────────────────────────────────────────────────
-# Claude Code discovers plugins via two JSON files:
-#   1. known_marketplaces.json — lists all marketplace sources
-#   2. installed_plugins.json — lists all installed plugins with paths
+# Claude Code discovers plugins via three data structures:
+#   1. known_marketplaces.json — lists marketplace sources
+#   2. installed_plugins.json — lists installed plugins with versioned cache paths
+#   3. settings.json — enabledPlugins gate (plugin must be enabled to load)
+# The plugin files must also be copied to the versioned cache directory.
 
 header "Claude Code registration"
 
 KNOWN_MARKETPLACES="$HOME/.claude/plugins/known_marketplaces.json"
+INSTALLED_PLUGINS="$HOME/.claude/plugins/installed_plugins.json"
+SETTINGS_FILE="$HOME/.claude/settings.json"
 NOW=$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")
 MARKETPLACE_ROOT="$HOME/.claude/plugins/local-plugins"
+PLUGIN_KEY="$PLUGIN_NAME@local"
+VERSIONED_CACHE="$HOME/.claude/plugins/cache/local/$PLUGIN_NAME/$PLUGIN_VERSION"
 
 if command -v jq &>/dev/null; then
   # Step 1: Register "local" marketplace in known_marketplaces.json
@@ -481,18 +487,20 @@ if command -v jq &>/dev/null; then
       "lastUpdated": $now
     }' "$KNOWN_MARKETPLACES" > "$TMPFILE"
   mv "$TMPFILE" "$KNOWN_MARKETPLACES"
-  ok "Registered 'local' marketplace with Claude Code"
+  ok "Registered 'local' marketplace"
 
-  # Step 2: Register plugin in installed_plugins.json
-  INSTALLED_PLUGINS="$HOME/.claude/plugins/installed_plugins.json"
-  PLUGIN_KEY="$PLUGIN_NAME@local"
+  # Step 2: Copy plugin to versioned cache (Claude Code loads from cache)
+  mkdir -p "$VERSIONED_CACHE"
+  rsync -a --delete --exclude='.git' "$INSTALL_DIR/" "$VERSIONED_CACHE/"
+  ok "Cached plugin at $VERSIONED_CACHE"
 
+  # Step 3: Register plugin in installed_plugins.json (must point to cache)
   if [[ ! -f "$INSTALLED_PLUGINS" ]]; then
     jq -n '{"version": 2, "plugins": {}}' > "$INSTALLED_PLUGINS"
   fi
   TMPFILE="$(mktemp)"
   jq --arg key "$PLUGIN_KEY" \
-     --arg path "$INSTALL_DIR" \
+     --arg path "$VERSIONED_CACHE" \
      --arg version "$PLUGIN_VERSION" \
      --arg now "$NOW" \
      '.plugins[$key] = [{
@@ -503,7 +511,17 @@ if command -v jq &>/dev/null; then
        "lastUpdated": $now
      }]' "$INSTALLED_PLUGINS" > "$TMPFILE"
   mv "$TMPFILE" "$INSTALLED_PLUGINS"
-  ok "Registered $PLUGIN_KEY in Claude Code"
+  ok "Registered $PLUGIN_KEY in installed plugins"
+
+  # Step 4: Enable plugin in settings.json (required for Claude Code to load it)
+  if [[ ! -f "$SETTINGS_FILE" ]]; then
+    echo '{}' > "$SETTINGS_FILE"
+  fi
+  TMPFILE="$(mktemp)"
+  jq --arg key "$PLUGIN_KEY" \
+     '.enabledPlugins[$key] = true' "$SETTINGS_FILE" > "$TMPFILE"
+  mv "$TMPFILE" "$SETTINGS_FILE"
+  ok "Enabled $PLUGIN_KEY in settings"
 else
   warn "jq not found — cannot register plugin with Claude Code"
   info "  After installing jq, re-run this installer or run: claude /install"
