@@ -94,3 +94,16 @@ The quote must:
 ## Call to Action
 
 Where to go, when it's available, how much it costs. One paragraph. If you cannot write a clear call to action, you have not defined the product well enough.
+
+## Stage Calibration
+
+Press release evidence expectations shift with document stage (`\prfaqstage{}`):
+
+| Section | Hypothesis | Validated | Growth |
+|---------|-----------|-----------|--------|
+| **Headline** | Announces the intended product. May be aspirational. | Should reflect validated value proposition. | Should reflect actual market positioning. |
+| **Problem** | Can describe problem from inference and market signals. Must be specific and testable. | Must include evidence from customer interviews. Quantified pain preferred. | Must include measured impact data from existing users. |
+| **Solution** | Describes intended experience. Speculative on mechanism is OK. | Should reflect prototype or tested experience. | Must describe actual product experience. |
+| **Customer Quote** | Fictional. Must feel plausible. Named person with specific role. | Should be inspired by real interview quotes. | Must be real or closely paraphrased from real feedback. |
+| **Getting Started** | Describes intended onboarding. Three-step structure is a design commitment. | Should reflect tested onboarding flow. | Must reflect actual onboarding with real metrics. |
+| **Spokesperson Quote** | Explains design philosophy and vision. Forward-looking is OK. | Should reflect learnings from validation. | Should reflect proven strategy and demonstrated results. |

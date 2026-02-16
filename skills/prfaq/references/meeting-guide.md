@@ -205,3 +205,28 @@ The debate should have genuine moments of insight. Look for:
 ## Early Exit
 
 If the user wants to leave the meeting early (AskUserQuestion option or explicit request), immediately produce the post-meeting summary with whatever decisions have been made. Mark unaddressed items as "Not discussed" — not "Deferred" (which implies a decision to defer).
+
+## Stage Calibration
+
+Extract `\prfaqstage{value}` from the document before the pre-meeting scan. Stage calibrates both the hot spot ranking and persona behavior:
+
+### Hot Spot Ranking by Stage
+
+| Signal | Hypothesis | Validated | Growth |
+|--------|-----------|-----------|--------|
+| Missing customer evidence | Warning (expected) | Critical (should have it) | Critical (must have it) |
+| `[CITATION NEEDED]` markers | Suggestion (acknowledged gaps) | Warning (should be shrinking) | Critical (unacceptable on business claims) |
+| Thin FAQ answers | Warning (depth comes later) | Warning (should be deepening) | Critical (all FAQs should be substantive) |
+| Risk ratings all Low | Warning at any stage | Warning (evidence should differentiate) | Critical (must reflect real data) |
+| No pre-mortem scenario | Critical at any stage | Critical | Critical |
+
+### Persona Calibration by Stage
+
+| Persona | Hypothesis | Validated | Growth |
+|---------|-----------|-----------|--------|
+| **Wei** | "What's the hardest unknown?" Focus on identifying risks, not solving them. Accept directional architecture. | "Have you tested the hard part?" Expect spike results or reference class data. | "Show me the production data." Expect operational metrics and real performance. |
+| **Priya** | "Does this problem ring true?" Evaluate problem plausibility from customer's perspective. Accept fictional quotes. | "Did real users say this?" Expect interview-backed insights. Push for real quotes. | "What do your users actually do?" Expect usage data and behavioral evidence. |
+| **Alex** | "What's the riskiest assumption?" Focus on identifying the bet, not proving the payoff. | "What did validation tell you?" Expect the document to have learned from testing. | "Show me the unit economics." Expect real financial data. |
+| **Dana** | "Is this bold enough?" Push for ambition even at hypothesis stage — thinking too small wastes the experiment. | "Did validation narrow or expand the opportunity?" Check if learnings were incorporated. | "What's the next frontier?" Push for growth beyond current success. |
+
+**Key principle:** Stage calibration makes personas more useful, not softer. At hypothesis stage, Priya asking "can I use this?" about an unbuilt product is unhelpful — but "does this problem ring true?" surfaces genuine insight. At growth stage, Alex accepting inferred demand is negligent — but at hypothesis stage, it's appropriate.

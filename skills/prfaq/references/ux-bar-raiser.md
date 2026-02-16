@@ -153,3 +153,18 @@ Rewrite the three steps as: "In [timeframe], you [action], [action], and [outcom
 **Strong:** "In 5 minutes, you paste your data, see the analysis, and share the report."
 
 If the rewrite does not end with a customer outcome, the Getting Started section needs revision.
+
+## Stage Calibration
+
+Usability expectations shift with document stage (`\prfaqstage{}`):
+
+| Area | Hypothesis | Validated | Growth |
+|------|-----------|-----------|--------|
+| **Customer journey** | Describes intended journey. Acceptable to be aspirational about friction reduction. | Should reflect observed user behavior from testing. Drop-off points identified. | Must reflect actual journey with measured conversion at each step. |
+| **Getting Started** | Three-step design commitment. Steps are intent, not tested. | Steps should be validated with users. Time-to-value measured in tests. | Steps must reflect actual onboarding. Completion rate and time-to-value from data. |
+| **Cognitive load** | Identify new concepts the customer must learn. Count is an estimate. | New concept count validated by user testing. Terminology checked against user language. | Cognitive load measured by onboarding completion, support tickets, error rates. |
+| **Mental model** | Hypothesized alignment with customer's existing model. | Tested with users. Misalignments identified and addressed. | Validated by usage patterns. Low error rates confirm alignment. |
+| **Error recovery** | Identify potential failure points in the onboarding flow. | Error scenarios tested. Recovery paths designed based on observed failures. | Error rates measured. Recovery paths validated by support data. |
+| **Customer quote** | Fictional. Must feel plausible and describe a concrete before/after. | Should be inspired by real user reactions during testing. | Must be real or closely paraphrased from actual user feedback. |
+
+**At hypothesis stage**, the UX bar raiser focuses on whether the author has **designed for** low friction — not whether they've proven it. The Getting Started section should describe an intentionally simple experience, even if untested.

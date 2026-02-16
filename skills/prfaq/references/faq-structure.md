@@ -114,3 +114,18 @@ Three categories, no others:
 - **Must Do** — Essential for launch. Without these, the product does not solve the core problem.
 - **Should Do** — Meaningfully improve the product but not launch-blocking. Fast follow-up candidates.
 - **Won't Do** — Explicitly excluded. Naming what you won't build prevents scope creep and clarifies the product's identity. The Won't Do rationale should explain *why not*.
+
+## Stage Calibration
+
+FAQ depth and evidence expectations scale with document stage (`\prfaqstage{}`):
+
+| FAQ Area | Hypothesis | Validated | Growth |
+|----------|-----------|-----------|--------|
+| **Customer Evidence** | Acknowledge absence of primary data. State validation plan. Fictional quotes OK. | Cite real interviews or user tests. Fictional quotes should be replaced. | Cite usage data, retention, NPS. Real quotes required. |
+| **TAM** | Range estimates with stated methodology. Analogies and proxies acceptable if labeled. | Bottoms-up estimate with cited sources. Proxies should be validated. | Actuals from existing market presence. Top-down and bottoms-up should converge. |
+| **Competitive Landscape** | Named competitors with honest assessment. Trajectory analysis is inference. | Should include competitive response analysis based on real market signals. | Must reflect observed competitive behavior and market share data. |
+| **Technical FAQs** | Identify unknowns. Architecture is directional. Spike plans for hard problems. | Reference class data for similar builds. Hard problems with mitigation plans. | Based on actual build experience. Timeline from measured velocity. |
+| **Business FAQs** | Revenue model described. P&L uses labeled assumptions. | Should have early pricing signals or cost observations. | Must use actual financial data from operations. |
+| **Feature Appendix** | Scope is aspirational. Won't Do reflects early positioning choices. | Must Do validated by user feedback. Should Do prioritized by evidence. | Must Do proven by usage. Scope changes justified by data. |
+
+**Key principle:** Every stage requires intellectual honesty about what is known vs. assumed. At hypothesis stage, the quality signal is explicit labeling of assumptions. At growth stage, the quality signal is evidence replacing assumptions.

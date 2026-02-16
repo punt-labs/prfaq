@@ -68,3 +68,16 @@ These anti-patterns consistently undermine PR/FAQ quality. Check every draft aga
 - The product competes for budget against problems the customer cares about more
 
 **The fix:** Ask the customer evidence question: "Is this a top-3 problem for the target customer?" If it's problem #7 on their list, they'll never prioritize adopting the solution, no matter how good it is.
+
+## Stage Calibration
+
+Anti-patterns apply at every stage, but some are more dangerous at specific stages (`\prfaqstage{}`):
+
+| Anti-Pattern | Hypothesis | Validated | Growth |
+|--------------|-----------|-----------|--------|
+| **Skills-forward thinking** | Most dangerous here. Early-stage documents are most susceptible to "we can build it, so let's find a use." Flag aggressively. | Still important but less common — validation usually forces customer focus. | Rare but appears as "we have this infrastructure, so let's add a feature for it." |
+| **Confusing speed with velocity** | Common. Authors rush to code without validating the problem. Thin FAQs and unrated risks are the signal. | Should be decreasing — if FAQs are still thin after validation, the validation wasn't rigorous. | Appears as shipping features without checking if they move key metrics. |
+| **Selling instead of truth-seeking** | Acceptable to be enthusiastic at idea stage, but the document must still surface risks honestly. | No longer acceptable. Validation data should drive honest assessment. | Critical failure — growth-stage documents should be the most honest. |
+| **Discounting competition** | Some tolerance for incomplete competitive analysis if the space is genuinely new. | Must engage seriously with competitors and their likely response. | Must include observed competitive behavior and market share changes. |
+| **Vague customer definition** | Warning. Some vagueness is OK if the document proposes how to narrow it. | Must be specific. Validation should have identified the exact customer. | Must match actual user base, not aspirational target. |
+| **Great product, wrong problem** | Hard to detect without customer data. Flag if no validation plan exists. | Should be detectable from interview data. Flag if problem priority isn't established. | Detectable from usage patterns. Flag if engagement is low despite adoption. |

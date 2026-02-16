@@ -107,3 +107,19 @@ The peer reviewer should not mechanically check all 12 biases. Instead:
 3. For each flag, cite the specific text that triggered it and which bias applies
 4. Rate severity: **critical** (the bias undermines the core argument), **warning** (the bias weakens a section), **suggestion** (the bias is present but minor)
 5. Distinguish between biases the author can fix (better evidence, clearer language) and biases that require the user's judgment (strategic choices, risk tolerance)
+
+## Stage Calibration
+
+The Kahneman framework applies at every stage, but the expected quality of evidence shifts with document stage (`\prfaqstage{}`):
+
+| Bias Check | Hypothesis | Validated | Growth |
+|------------|-----------|-----------|--------|
+| **Affect heuristic** | Thin Problem section is a warning at any stage. But rich Solution section is acceptable if it's explicitly speculative. | Problem section should be grounded in interview data. Solution richness should reflect tested approaches. | Both sections should be data-driven. |
+| **Anchoring** | Numbers without provenance are OK if labeled as assumptions. | Key numbers (TAM, timeline) should have cited sources. | All numbers must have traceable provenance. |
+| **Availability bias** | Inferred demand is acceptable if the inference is labeled and a validation plan exists. | Primary customer data expected. Inference-only demand is a warning. | Must distinguish measured demand from inferred. |
+| **Overconfidence** | No outside-view reference class expected, but the absence should be acknowledged. | Reference class data expected for timeline and adoption claims. | Reference class plus actuals from own product expected. |
+| **Disaster neglect** | Pre-mortem can be hypothesis-level ("if the problem isn't real..."). | Pre-mortem should incorporate validation learnings. | Pre-mortem should address observed failure modes. |
+
+**At hypothesis stage**, the most damaging bias is **affect heuristic** — falling in love with the solution before validating the problem. Flag it aggressively regardless of stage.
+
+**At growth stage**, the most damaging bias is **sunk-cost fallacy** — continuing to build because of past investment rather than future value. Flag it when evidence contradicts the current direction.

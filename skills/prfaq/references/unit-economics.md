@@ -83,3 +83,19 @@ The P&L should show:
 **Using average LTV without segmentation.** If 10% of customers generate 80% of revenue, the average LTV is misleading. The PR/FAQ should identify which customer segment drives unit economics.
 
 **Projecting current unit economics at future scale.** CAC typically increases as you exhaust early-adopter channels. Support costs increase as you move beyond self-serve customers. Gross margin may decrease if infrastructure costs have step functions.
+
+## Stage Calibration
+
+Unit economics expectations shift significantly with document stage (`\prfaqstage{}`):
+
+| Metric | Hypothesis | Validated | Growth |
+|--------|-----------|-----------|--------|
+| **Pricing** | Proposed pricing model with rationale. Willingness-to-pay is inferred from comparables. | Should have pricing test results or early customer feedback on pricing. | Must reflect actual pricing with observed conversion rates. |
+| **CAC** | Estimated from comparable products or channels. Labeled as assumption. | Should have early channel data (cost per signup, conversion from trials). | Must be calculated from actual spend and acquisition data. |
+| **LTV** | Projected from assumptions about retention and ARPU. Sensitivity analysis required. | Should incorporate early retention data and actual revenue observations. | Must use measured churn, expansion revenue, and actual ARPU. |
+| **P&L** | Framework with labeled assumptions. Acceptable to say "Year 1 P&L is speculative." | Key line items should have real data points. Sensitivity analysis grounded. | Must reflect actual financial performance. |
+| **Break-even** | Range estimate acceptable. "Between X and Y customers." | Should be narrowing based on real cost data. | Should be known or achieved. |
+
+**At hypothesis stage**, the viability section's purpose is to verify that a plausible business model exists — not to prove it works. The quality signal is intellectual honesty about what's assumed vs. known.
+
+**At growth stage**, projections without actuals are a critical issue. If the product has users, the numbers should come from the product, not from spreadsheets.
