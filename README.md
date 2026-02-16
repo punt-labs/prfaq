@@ -14,7 +14,7 @@ Eight commands form a complete product-thinking workflow:
 |---------|-------------|
 | `/prfaq` | Generate a new PR/FAQ from scratch (or revise an existing one) |
 | `/prfaq:feedback` | Apply pointed feedback — traces cascading effects and surgically redrafts |
-| `/prfaq:meeting` | Simulate an Amazon-style review meeting with four agentic personas |
+| `/prfaq:meeting` | Amazon-style review meeting with you and four agentic personas |
 | `/prfaq:meeting-hive` | Autonomous meeting — personas debate and decide without you moderating |
 | `/prfaq:review` | Peer review against Working Backwards principles and cognitive biases |
 | `/prfaq:research` | Find evidence for claims using local files, web, and indexed documents |
