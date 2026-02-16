@@ -30,7 +30,7 @@ The installer clones the plugin, registers it with Claude Code, checks for a TeX
 
 ### Prerequisites
 
-PDF compilation requires `pdflatex`. Any TeX distribution works:
+The core output is a compiled PDF. This requires a TeX distribution (~4 GB) — the installer will offer to set one up:
 
 ```bash
 # macOS
@@ -40,7 +40,7 @@ brew install --cask mactex
 sudo apt install texlive-full
 ```
 
-The plugin generates `.tex` files regardless — you can install TeX later.
+Without TeX, the plugin still generates `.tex` source files, but you won't get the PDF that you circulate and debate.
 
 ### Required for `/prfaq:meeting-hive`: claude-flow
 
