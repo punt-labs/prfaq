@@ -38,6 +38,17 @@ pdflatex -interaction=nonstopmode -output-directory="$DIR" "$TEX_FILE" > /dev/nu
 
 if [[ -f "$DIR/$BASE.pdf" ]]; then
   echo "Success: $DIR/$BASE.pdf"
+
+  # Check for overfull hbox warnings (content extending beyond margins)
+  LOG_FILE="$DIR/$BASE.log"
+  if [[ -f "$LOG_FILE" ]]; then
+    OVERFULL=$(grep -c "Overfull \\\\hbox" "$LOG_FILE" 2>/dev/null || true)
+    if [[ "$OVERFULL" -gt 0 ]]; then
+      echo ""
+      echo "Warning: $OVERFULL overfull hbox warning(s) — content extends beyond margins:"
+      grep "Overfull \\\\hbox" "$LOG_FILE"
+    fi
+  fi
 else
   echo "Error: PDF not generated. Re-running with full output:" >&2
   pdflatex -interaction=nonstopmode -output-directory="$DIR" "$TEX_FILE"

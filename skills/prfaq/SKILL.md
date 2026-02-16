@@ -40,7 +40,7 @@ Before starting the full workflow, check if a `prfaq.tex` file already exists in
 
 3. **Edit surgically.** Only modify the sections the user wants changed. Read the existing `.tex` file, make targeted edits, and preserve everything else. Do not regenerate the entire document.
 
-4. **Recompile and review.** After edits, run the compile script and present the changes for review. Offer to re-run the peer reviewer (Phase 3c) on the revised document. Offer further iteration.
+4. **Recompile and review.** After edits, run the compile script and present the changes for review. If the compile script reports overfull hbox warnings, fix them before presenting (see Phase 4 for common fixes). Offer to re-run the peer reviewer (Phase 3c) on the revised document. Offer further iteration.
 
 If the user explicitly asks to start a new PR/FAQ (not revise), proceed to the full workflow below even if a document exists.
 
@@ -211,7 +211,14 @@ Run the compile script to produce the PDF:
 bash ${CLAUDE_PLUGIN_ROOT}/scripts/compile_prfaq.sh <path-to-tex-file>
 ```
 
-If compilation fails, read the LaTeX log, fix the issue, and recompile. Report the output PDF path to the user.
+If compilation fails, read the LaTeX log, fix the issue, and recompile.
+
+The compile script reports overfull hbox warnings (content extending beyond page margins). If any are reported, fix them before proceeding — these produce visible layout defects in the PDF. Common fixes:
+- Long URLs or `\texttt{}` strings: move to a display line with `{\small\texttt{...}}`
+- Long paragraphs with unbreakable tokens: restructure the sentence to give LaTeX better line-break opportunities
+- Multiple `\texttt{}` commands close together: add a natural-language phrase between them
+
+Recompile until zero overfull hbox warnings remain. Report the output PDF path to the user.
 
 ### Phase 5: Review
 

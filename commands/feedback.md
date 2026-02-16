@@ -62,7 +62,7 @@ Interpret user feedback, trace cascading effects across all affected sections, r
    ```bash
    bash ${CLAUDE_PLUGIN_ROOT}/scripts/compile_prfaq.sh <path-to-tex-file>
    ```
-   If compilation fails, read the LaTeX log, identify the issue, and fix it before proceeding.
+   If compilation fails, read the LaTeX log, identify the issue, and fix it before proceeding. The compile script also reports overfull hbox warnings (content extending beyond page margins). If any are reported, fix them — long `\texttt{}` strings should be moved to display lines with `{\small\texttt{...}}`, and long paragraphs should be restructured for better line breaks. Recompile until zero warnings remain.
 
 7. **Invoke peer review.** Run once. Launch the peer-reviewer agent using the Task tool with `subagent_type: "prfaq:peer-reviewer"`, passing the same `.tex` file path. Present the review results alongside the changes summary.
 
