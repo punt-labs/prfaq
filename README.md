@@ -8,7 +8,7 @@ A Claude Code plugin that brings Amazon's Working Backwards PR/FAQ process to en
 
 The output is a decision-making artifact, not a brainstorm. It is designed to be read, debated, and revised before committing to building anything.
 
-Seven commands form a complete product-thinking workflow:
+Eight commands form a complete product-thinking workflow:
 
 | Command | What it does |
 |---------|-------------|
@@ -18,6 +18,7 @@ Seven commands form a complete product-thinking workflow:
 | `/prfaq:meeting-hive` | Autonomous consensus meeting — personas debate and decide without you moderating |
 | `/prfaq:review` | Peer review against Working Backwards principles and cognitive biases |
 | `/prfaq:research` | Find evidence for claims using local files, web, and indexed documents |
+| `/prfaq:streamline` | Scalpel edit — remove redundancy, weasel words, and bloat (10–20% tighter) |
 | `/prfaq:rate` | Rate your experience with the plugin (anonymous 1-5 feedback) |
 
 ## Installation
@@ -142,7 +143,15 @@ Peer review against Working Backwards principles, Cagan's four risks framework, 
 /prfaq:research find evidence that developers lack product training
 ```
 
-Searches local files, web sources, and indexed documents (via quarry-mcp if available) for evidence. Returns structured biblatex citations ready to add to your `.bib` file.
+Searches local files, web sources, and indexed documents (via quarry-mcp if available) for evidence. Returns structured biblatex citations ready to add to your `.bib` file. Results are cached in `./research/` so future runs reuse prior findings.
+
+### Streamline: `/prfaq:streamline`
+
+```
+/prfaq:streamline
+```
+
+Scalpel editor for the final document. Removes redundancy across sections, eliminates weasel words and hollow adjectives, compresses inflated phrases, and applies the "so what" test to every sentence. Targets 10–20% length reduction without touching evidence, citations, customer quotes, risk assessments, or structural elements. Best used after iteration is complete, before sharing the document.
 
 ## Document Features
 
@@ -179,7 +188,7 @@ Each risk is rated Low / Medium / High with specific evidence. The peer reviewer
 
 ## Architecture
 
-### Seven Specialized Agents
+### Eight Specialized Agents
 
 Each agent has a distinct role, loads specific reference guides, and produces structured output:
 
@@ -192,8 +201,9 @@ Each agent has a distinct role, loads specific reference guides, and produces st
 | **meeting-customer** (Priya) | Value risk, customer reality, concrete user scenarios | `/prfaq:meeting`, `/prfaq:meeting-hive` |
 | **meeting-executive** (Alex) | Strategic fit, opportunity cost, devil's advocate | `/prfaq:meeting`, `/prfaq:meeting-hive` |
 | **meeting-builder** (Dana) | Ambition risk, cost of inaction, simplest viable version | `/prfaq:meeting`, `/prfaq:meeting-hive` |
+| **streamliner** | Scalpel editor — removes redundancy, weasel words, inflated phrases | `/prfaq:streamline` |
 
-### Nine Reference Guides
+### Ten Reference Guides
 
 Domain knowledge is encoded in standalone reference guides that agents load as needed:
 
@@ -208,6 +218,7 @@ Domain knowledge is encoded in standalone reference guides that agents load as n
 | `principal-engineer.md` | Feasibility risk lens: architecture trade-offs, irreversible decisions |
 | `unit-economics.md` | Viability risk lens: CAC, LTV, payback period, margins |
 | `ux-bar-raiser.md` | Usability risk lens: customer journey, cognitive load, error recovery |
+| `precise-writing.md` | Precise writing rules: redundancy, weasel words, "so what" test |
 
 Each guide includes stage calibration — the same guide produces different expectations for a hypothesis-stage document vs. a growth-stage document.
 
@@ -233,13 +244,14 @@ The PR/FAQ document includes:
 
 ## The Workflow
 
-The typical workflow is: **generate** → **review** → **meeting** → **feedback** → repeat.
+The typical workflow is: **generate** → **review** → **meeting** → **feedback** → repeat → **streamline** → share.
 
 1. `/prfaq` generates the initial document from a structured conversation
 2. `/prfaq:review` gives you an adversarial peer review
 3. `/prfaq:meeting` stress-tests with four personas where you make each call — or `/prfaq:meeting-hive` for autonomous consensus via claude-flow
 4. `/prfaq:feedback` applies the meeting's decisions (or your own feedback) surgically
-5. `/prfaq:rate` when you're done — helps us improve the plugin
+5. `/prfaq:streamline` tightens the final document — removes redundancy, weasel words, and bloat
+6. `/prfaq:rate` when you're done — helps us improve the plugin
 
 Each step produces a compiled PDF. The document improves with each cycle.
 
