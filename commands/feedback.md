@@ -9,22 +9,24 @@ Interpret user feedback, trace cascading effects across all affected sections, r
 
 ## Steps
 
-1. **Determine mode.** Three branches based on `$ARGUMENTS`:
+1. **Find the document.** Search for `prfaq.tex` in the project root using Glob. If not found, ask the user for the path.
 
-   **a) Feedback text** — `$ARGUMENTS` is non-empty and does NOT end in `.md`: treat it as literal feedback text (single mode). Proceed to step 2.
+2. **Determine mode.** Three branches based on `$ARGUMENTS`:
 
-   **b) Explicit file path** — `$ARGUMENTS` ends in `.md`: read that file, extract directives from the `## Revision Queue` section (batch mode). Proceed to step 2.
+   **a) Feedback text** — `$ARGUMENTS` is non-empty and does NOT end in `.md`: treat it as literal feedback text (single mode). Skip step 3, proceed to step 4.
 
-   **c) Auto-discover** — `$ARGUMENTS` is empty: search for `meeting-summary-*.md` files in the same directory as the `.tex` document (found in step 2). If one or more are found, show the most recent one's filename and ask the user via AskUserQuestion:
-   - **Apply all directives** from this file (batch mode)
-   - **Enter feedback manually** (single mode, ask for text)
+   **b) Explicit file path** — `$ARGUMENTS` ends in `.md`: treat it as the meeting summary file path (batch mode). Proceed to step 3.
+
+   **c) Auto-discover** — `$ARGUMENTS` is empty: search for `meeting-summary-*.md` files in the same directory as the `.tex` document. If one or more are found, show the most recent one's filename and ask the user via AskUserQuestion:
+   - **Apply all directives** from this file (batch mode — proceed to step 3, skip its confirmation)
+   - **Enter feedback manually** (single mode, ask for text, skip step 3, proceed to step 4)
    - **Cancel**
 
-   If no meeting summary files are found, ask the user what feedback they want to apply (single mode).
+   If no meeting summary files are found, ask the user what feedback they want to apply (single mode — skip step 3, proceed to step 4).
 
-2. **Find the document.** Search for `prfaq.tex` in the project root using Glob. If not found, ask the user for the path.
+3. **Parse batch directives (batch mode only).** Read the meeting summary file (from the path in step 2b or auto-discovered in step 2c) and extract directives from the `## Revision Queue` section. Each directive is a `### Directive N: Title` header followed by its body text.
 
-3. **Parse batch directives (batch mode only).** Read the meeting summary file and extract directives from the `## Revision Queue` section. Each directive is a `### Directive N: Title` header followed by its body text. Confirm with the user via AskUserQuestion:
+   If the user already chose "Apply all directives" in step 2c, skip confirmation and proceed to step 4. Otherwise, confirm with the user via AskUserQuestion:
    - **Apply all N directives**
    - **Pick specific directives** (show numbered list, let user choose)
    - **Cancel**
@@ -39,13 +41,13 @@ Interpret user feedback, trace cascading effects across all affected sections, r
    Present the full output: interpreted feedback, impact analysis, edits made, citation changes, cross-reference integrity.
 
    **Batch mode:** For each selected directive, in order:
-   - Show progress: `[N/M] Applying: "Directive N: Title"`
+   - Show progress: `[N/M] Applying: "Title"`
    - Invoke the feedback agent using the Task tool with `subagent_type: "prfaq:feedback"`, passing the directive text, `.tex` path, and `.bib` path
    - Show a brief summary of sections edited (2-3 lines, not the full agent output)
 
    After all directives are applied, show a consolidated summary: total directives applied, all sections modified across all directives.
 
-5. **Recompile the PDF.** Run once (regardless of how many directives were applied):
+5. **Recompile the PDF.** Run once at the end, after all directives have been applied:
    ```bash
    bash ${CLAUDE_PLUGIN_ROOT}/scripts/compile_prfaq.sh <path-to-tex-file>
    ```
