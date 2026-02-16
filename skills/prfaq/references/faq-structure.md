@@ -51,6 +51,9 @@ Internal FAQs answer questions leadership, finance, and engineering would ask. T
 4. **What is the customer acquisition strategy?**
    How will customers discover and adopt this product? Be specific about channels, costs, and conversion assumptions.
 
+5. **What is your next step to validate your vision?** *(Required at hypothesis stage.)*
+   Name the single most important thing you will do next to test whether the vision is right. Not a plan — a next step. "Interview 10 target users" or "ship a beta to 20 early adopters and measure completion rate." This FAQ forces a commitment to action. At validated stage, this FAQ should be replaced or updated with results from that step. At growth stage, it should describe the next growth experiment.
+
 ### Technical
 
 5. **What are the major technical risks?**
@@ -121,7 +124,9 @@ FAQ depth and evidence expectations scale with document stage (`\prfaqstage{}`):
 
 | FAQ Area | Hypothesis | Validated | Growth |
 |----------|-----------|-----------|--------|
-| **Customer Evidence** | Acknowledge absence of primary data. State validation plan. Fictional quotes OK. | Cite real interviews or user tests. Fictional quotes should be replaced. | Cite usage data, retention, NPS. Real quotes required. |
+| **Customer Evidence** | Acknowledge absence of primary data. State validation plan. | Cite real interviews or user tests. Primary data expected. | Cite usage data, retention, NPS. Quantitative evidence required. |
+
+**Note:** "Customer Evidence" refers to the FAQ section where evidence for demand is presented. This is distinct from the **press release customer quote**, which is always aspirational (the press release describes the future). Do not flag the press release quote as needing "real" sources — that is the FAQ's job. See `pr-structure.md` for customer quote guidance.
 | **TAM** | Range estimates with stated methodology. Analogies and proxies acceptable if labeled. | Bottoms-up estimate with cited sources. Proxies should be validated. | Actuals from existing market presence. Top-down and bottoms-up should converge. |
 | **Competitive Landscape** | Named competitors with honest assessment. Trajectory analysis is inference. | Should include competitive response analysis based on real market signals. | Must reflect observed competitive behavior and market share data. |
 | **Technical FAQs** | Identify unknowns. Architecture is directional. Spike plans for hard problems. | Reference class data for similar builds. Hard problems with mitigation plans. | Based on actual build experience. Timeline from measured velocity. |

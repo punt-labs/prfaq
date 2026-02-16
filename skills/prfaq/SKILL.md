@@ -121,12 +121,12 @@ Read the LaTeX template from `${CLAUDE_PLUGIN_ROOT}/assets/prfaq-template.tex`. 
 Write each section of the press release using the user's discovery answers:
 
 1. **Headline block** — A press-release-style headline (the news in one sentence) followed by one or two sub-headlines (supporting detail, key numbers, scope). Modeled on wire format, not a document cover page. Lead with the news, not the organization name. If the org name is lowercase-stylized, move it to the sub-headline to avoid awkward capitalization (e.g., "Free Plugin Brings X to Y" not "acme-corp Releases Plugin").
-2. **Lede paragraph** — Dateline (CITY --- Date), then the entire value proposition in one paragraph: who, what, why, how it differs
+2. **Lede paragraph** — Dateline (CITY --- Date), then the entire value proposition in one paragraph: who, what, why, how it differs. The press release is written as if the product has already launched — use a **future date** in the dateline to make this explicit (e.g., 6-12 months out). This signals the document is aspirational, not a current announcement.
 3. **Problem paragraph** — The customer's pain in concrete, measurable terms
 4. **Solution paragraph(s)** — How the product solves the problem, focusing on customer experience
 5. **Customer quote** — A fictional quote from the target customer expressing relief and outcome
 6. **Getting started** — The first 3 steps a customer takes, emphasizing low friction
-7. **Spokesperson quote** — A fictional internal quote explaining vision and design philosophy
+7. **Spokesperson quote** — A fictional internal quote explaining vision and design philosophy. Use the author's real name from the plugin marketplace config (`marketplace.json` owner name), not a made-up name. The spokesperson is a real person at the company speaking about their vision.
 8. **Call to action** — Where to go, when available, pricing model
 
 Write the LaTeX content into a `.tex` file in the user's project directory (default: `prfaq.tex` in the project root, or a path the user specifies). Replace all placeholder text in the template with generated content. Uncomment the `\addbibresource` line in the preamble and set it to the `.bib` filename. Set `\prfaqversion{1}{0}` — initial generation is always v1.0.

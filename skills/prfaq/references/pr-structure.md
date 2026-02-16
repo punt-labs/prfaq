@@ -23,7 +23,7 @@ The test: if a reader sees only the headline and sub-headline(s), do they unders
 
 ## Lede Paragraph
 
-The entire PR/FAQ compressed into one paragraph, opening with a dateline (CITY --- Date). Structure: COMPANY announced PRODUCT, which provides BENEFIT to TARGET CUSTOMER. Unlike ALTERNATIVES, PRODUCT offers DIFFERENTIATOR, enabling customers to OUTCOME.
+The entire PR/FAQ compressed into one paragraph, opening with a dateline (CITY --- Date). The press release is written as if the product has already launched — **use a future date** in the dateline (typically 6-12 months out) to make the aspirational nature explicit. This prevents readers from mistaking the document for a current announcement. Structure: COMPANY announced PRODUCT, which provides BENEFIT to TARGET CUSTOMER. Unlike ALTERNATIVES, PRODUCT offers DIFFERENTIATOR, enabling customers to OUTCOME.
 
 This paragraph must:
 - Name the specific customer (not "users" or "people")
@@ -59,13 +59,15 @@ This section must:
 
 ## Customer Quote
 
-A fictional quote from the target customer. This is the emotional proof point — it shows what life is like after the product exists.
+A fictional quote from the target customer. The press release is written as if the product has already launched — the customer quote lands the value proposition by showing what life is like after the product exists. This quote is aspirational at every stage. It is never required to be "real" or sourced from actual interviews, because the press release describes the future, not the present. At later stages, the quote should be *informed by* real evidence, but it remains a vision of the customer's experience.
 
 The quote must:
 - Come from a named person with a specific role ("Sarah Chen, Operations Manager at BuildCo")
 - Reference the before state (the pain)
 - Describe the after state (the relief)
 - Include a concrete detail that makes it feel real
+
+Do not flag the customer quote as "fabricated" or "fictional" — it is aspirational by design. The evidence for customer demand belongs in the FAQ section ("What evidence do we have that customers want this?"), not in the press release quote.
 
 **Strong:** "Before Product, I spent every Friday afternoon manually reconciling our field reports. Last Friday I left at 3pm. That's not a small thing when you have two kids in soccer."
 
@@ -104,6 +106,6 @@ Press release evidence expectations shift with document stage (`\prfaqstage{}`):
 | **Headline** | Announces the intended product. May be aspirational. | Should reflect validated value proposition. | Should reflect actual market positioning. |
 | **Problem** | Can describe problem from inference and market signals. Must be specific and testable. | Must include evidence from customer interviews. Quantified pain preferred. | Must include measured impact data from existing users. |
 | **Solution** | Describes intended experience. Speculative on mechanism is OK. | Should reflect prototype or tested experience. | Must describe actual product experience. |
-| **Customer Quote** | Fictional. Must feel plausible. Named person with specific role. | Should be inspired by real interview quotes. | Must be real or closely paraphrased from real feedback. |
+| **Customer Quote** | Fictional. Must feel plausible. Named person with specific role. | Fictional. Should be *informed by* interview insights, but the quote itself is aspirational — the press release describes the future. Named person with specific role. | Fictional. Should be *informed by* real usage patterns and feedback themes. Named person with specific role. The quote lands the value proposition; the FAQ section provides the evidence. |
 | **Getting Started** | Describes intended onboarding. Three-step structure is a design commitment. | Should reflect tested onboarding flow. | Must reflect actual onboarding with real metrics. |
 | **Spokesperson Quote** | Explains design philosophy and vision. Forward-looking is OK. | Should reflect learnings from validation. | Should reflect proven strategy and demonstrated results. |

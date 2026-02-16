@@ -118,7 +118,7 @@ How the product behaves when something goes wrong reveals more about usability t
 
 ## Sharpening the Customer Quote
 
-The Customer Quote is the emotional proof point for usability. A strong customer quote describes the before and after in terms of the customer's lived experience, not the product's features.
+The Customer Quote is the emotional proof point for usability. It is always aspirational — the press release describes the future. A strong customer quote describes the before and after in terms of the customer's lived experience, not the product's features. Do not flag it as "fabricated" — evaluate it for plausibility and specificity, not sourcing.
 
 ### The Quote Should Answer
 
@@ -165,6 +165,6 @@ Usability expectations shift with document stage (`\prfaqstage{}`):
 | **Cognitive load** | Identify new concepts the customer must learn. Count is an estimate. | New concept count validated by user testing. Terminology checked against user language. | Cognitive load measured by onboarding completion, support tickets, error rates. |
 | **Mental model** | Hypothesized alignment with customer's existing model. | Tested with users. Misalignments identified and addressed. | Validated by usage patterns. Low error rates confirm alignment. |
 | **Error recovery** | Identify potential failure points in the onboarding flow. | Error scenarios tested. Recovery paths designed based on observed failures. | Error rates measured. Recovery paths validated by support data. |
-| **Customer quote** | Fictional. Must feel plausible and describe a concrete before/after. | Should be inspired by real user reactions during testing. | Must be real or closely paraphrased from actual user feedback. |
+| **Customer quote** | Fictional. Must feel plausible and describe a concrete before/after. | Fictional. Should be *informed by* real user reactions during testing, but the quote itself is aspirational — the press release describes the future. | Fictional. Should be *informed by* real usage patterns. The press release customer quote lands the value; the FAQ provides the evidence. |
 
 **At hypothesis stage**, the UX bar raiser focuses on whether the author has **designed for** low friction — not whether they've proven it. The Getting Started section should describe an intentionally simple experience, even if untested.

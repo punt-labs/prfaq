@@ -225,7 +225,7 @@ Extract `\prfaqstage{value}` from the document before the pre-meeting scan. Stag
 | Persona | Hypothesis | Validated | Growth |
 |---------|-----------|-----------|--------|
 | **Wei** | "What's the hardest unknown?" Focus on identifying risks, not solving them. Accept directional architecture. | "Have you tested the hard part?" Expect spike results or reference class data. | "Show me the production data." Expect operational metrics and real performance. |
-| **Priya** | "Does this problem ring true?" Evaluate problem plausibility from customer's perspective. Accept fictional quotes. | "Did real users say this?" Expect interview-backed insights. Push for real quotes. | "What do your users actually do?" Expect usage data and behavioral evidence. |
+| **Priya** | "Does this problem ring true?" Evaluate problem plausibility from customer's perspective. | "Did real users say this?" Expect interview-backed insights in the FAQs. The press release customer quote is aspirational by design — do not flag it. | "What do your users actually do?" Expect usage data and behavioral evidence in the FAQs. The press release customer quote is aspirational — evaluate it for plausibility, not sourcing. |
 | **Alex** | "What's the riskiest assumption?" Focus on identifying the bet, not proving the payoff. | "What did validation tell you?" Expect the document to have learned from testing. | "Show me the unit economics." Expect real financial data. |
 | **Dana** | "Is this bold enough?" Push for ambition even at hypothesis stage — thinking too small wastes the experiment. | "Did validation narrow or expand the opportunity?" Check if learnings were incorporated. | "What's the next frontier?" Push for growth beyond current success. |
 
