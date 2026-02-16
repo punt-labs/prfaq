@@ -11,7 +11,7 @@ Invoke the `peer-reviewer` agent to critically evaluate a PR/FAQ document agains
 
 1. **Find the document.** If `$ARGUMENTS` specifies a path, use it. Otherwise, search for `prfaq.tex` in the project root.
 
-2. **Launch the peer-reviewer agent** using the Task tool with `subagent_type: "prfaq:peer-reviewer"`. Pass the file path in the prompt.
+2. **Launch the peer-reviewer agent** using the Task tool with `subagent_type: "prfaq:peer-reviewer"`. Pass the file path in the prompt. The peer reviewer reads `\prfaqstage{}` from the document and calibrates its evidence expectations accordingly.
 
 3. **Present the results** to the user. The peer reviewer returns:
    - Overall assessment (PASS / ITERATE / REJECT)

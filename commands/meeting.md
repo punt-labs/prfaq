@@ -13,7 +13,7 @@ Run an interactive review meeting where four personas — a principal engineer, 
 
 2. **Read the meeting guide.** Load `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/meeting-guide.md` for the full meeting flow, synthesis guidelines, and persona details.
 
-3. **Run the pre-meeting scan.** Read the full `.tex` document and identify 5-8 hot spots: sections with unsupported claims, vague language, thin evidence, risk rating mismatches, or gaps between press release confidence and FAQ hedging. Rank each as Critical, Warning, or Suggestion.
+3. **Run the pre-meeting scan.** Read the full `.tex` document. Extract `\prfaqstage{value}` to calibrate expectations (see Stage Calibration in the meeting guide). Identify 5-8 hot spots: sections with unsupported claims, vague language, thin evidence, risk rating mismatches, or gaps between press release confidence and FAQ hedging. Rank each as Critical, Warning, or Suggestion — calibrated to the document's stage.
 
 4. **Present the agenda.** Show the user the hot spots ranked by severity and offer scope options via AskUserQuestion:
    - Full meeting (all items)
