@@ -4,6 +4,8 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-02-15
+
 ### Added
 - Stage awareness via `\prfaqstage{}` command (hypothesis | validated | growth)
   - LaTeX template defines `\prfaqstage{}` with `fancyhdr` header badge showing current stage
@@ -110,7 +112,8 @@ First tagged release.
 - Plugin cache not clearing on reinstall (stale cache hid new agents)
 - FAQ paragraph indentation inconsistency in `faqpair` environment
 
-[Unreleased]: https://github.com/punt-labs/prfaq/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/punt-labs/prfaq/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/punt-labs/prfaq/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/punt-labs/prfaq/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/punt-labs/prfaq/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/punt-labs/prfaq/releases/tag/v0.4.0
