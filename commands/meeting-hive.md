@@ -22,7 +22,7 @@ When classifying a decision, look at Wei's IRREVERSIBLE DECISIONS section — if
 
 ## Prerequisites
 
-This command uses claude-flow hive-mind for consensus orchestration. If `mcp__claude-flow__hive-mind_init` is not available, fall back to majority voting (count APPROVE/ITERATE/REJECT positions from each persona).
+This command requires claude-flow for hive-mind consensus orchestration. If `mcp__claude-flow__hive-mind_init` is not available, tell the user to install claude-flow (`npm install -g claude-flow`) and re-run the installer (`bash install.sh`) to register it as an MCP server, then restart Claude Code. Do not proceed without it — use `/prfaq:meeting` for manual moderation instead.
 
 ## Steps
 
@@ -36,13 +36,12 @@ This command uses claude-flow hive-mind for consensus orchestration. If `mcp__cl
 
 5. **Show the agenda.** Present the hot spots ranked by severity with door classification. All items will be debated — the user does not select scope. Tell the user: "The hive will debate these autonomously. I'll present the consensus when they're done."
 
-6. **Initialize the hive-mind.** If claude-flow MCP tools are available:
+6. **Initialize the hive-mind.**
    ```
    mcp__claude-flow__hive-mind_init(queenId: "prfaq-meeting", topology: "mesh")
    mcp__claude-flow__hive-mind_memory(action: "set", key: "document-stage", value: "<stage>")
    mcp__claude-flow__hive-mind_memory(action: "set", key: "hot-spots", value: "<JSON array of hot spots with door classification>")
    ```
-   If not available, proceed without — the consensus logic below has a fallback path.
 
 7. **Run the debate loop.** For each hot spot, run up to two rounds:
 
@@ -57,11 +56,11 @@ This command uses claude-flow hive-mind for consensus orchestration. If `mcp__cl
 
    **Resolve the debate — arguments win, not averages:**
 
-   Count APPROVE / ITERATE / REJECT across all four positions. Apply door-weighted resolution:
+   Count APPROVE / ITERATE / REJECT across all four positions. Define the **action side** as APPROVE or ITERATE; define the **caution side** as REJECT. Apply door-weighted resolution:
 
    *Two-way door (reversible):*
    - 3-1 or 4-0 in any direction → majority wins
-   - 2-2 split → if Dana or Priya are on the action side, bias toward action (ITERATE, not REJECT). Proceed to Round 2 only if the caution side raises a specific falsifiable concern.
+   - 2-2 split → bias for action (ITERATE, not REJECT). Two-way doors are reversible — ship and learn. Proceed to Round 2 only if the caution side raises a specific falsifiable concern.
 
    *One-way door (irreversible):*
    - 4-0 APPROVE → KEEP
@@ -77,7 +76,7 @@ This command uses claude-flow hive-mind for consensus orchestration. If `mcp__cl
    - Persistent split on a one-way door → **escalate to user**. Present both sides' strongest single argument.
    - Persistent split on a two-way door → **bias for action**. The action side wins. Note the dissent in the summary so the user can revisit after learning more.
 
-   **Hive-mind integration (when available):**
+   **Hive-mind integration:**
    After Round 1, store positions in shared memory:
    ```
    mcp__claude-flow__hive-mind_memory(action: "set", key: "hotspot-N-wei", value: "<position>")
@@ -92,7 +91,7 @@ This command uses claude-flow hive-mind for consensus orchestration. If `mcp__cl
 
 8. **Synthesize the debate.** For each hot spot, write a brief narrative (3-5 sentences) that shows which argument won and why. Name the winner and the loser. Do not soften — "Wei's scalability concern overruled Dana's push to ship" is better than "the group balanced speed and caution." Follow the synthesis voice guidelines from the meeting guide.
 
-9. **Shutdown the hive-mind** (if initialized):
+9. **Shutdown the hive-mind.**
    ```
    mcp__claude-flow__hive-mind_shutdown(queenId: "prfaq-meeting")
    ```
@@ -102,10 +101,14 @@ This command uses claude-flow hive-mind for consensus orchestration. If `mcp__cl
     - **Escalated decisions:** One-way door splits that require user input. Show both sides' strongest argument. Ask the user to decide via AskUserQuestion: REVISE / KEEP / DEFER.
     - **Revision queue:** Specific feedback directives for each REVISE decision, written to work as `/prfaq:feedback` input.
 
-11. **Persist the summary.** Write to `meeting-hive-summary-YYYY-MM-DD.md` in the same directory as the `.tex` file. If that filename exists, append a counter (`-2`, `-3`, etc.). Use the same format as regular meeting summaries (see Phase 3b in the meeting guide), but add:
-    - `**Mode:** Hive (autonomous consensus)` in the header
-    - A `Door` column in the decisions table (one-way / two-way)
-    - A `Resolution` column: `CONSENSUS`, `BIAS-FOR-ACTION`, or `ESCALATED`
-    - Escalated decisions include a `User Action Required` section at the top
+11. **Persist the summary.** Write to `meeting-hive-summary-YYYY-MM-DD.md` in the same directory as the `.tex` file. If that filename exists, append a counter (`-2`, `-3`, etc.). Use the same format as regular meeting summaries (see Phase 3b in the meeting guide), with `**Mode:** Hive (autonomous consensus)` in the header and this decisions table schema:
+
+    | # | Hot Spot | Door | Decision | Resolution | Winning Argument | Dissent |
+    |---|----------|------|----------|------------|------------------|---------|
+    | 1 | Example  | Two-way | REVISE | CONSENSUS | Wei: scalability concern | Dana: disagreed, committed |
+
+    - **Door**: `one-way` or `two-way`
+    - **Resolution**: `CONSENSUS`, `BIAS-FOR-ACTION`, or `ESCALATED`
+    - Escalated decisions get a `User Action Required` section at the top of the summary listing each escalated item, the competing arguments, and a prompt for the user to choose REVISE / KEEP / DEFER
 
 12. **Offer to apply revisions.** If the revision queue is non-empty, tell the user to run `/prfaq:feedback` (no arguments) to automatically discover this meeting summary and apply all directives.

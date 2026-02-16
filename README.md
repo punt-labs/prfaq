@@ -42,6 +42,16 @@ sudo apt install texlive-full
 
 The plugin generates `.tex` files regardless — you can install TeX later.
 
+### Required for `/prfaq:meeting-hive`: claude-flow
+
+The autonomous consensus meeting requires [claude-flow](https://github.com/ruvnet/claude-flow) for hive-mind orchestration. The installer will offer to install it:
+
+```bash
+npm install -g claude-flow
+```
+
+The installer also registers it as an MCP server in Claude Code. If you skip it during install, `/prfaq:meeting-hive` will not be available — use `/prfaq:meeting` for manual moderation instead.
+
 ### Optional: quarry-mcp
 
 If you have [quarry-mcp](https://github.com/jmf-pobox/quarry-mcp) installed, the research agent will automatically search your indexed documents for evidence when writing or revising a PR/FAQ. Install it with:

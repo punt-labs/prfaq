@@ -236,14 +236,14 @@ Present the assessment honestly. Identify the weakest sections and suggest speci
 
 After completing a PR/FAQ, the user can stress-test it with these commands:
 
-- **`/prfaq review`** — Static peer review. Returns a structured report (PASS/ITERATE/REJECT) with critical issues, warnings, and recommendations. Good for identifying problems.
-- **`/prfaq meeting`** — Interactive review meeting. Four personas (principal engineer, target customer, skeptical executive, builder-visionary) debate the document's hot spots. The user makes explicit tradeoff decisions at each disagreement. Good for forcing decisions. Output is a decisions log with specific revision directives.
-- **`/prfaq meeting-hive`** — Autonomous consensus meeting. Same four personas, but they debate and reach consensus without user moderation. Uses one-way/two-way door framework to weight caution vs. action. Only escalates to the user on persistent splits over irreversible decisions. Requires claude-flow.
-- **`/prfaq feedback`** — Directed iteration. Takes a specific feedback directive (from the user or from a meeting's revision queue), traces cascading effects, and surgically redrafts affected sections.
+- **`/prfaq:review`** — Static peer review. Returns a structured report (PASS/ITERATE/REJECT) with critical issues, warnings, and recommendations. Good for identifying problems.
+- **`/prfaq:meeting`** — Interactive review meeting. Four personas (principal engineer, target customer, skeptical executive, builder-visionary) debate the document's hot spots. The user makes explicit tradeoff decisions at each disagreement. Good for forcing decisions. Output is a decisions log with specific revision directives.
+- **`/prfaq:meeting-hive`** — Autonomous consensus meeting. Same four personas, but they debate and reach consensus without user moderation. Uses one-way/two-way door framework to weight caution vs. action. Only escalates to the user on persistent splits over irreversible decisions. Requires claude-flow.
+- **`/prfaq:feedback`** — Directed iteration. Takes a specific feedback directive (from the user or from a meeting's revision queue), traces cascading effects, and surgically redrafts affected sections.
 
-- **`/prfaq rate`** — Anonymous satisfaction feedback. Quick 1-5 rating with optional comment to help improve the plugin.
+- **`/prfaq:rate`** — Anonymous satisfaction feedback. Quick 1-5 rating with optional comment to help improve the plugin.
 
-**Typical flow:** `/prfaq` → `/prfaq review` → `/prfaq meeting` (or `meeting-hive`) → `/prfaq feedback` (repeat until ready to build).
+**Typical flow:** `/prfaq` → `/prfaq:review` → `/prfaq:meeting` (or `:meeting-hive`) → `/prfaq:feedback` (repeat until ready to build).
 
 ## Additional Resources
 

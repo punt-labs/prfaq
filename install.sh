@@ -218,11 +218,11 @@ if command -v claude-flow &>/dev/null; then
   CF_VERSION=$(claude-flow --version 2>/dev/null | head -1 | sed 's/claude-flow //')
   ok "claude-flow $CF_VERSION"
 else
-  warn "claude-flow not found — /prfaq:meeting-hive will use fallback voting"
+  warn "claude-flow not found — required for /prfaq:meeting-hive"
   if command -v npm &>/dev/null; then
-    if ask "Install claude-flow via npm? (enables autonomous consensus meetings)"; then
+    if ask "Install claude-flow via npm? (required for autonomous consensus meetings)"; then
       info "  Installing claude-flow..."
-      npm install -g claude-flow
+      npm install -g claude-flow || { warn "npm install failed — try with sudo or fix npm permissions"; true; }
       if command -v claude-flow &>/dev/null; then
         CF_VERSION=$(claude-flow --version 2>/dev/null | head -1 | sed 's/claude-flow //')
         ok "claude-flow $CF_VERSION installed"

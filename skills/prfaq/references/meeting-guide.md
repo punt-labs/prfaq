@@ -258,7 +258,7 @@ The door type changes how votes are weighted — not equally, but by relevance:
 
 *Two-way doors:*
 - 3-1 or 4-0 → majority wins in one round
-- 2-2 with Dana or Priya on the action side → bias toward action. Round 2 only if the caution side raises a specific falsifiable concern.
+- 2-2 → bias for action (two-way doors are reversible — ship and learn). Round 2 only if the caution side raises a specific falsifiable concern.
 
 *One-way doors:*
 - 4-0 APPROVE → KEEP
@@ -277,10 +277,11 @@ The door type changes how votes are weighted — not equally, but by relevance:
 
 | Door Type | Consensus Position | Meeting Decision |
 |-----------|-------------------|-----------------|
-| Either | Majority APPROVE | KEEP |
-| Either | Majority ITERATE/REJECT | REVISE |
-| Two-way | Persistent split | BIAS-FOR-ACTION (action side wins, dissent noted) |
-| One-way | Persistent split | ESCALATED (user decides) |
+| Either | 3-1 or 4-0 APPROVE | KEEP |
+| Either | 3-1 or 4-0 ITERATE/REJECT | REVISE |
+| Two-way | 2-2 split (Round 1) | BIAS-FOR-ACTION — action side wins unless caution raises a falsifiable concern → Round 2 |
+| Two-way | 2-2 split (after Round 2) | BIAS-FOR-ACTION — action side wins, dissent noted |
+| One-way | 2-2 split (after Round 2) | ESCALATED — user decides, both sides' strongest argument presented |
 
 ### Synthesis in Hive Mode
 
@@ -290,7 +291,11 @@ For split decisions, present both sides' strongest single argument and ask the u
 
 ### Hive Summary Format
 
-Same structure as the regular meeting summary (Phase 3b), with these additions:
-- `**Mode:** Hive (autonomous consensus)` in the header
-- Each decision row includes a `Resolution` column: `CONSENSUS` or `SPLIT`
-- Split decisions include a `User Action Required` section at the top of the revision queue
+Same structure as the regular meeting summary (Phase 3b), with `**Mode:** Hive (autonomous consensus)` in the header and this decisions table schema:
+
+| # | Hot Spot | Door | Decision | Resolution | Winning Argument | Dissent |
+|---|----------|------|----------|------------|------------------|---------|
+
+- **Door**: `one-way` or `two-way`
+- **Resolution**: `CONSENSUS`, `BIAS-FOR-ACTION`, or `ESCALATED`
+- Escalated decisions get a `User Action Required` section at the top of the summary
