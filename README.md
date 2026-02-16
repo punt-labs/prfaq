@@ -145,6 +145,8 @@ Peer review against Working Backwards principles, Cagan's four risks framework, 
 
 Searches local files, web sources, and indexed documents (via quarry-mcp if available) for evidence. Returns structured biblatex citations ready to add to your `.bib` file. Results are cached in `./research/` so future runs reuse prior findings.
 
+**Bring your own research.** Drop customer interviews, survey data, market reports, or competitive analysis into `./research/` before running `/prfaq` or `/prfaq:research`. The researcher reads all `.md`, `.txt`, and `.pdf` files in that directory and treats them as primary sources — they take priority over web search results.
+
 ### Streamline: `/prfaq:streamline`
 
 ```
