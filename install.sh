@@ -457,6 +457,58 @@ if [[ -d "$CACHE_DIR" ]]; then
   ok "Cleared plugin cache (will rebuild on next launch)"
 fi
 
+# ── Register with Claude Code ────────────────────────────────────────────────
+# Claude Code discovers plugins via two JSON files:
+#   1. known_marketplaces.json — lists all marketplace sources
+#   2. installed_plugins.json — lists all installed plugins with paths
+
+header "Claude Code registration"
+
+KNOWN_MARKETPLACES="$HOME/.claude/plugins/known_marketplaces.json"
+NOW=$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")
+MARKETPLACE_ROOT="$HOME/.claude/plugins/local-plugins"
+
+if command -v jq &>/dev/null; then
+  # Step 1: Register "local" marketplace in known_marketplaces.json
+  if [[ ! -f "$KNOWN_MARKETPLACES" ]]; then
+    echo '{}' > "$KNOWN_MARKETPLACES"
+  fi
+  TMPFILE="$(mktemp)"
+  jq --arg path "$MARKETPLACE_ROOT" --arg now "$NOW" \
+    '.local = {
+      "source": {"source": "directory", "path": $path},
+      "installLocation": $path,
+      "lastUpdated": $now
+    }' "$KNOWN_MARKETPLACES" > "$TMPFILE"
+  mv "$TMPFILE" "$KNOWN_MARKETPLACES"
+  ok "Registered 'local' marketplace with Claude Code"
+
+  # Step 2: Register plugin in installed_plugins.json
+  INSTALLED_PLUGINS="$HOME/.claude/plugins/installed_plugins.json"
+  PLUGIN_KEY="$PLUGIN_NAME@local"
+
+  if [[ ! -f "$INSTALLED_PLUGINS" ]]; then
+    jq -n '{"version": 2, "plugins": {}}' > "$INSTALLED_PLUGINS"
+  fi
+  TMPFILE="$(mktemp)"
+  jq --arg key "$PLUGIN_KEY" \
+     --arg path "$INSTALL_DIR" \
+     --arg version "$PLUGIN_VERSION" \
+     --arg now "$NOW" \
+     '.plugins[$key] = [{
+       "scope": "user",
+       "installPath": $path,
+       "version": $version,
+       "installedAt": $now,
+       "lastUpdated": $now
+     }]' "$INSTALLED_PLUGINS" > "$TMPFILE"
+  mv "$TMPFILE" "$INSTALLED_PLUGINS"
+  ok "Registered $PLUGIN_KEY in Claude Code"
+else
+  warn "jq not found — cannot register plugin with Claude Code"
+  info "  After installing jq, re-run this installer or run: claude /install"
+fi
+
 # ── Summary ──────────────────────────────────────────────────────────────────
 
 header "Done"
