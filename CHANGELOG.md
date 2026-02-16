@@ -4,6 +4,8 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-02-15
+
 ### Added
 - `/prfaq:meeting-hive` command — autonomous consensus meeting via claude-flow hive-mind
   - Same four personas (Wei, Priya, Alex, Dana) debate and reach consensus without user moderation
@@ -14,6 +16,15 @@ All notable changes to the prfaq plugin are documented here. This project follow
   - Requires claude-flow (installed and registered as MCP server by the installer)
 - claude-flow MCP server registration in `.mcp.json`
 - Hive mode section in `meeting-guide.md` reference guide
+- Comprehensive README documenting all seven commands, seven agents, nine reference guides, document features (stage awareness, version tracking, cross-references, four risks), and architecture
+
+### Changed
+- claude-flow is a hard requirement for `/prfaq:meeting-hive` (no fallback path)
+- Installer guards `npm install -g claude-flow` against aborting the script on failure
+- SKILL.md command syntax corrected to use colons (`/prfaq:review` not `/prfaq review`)
+
+### Removed
+- `docs/prd/` directory (Feature Dev artifact from development — the feature is shipped)
 
 ## [0.7.0] - 2026-02-15
 
@@ -123,7 +134,8 @@ First tagged release.
 - Plugin cache not clearing on reinstall (stale cache hid new agents)
 - FAQ paragraph indentation inconsistency in `faqpair` environment
 
-[Unreleased]: https://github.com/punt-labs/prfaq/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/punt-labs/prfaq/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/punt-labs/prfaq/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/punt-labs/prfaq/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/punt-labs/prfaq/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/punt-labs/prfaq/compare/v0.4.0...v0.5.0
