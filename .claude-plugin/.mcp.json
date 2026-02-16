@@ -1,0 +1,7 @@
+{
+  "claude-flow": {
+    "type": "stdio",
+    "command": "claude-flow",
+    "args": ["mcp", "start"]
+  }
+}

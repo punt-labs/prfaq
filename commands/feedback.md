@@ -17,7 +17,7 @@ Interpret user feedback, trace cascading effects across all affected sections, r
 
    **b) Explicit file path** — `$ARGUMENTS` is a single file path ending in `.md` and the file exists: treat it as the meeting summary file path (batch mode). Proceed to step 3. If the file does not exist, treat `$ARGUMENTS` as feedback text (single mode, same as branch a).
 
-   **c) Auto-discover** — `$ARGUMENTS` is empty: search for `meeting-summary-*.md` files in the same directory as the `.tex` document. If one or more are found, show the most recent one's filename and ask the user via AskUserQuestion:
+   **c) Auto-discover** — `$ARGUMENTS` is empty: search for `meeting-summary-*.md` and `meeting-hive-summary-*.md` files in the same directory as the `.tex` document. If one or more are found, show the most recent one's filename and ask the user via AskUserQuestion:
    - **Apply all directives** from this file (batch mode — proceed to step 3, skip its confirmation)
    - **Enter feedback manually** (single mode, ask for text, skip step 3, proceed to step 4)
    - **Cancel**
