@@ -77,11 +77,17 @@
 \newcommand{\prfaqstage}[1]{\def\theprfaqstage{#1}}
 \prfaqstage{hypothesis}  % Default: pre-validation
 
+% ── Document version ─────────────────────────────────────────────────────────
+% Tracks iteration count. Major for structural changes, minor for feedback edits.
+% /prfaq:feedback auto-increments after each application.
+\newcommand{\prfaqversion}[2]{\def\theprfaqmajor{#1}\def\theprfaqminor{#2}}
+\prfaqversion{1}{0}  % v1.0 — initial generation
+
 % ── Header/footer ────────────────────────────────────────────────────────────
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\footnotesize\textcolor{AccentGray}{Stage: \theprfaqstage}}
+\fancyhead[L]{\footnotesize\textcolor{AccentGray}{Stage: \theprfaqstage{} \enspace\textbar\enspace v\theprfaqmajor.\theprfaqminor}}
 \fancyhead[R]{\footnotesize\textcolor{AccentGray}{\thepage}}
 \renewcommand{\headrulewidth}{0pt}
 

@@ -47,12 +47,23 @@ Interpret user feedback, trace cascading effects across all affected sections, r
 
    After all directives are applied, show a consolidated summary: total directives applied, all sections modified across all directives.
 
-5. **Recompile the PDF.** Run once at the end, after all directives have been applied:
+5. **Bump the document version.** After all feedback is applied (single or batch), increment `\prfaqversion{M}{m}` in the `.tex` preamble:
+
+   Read the current version using Grep for `\prfaqversion{`. If absent, add `\prfaqversion{1}{0}` to the preamble (after `\prfaqstage`) and treat the current version as v1.0. Then evaluate the scope of changes from the feedback agent's output:
+
+   - **Minor bump** (M stays, m+1): Evidence additions, risk re-ratings, wording improvements, research additions, localized edits within existing sections.
+   - **Major bump** (M+1, minor resets to 0): Structural shifts — customer persona change, problem reframe, business model change, scope change, new or removed FAQ sections, or stage transition.
+
+   Use judgment: if the feedback fundamentally changes who the document is about, what problem it solves, or how it makes money, that's a major bump. Everything else is minor.
+
+   Use the Edit tool to update `\prfaqversion{M}{m}` with the new values. Tell the user: `Version: vM.m → vM'.m'`
+
+6. **Recompile the PDF.** Run once at the end, after all directives have been applied:
    ```bash
    bash ${CLAUDE_PLUGIN_ROOT}/scripts/compile_prfaq.sh <path-to-tex-file>
    ```
    If compilation fails, read the LaTeX log, identify the issue, and fix it before proceeding.
 
-6. **Invoke peer review.** Run once. Launch the peer-reviewer agent using the Task tool with `subagent_type: "prfaq:peer-reviewer"`, passing the same `.tex` file path. Present the review results alongside the changes summary.
+7. **Invoke peer review.** Run once. Launch the peer-reviewer agent using the Task tool with `subagent_type: "prfaq:peer-reviewer"`, passing the same `.tex` file path. Present the review results alongside the changes summary.
 
-7. **Offer iteration.** Ask if the user wants to apply more feedback, address review issues, or proceed. If they provide more feedback, loop back to step 4 (single mode).
+8. **Offer iteration.** Ask if the user wants to apply more feedback, address review issues, or proceed. If they provide more feedback, loop back to step 4 (single mode).

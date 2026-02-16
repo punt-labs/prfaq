@@ -11,6 +11,11 @@ All notable changes to the prfaq plugin are documented here. This project follow
   - Peer reviewer, meeting personas, and all reference guides calibrate evidence expectations by stage
   - Stage Calibration sections added to all 9 reference guides
   - Defaults to `hypothesis` for backwards compatibility — existing documents work unchanged
+- Document version tracking via `\prfaqversion{major}{minor}` command
+  - LaTeX template renders version alongside stage in the page header (`Stage: hypothesis | v1.0`)
+  - `/prfaq` generation sets initial version to v1.0
+  - `/prfaq:feedback` auto-increments version after each application using judgment: minor for editorial changes, major for structural shifts (persona change, problem reframe, business model)
+  - Revise mode detects and preserves existing version; adds v1.0 if absent
 - `/prfaq:feedback` batch mode — auto-discovers `meeting-summary-*.md` files and applies all revision queue directives sequentially
   - Empty arguments: auto-discovers most recent meeting summary, offers to apply all directives
   - `.md` file path argument: reads that specific file's revision queue
