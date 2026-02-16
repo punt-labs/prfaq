@@ -210,6 +210,31 @@ if [[ ${#MISSING_PACKAGES[@]} -gt 0 ]]; then
   fi
 fi
 
+# ── claude-flow (optional, for /prfaq:meeting-hive) ─────────────────────────
+
+header "claude-flow (optional)"
+
+if command -v claude-flow &>/dev/null; then
+  CF_VERSION=$(claude-flow --version 2>/dev/null | head -1 | sed 's/claude-flow //')
+  ok "claude-flow $CF_VERSION"
+else
+  warn "claude-flow not found — /prfaq:meeting-hive will use fallback voting"
+  if command -v npm &>/dev/null; then
+    if ask "Install claude-flow via npm? (enables autonomous consensus meetings)"; then
+      info "  Installing claude-flow..."
+      npm install -g claude-flow
+      if command -v claude-flow &>/dev/null; then
+        CF_VERSION=$(claude-flow --version 2>/dev/null | head -1 | sed 's/claude-flow //')
+        ok "claude-flow $CF_VERSION installed"
+      else
+        warn "claude-flow installed but not in PATH — you may need to restart your shell"
+      fi
+    fi
+  else
+    info "  Install Node.js and npm first, then: npm install -g claude-flow"
+  fi
+fi
+
 # ── Install plugin ───────────────────────────────────────────────────────────
 
 header "Plugin"
