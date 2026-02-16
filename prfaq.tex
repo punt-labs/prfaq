@@ -71,6 +71,18 @@
   {}
 \titlespacing*{\subsubsection}{0pt}{1em}{0.5em}[0pt]
 
+% ── Document stage ───────────────────────────────────────────────────────────
+\newcommand{\prfaqstage}[1]{\def\theprfaqstage{#1}}
+\prfaqstage{validated}  % Post-meeting, pre-customer-testing
+
+% ── Header/footer ────────────────────────────────────────────────────────────
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\footnotesize\textcolor{AccentGray}{Stage: \theprfaqstage}}
+\fancyhead[R]{\footnotesize\textcolor{AccentGray}{\thepage}}
+\renewcommand{\headrulewidth}{0pt}
+
 % ══════════════════════════════════════════════════════════════════════════════
 % Custom environments
 % ══════════════════════════════════════════════════════════════════════════════

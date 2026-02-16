@@ -71,6 +71,20 @@
   {}
 \titlespacing*{\subsubsection}{0pt}{1em}{0.5em}[0pt]
 
+% ── Document stage ───────────────────────────────────────────────────────────
+% Stage affects peer review expectations and meeting persona calibration.
+% Valid values: hypothesis | validated | growth
+\newcommand{\prfaqstage}[1]{\def\theprfaqstage{#1}}
+\prfaqstage{hypothesis}  % Default: pre-validation
+
+% ── Header/footer ────────────────────────────────────────────────────────────
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\footnotesize\textcolor{AccentGray}{Stage: \theprfaqstage}}
+\fancyhead[R]{\footnotesize\textcolor{AccentGray}{\thepage}}
+\renewcommand{\headrulewidth}{0pt}
+
 % ══════════════════════════════════════════════════════════════════════════════
 % Custom environments
 % ══════════════════════════════════════════════════════════════════════════════
