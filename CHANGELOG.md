@@ -4,6 +4,18 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-02-15
+
+### Added
+- Installer prompts for name, email, and organization on every run (not just first install)
+  - Reads from `/dev/tty` so prompts work in `curl | bash` piped installs
+  - Previous values from `marketplace.json` used as defaults on re-run
+  - Organization stored in marketplace owner and plugin author objects
+
+### Fixed
+- Installer aborted before Registration when run inside Claude Code (`claude mcp add` failed unguarded under `set -e`)
+- README Prerequisites understated TeX dependency ("you can install TeX later" → clarified PDF is the core output)
+
 ## [0.8.0] - 2026-02-15
 
 ### Added
@@ -134,7 +146,8 @@ First tagged release.
 - Plugin cache not clearing on reinstall (stale cache hid new agents)
 - FAQ paragraph indentation inconsistency in `faqpair` environment
 
-[Unreleased]: https://github.com/punt-labs/prfaq/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/punt-labs/prfaq/compare/v0.8.1...HEAD
+[0.8.1]: https://github.com/punt-labs/prfaq/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/punt-labs/prfaq/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/punt-labs/prfaq/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/punt-labs/prfaq/compare/v0.5.0...v0.6.0
