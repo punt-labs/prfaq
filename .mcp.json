@@ -1,7 +1,9 @@
 {
-  "claude-flow": {
-    "type": "stdio",
-    "command": "claude-flow",
-    "args": ["mcp", "start"]
+  "mcpServers": {
+    "claude-flow": {
+      "type": "stdio",
+      "command": "claude-flow",
+      "args": ["mcp", "start"]
+    }
   }
 }
