@@ -49,7 +49,19 @@ Key:   sb_publishable_iDt3ITGKyP_BZ5oksdgAkw_YxDIfkt0
 
    If they choose "Add comment" or type something via "Other", capture the text.
 
-5. **Send the rating.** POST the JSON payload to the endpoint above via Bash. Use curl, wget, or python3 — whichever is available. The key goes in both `apikey` and `Authorization: Bearer` headers.
+5. **Send the rating.** POST the JSON payload to the endpoint above via Bash. The key goes in both `apikey` and `Authorization: Bearer` headers. For example:
+
+   ```bash
+   curl -s -o /dev/null -w "%{http_code}" \
+     -X POST 'https://ywikngjtcnyjrddrurhi.supabase.co/rest/v1/ratings' \
+     -H 'apikey: sb_publishable_iDt3ITGKyP_BZ5oksdgAkw_YxDIfkt0' \
+     -H 'Authorization: Bearer sb_publishable_iDt3ITGKyP_BZ5oksdgAkw_YxDIfkt0' \
+     -H 'Content-Type: application/json' \
+     -H 'Prefer: return=minimal' \
+     -d '{"anonymous_id":"...","rating":4,"version":"1.5","stage":"hypothesis"}'
+   ```
+
+   If curl is not available, use wget or python3 instead.
 
    If the response is `201`: "Thanks — your anonymous feedback has been recorded."
 

@@ -8,7 +8,7 @@ A Claude Code plugin that brings Amazon's Working Backwards PR/FAQ process to en
 
 The output is a decision-making artifact, not a brainstorm. It is designed to be read, debated, and revised before committing to building anything.
 
-Five commands form a complete product-thinking workflow:
+Six commands form a complete product-thinking workflow:
 
 | Command | What it does |
 |---------|-------------|
@@ -17,6 +17,7 @@ Five commands form a complete product-thinking workflow:
 | `/prfaq:meeting` | Simulate an Amazon-style review meeting with four agentic personas |
 | `/prfaq:review` | Peer review against Working Backwards principles and cognitive biases |
 | `/prfaq:research` | Find evidence for claims using local files, web, and indexed documents |
+| `/prfaq:rate` | Rate your experience with the plugin (anonymous 1-5 feedback) |
 
 ## Installation
 

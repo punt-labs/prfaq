@@ -239,6 +239,8 @@ After completing a PR/FAQ, the user can stress-test it with these commands:
 - **`/prfaq meeting`** — Interactive review meeting. Four personas (principal engineer, target customer, skeptical executive, builder-visionary) debate the document's hot spots. The user makes explicit tradeoff decisions at each disagreement. Good for forcing decisions. Output is a decisions log with specific revision directives.
 - **`/prfaq feedback`** — Directed iteration. Takes a specific feedback directive (from the user or from a meeting's revision queue), traces cascading effects, and surgically redrafts affected sections.
 
+- **`/prfaq rate`** — Anonymous satisfaction feedback. Quick 1-5 rating with optional comment to help improve the plugin.
+
 **Typical flow:** `/prfaq` → `/prfaq review` → `/prfaq meeting` → `/prfaq feedback` (repeat until ready to build).
 
 ## Additional Resources
