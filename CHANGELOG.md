@@ -4,6 +4,13 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+### Added
+- `/prfaq:feedback` batch mode — auto-discovers `meeting-summary-*.md` files and applies all revision queue directives sequentially
+  - Empty arguments: auto-discovers most recent meeting summary, offers to apply all directives
+  - `.md` file path argument: reads that specific file's revision queue
+  - Text argument: existing single-feedback behavior (unchanged)
+  - One PDF compile and one peer review at the end, not per-directive
+
 ## [0.6.0] - 2026-02-15
 
 ### Added

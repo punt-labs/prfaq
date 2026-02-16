@@ -127,7 +127,7 @@ Revision queue (for /prfaq:feedback):
 Deferred items:
   - [Item] — [what needs to happen before deciding]
 
-To apply revisions, run: /prfaq:feedback [first directive]
+To apply all revisions automatically, run: /prfaq:feedback
 ```
 
 The revision queue items must be specific enough to work as `/prfaq:feedback` input. Not "fix the TAM" but "Reframe TAM FAQ around viral distribution model instead of traditional market sizing. The denominator should be active Claude Code users, not all developers."

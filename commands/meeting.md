@@ -36,4 +36,4 @@ Run an interactive review meeting where four personas — a principal engineer, 
 
 7. **Persist the summary.** Write the meeting summary to a markdown file in the same directory as the `.tex` document. Use the filename `meeting-summary-YYYY-MM-DD.md` (today's date). If that file already exists, append a counter (`-2`, `-3`, etc.). See Phase 3b in the meeting guide for the full file format. Tell the user where the file was saved.
 
-8. **Offer to apply revisions.** If the revision queue is non-empty, offer to run `/prfaq:feedback` with the first directive.
+8. **Offer to apply revisions.** If the revision queue is non-empty, tell the user to run `/prfaq:feedback` (no arguments) to automatically discover this meeting summary and apply all directives sequentially.
