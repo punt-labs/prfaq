@@ -134,9 +134,9 @@ The revision queue items must be specific enough to work as `/prfaq:feedback` in
 
 ### Phase 3b: Persist the Summary
 
-After presenting the summary to the user, write it to a markdown file in the same directory as the `.tex` document.
+After presenting the summary to the user, write it to a markdown file in the `./meetings/` subdirectory (relative to the project root).
 
-**Filename:** `meeting-summary-YYYY-MM-DD.md` using today's date. If a file with that name already exists, append a counter: `meeting-summary-YYYY-MM-DD-2.md`, `meeting-summary-YYYY-MM-DD-3.md`, etc.
+**Filename:** `./meetings/meeting-summary-YYYY-MM-DD.md` using today's date. If a file with that name already exists, append a counter: `meeting-summary-YYYY-MM-DD-2.md`, `meeting-summary-YYYY-MM-DD-3.md`, etc.
 
 **Contents:** The file should contain the full meeting output as structured markdown:
 

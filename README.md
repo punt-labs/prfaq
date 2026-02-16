@@ -231,7 +231,7 @@ Each guide includes stage calibration — the same guide produces different expe
 - `prfaq.tex` — LaTeX source in your project directory
 - `prfaq.bib` — Bibliography with sourced citations
 - `prfaq.pdf` — Compiled PDF ready for review
-- `meeting-summary-*.md` / `meeting-hive-summary-*.md` — Meeting decisions log (feeds into `/prfaq:feedback`)
+- `meetings/meeting-summary-*.md` / `meetings/meeting-hive-summary-*.md` — Meeting decisions log (feeds into `/prfaq:feedback`)
 
 ## What Is Working Backwards?
 

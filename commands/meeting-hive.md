@@ -101,7 +101,9 @@ This command requires claude-flow for hive-mind consensus orchestration. If `mcp
     - **Escalated decisions:** One-way door splits that require user input. Show both sides' strongest argument. Ask the user to decide via AskUserQuestion: REVISE / KEEP / DEFER.
     - **Revision queue:** Specific feedback directives for each REVISE decision, written to work as `/prfaq:feedback` input.
 
-11. **Persist the summary.** Write to `meeting-hive-summary-YYYY-MM-DD.md` in the same directory as the `.tex` file. If that filename exists, append a counter (`-2`, `-3`, etc.). Use the same format as regular meeting summaries (see Phase 3b in the meeting guide), with `**Mode:** Hive (autonomous consensus)` in the header and this decisions table schema:
+11. **Persist the summary.** Write to `./meetings/meeting-hive-summary-YYYY-MM-DD.md`. If that filename exists, append a counter (`-2`, `-3`, etc.). Use the same format as regular meeting summaries (see Phase 3b in the meeting guide), with `**Mode:** Hive (autonomous consensus)` in the header and this decisions table schema:
+
+    **Migration:** Before writing, use Glob to check for `meeting-summary-*.md` and `meeting-hive-summary-*.md` in the project root (same directory as the `.tex` file). If any are found, move them to `./meetings/` using the Read and Write tools (read content, write to new path, delete old file via Bash `rm`). Tell the user: "Moved N meeting summary file(s) to ./meetings/ for organization."
 
     | # | Hot Spot | Door | Decision | Resolution | Winning Argument | Dissent |
     |---|----------|------|----------|------------|------------------|---------|

@@ -34,6 +34,8 @@ Run an interactive review meeting where four personas — a principal engineer, 
 
 6. **Present the post-meeting summary.** List all decisions, build a revision queue with specific feedback directives for `/prfaq:feedback`, and note deferred items.
 
-7. **Persist the summary.** Write the meeting summary to a markdown file in the same directory as the `.tex` document. Use the filename `meeting-summary-YYYY-MM-DD.md` (today's date). If that file already exists, append a counter (`-2`, `-3`, etc.). See Phase 3b in the meeting guide for the full file format. Tell the user where the file was saved.
+7. **Persist the summary.** Write the meeting summary to `./meetings/meeting-summary-YYYY-MM-DD.md` (today's date). If that file already exists, append a counter (`-2`, `-3`, etc.). See Phase 3b in the meeting guide for the full file format. Tell the user where the file was saved.
+
+   **Migration:** Before writing, use Glob to check for `meeting-summary-*.md` and `meeting-hive-summary-*.md` in the project root (same directory as the `.tex` file). If any are found, move them to `./meetings/` using the Read and Write tools (read content, write to new path, delete old file via Bash `rm`). Tell the user: "Moved N meeting summary file(s) to ./meetings/ for organization."
 
 8. **Offer to apply revisions.** If the revision queue is non-empty, tell the user to run `/prfaq:feedback` (no arguments) to automatically discover this meeting summary and apply all directives sequentially.
