@@ -4,6 +4,17 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+### Added
+- `/prfaq:meeting-hive` command — autonomous consensus meeting via claude-flow hive-mind
+  - Same four personas (Wei, Priya, Alex, Dana) debate and reach consensus without user moderation
+  - One-way/two-way door framework weights caution vs. action: irreversible decisions require stronger evidence, reversible decisions bias toward action
+  - Two-round debate: independent evaluation → rebuttal (only for splits)
+  - Only escalates to user on persistent splits over one-way door decisions
+  - Arguments win or lose (Amazon LP: Disagree and Commit) — no compromise blending
+  - Requires claude-flow (installed and registered as MCP server by the installer)
+- claude-flow MCP server registration in `.mcp.json`
+- Hive mode section in `meeting-guide.md` reference guide
+
 ## [0.7.0] - 2026-02-15
 
 ### Added

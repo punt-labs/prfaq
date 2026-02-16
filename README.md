@@ -8,13 +8,14 @@ A Claude Code plugin that brings Amazon's Working Backwards PR/FAQ process to en
 
 The output is a decision-making artifact, not a brainstorm. It is designed to be read, debated, and revised before committing to building anything.
 
-Six commands form a complete product-thinking workflow:
+Seven commands form a complete product-thinking workflow:
 
 | Command | What it does |
 |---------|-------------|
 | `/prfaq` | Generate a new PR/FAQ from scratch (or revise an existing one) |
 | `/prfaq:feedback` | Apply pointed feedback — traces cascading effects and surgically redrafts |
 | `/prfaq:meeting` | Simulate an Amazon-style review meeting with four agentic personas |
+| `/prfaq:meeting-hive` | Autonomous consensus meeting — personas debate and decide without you moderating |
 | `/prfaq:review` | Peer review against Working Backwards principles and cognitive biases |
 | `/prfaq:research` | Find evidence for claims using local files, web, and indexed documents |
 | `/prfaq:rate` | Rate your experience with the plugin (anonymous 1-5 feedback) |
@@ -40,6 +41,16 @@ sudo apt install texlive-full
 ```
 
 The plugin generates `.tex` files regardless — you can install TeX later.
+
+### Required for `/prfaq:meeting-hive`: claude-flow
+
+The autonomous consensus meeting requires [claude-flow](https://github.com/ruvnet/claude-flow) for hive-mind orchestration. The installer will offer to install it:
+
+```bash
+npm install -g claude-flow
+```
+
+The installer also registers it as an MCP server in Claude Code. If you skip it during install, `/prfaq:meeting-hive` will not be available — use `/prfaq:meeting` for manual moderation instead.
 
 ### Optional: quarry-mcp
 
@@ -115,6 +126,14 @@ Simulates an Amazon-style PR/FAQ review meeting with four agentic personas who d
 
 You are the PM and final decision-maker. The output is a decisions log with specific revision directives that feed into `/prfaq:feedback`.
 
+### Autonomous Stress-Test: `/prfaq:meeting-hive`
+
+```
+/prfaq:meeting-hive
+```
+
+Same four personas, but they debate and reach consensus without you moderating each decision. Uses Amazon's one-way/two-way door framework: reversible decisions bias toward action; irreversible decisions require stronger evidence. Only escalates to you when the team is deadlocked on a one-way door. Requires [claude-flow](https://github.com/ruvnet/claude-flow).
+
 ### Review: `/prfaq:review`
 
 ```
@@ -156,7 +175,7 @@ The typical workflow is: **generate** → **review** → **meeting** → **feedb
 
 1. `/prfaq` generates the initial document from a structured conversation
 2. `/prfaq:review` gives you an adversarial peer review
-3. `/prfaq:meeting` stress-tests the document with four personas who disagree with each other
+3. `/prfaq:meeting` stress-tests the document with four personas who disagree with each other (or `/prfaq:meeting-hive` for autonomous consensus)
 4. `/prfaq:feedback` applies the meeting's decisions (or your own feedback) surgically
 
 Each step produces a compiled PDF. The document improves with each cycle.

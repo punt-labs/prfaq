@@ -210,6 +210,42 @@ if [[ ${#MISSING_PACKAGES[@]} -gt 0 ]]; then
   fi
 fi
 
+# ── claude-flow (optional, for /prfaq:meeting-hive) ─────────────────────────
+
+header "claude-flow (optional)"
+
+if command -v claude-flow &>/dev/null; then
+  CF_VERSION=$(claude-flow --version 2>/dev/null | head -1 | sed 's/claude-flow //')
+  ok "claude-flow $CF_VERSION"
+else
+  warn "claude-flow not found — required for /prfaq:meeting-hive"
+  if command -v npm &>/dev/null; then
+    if ask "Install claude-flow via npm? (required for autonomous consensus meetings)"; then
+      info "  Installing claude-flow..."
+      npm install -g claude-flow || { warn "npm install failed — try with sudo or fix npm permissions"; true; }
+      if command -v claude-flow &>/dev/null; then
+        CF_VERSION=$(claude-flow --version 2>/dev/null | head -1 | sed 's/claude-flow //')
+        ok "claude-flow $CF_VERSION installed"
+      else
+        warn "claude-flow installed but not in PATH — you may need to restart your shell"
+      fi
+    fi
+  else
+    info "  Install Node.js and npm first, then: npm install -g claude-flow"
+  fi
+fi
+
+# Register claude-flow as an MCP server if installed and claude CLI is available
+if command -v claude-flow &>/dev/null && command -v claude &>/dev/null; then
+  if claude mcp get claude-flow &>/dev/null 2>&1; then
+    ok "claude-flow MCP server already registered"
+  else
+    info "Registering claude-flow as MCP server..."
+    claude mcp add claude-flow -- claude-flow mcp start
+    ok "claude-flow MCP server registered"
+  fi
+fi
+
 # ── Install plugin ───────────────────────────────────────────────────────────
 
 header "Plugin"

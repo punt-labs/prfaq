@@ -230,3 +230,72 @@ Extract `\prfaqstage{value}` from the document before the pre-meeting scan. Stag
 | **Dana** | "Is this bold enough?" Push for ambition even at hypothesis stage — thinking too small wastes the experiment. | "Did validation narrow or expand the opportunity?" Check if learnings were incorporated. | "What's the next frontier?" Push for growth beyond current success. |
 
 **Key principle:** Stage calibration makes personas more useful, not softer. At hypothesis stage, Priya asking "can I use this?" about an unbuilt product is unhelpful — but "does this problem ring true?" surfaces genuine insight. At growth stage, Alex accepting inferred demand is negligent — but at hypothesis stage, it's appropriate.
+
+## Hive Mode
+
+`/prfaq:meeting-hive` is the autonomous variant — the "team meeting without the boss." Same cast, same hot spot ranking, same stage calibration. The difference is the decision mechanism: personas reach consensus through multi-round debate instead of the user deciding at each point.
+
+### Decision Philosophy: Arguments Win, Not Averages
+
+Amazon's "Have Backbone; Disagree and Commit" means the hive does not compromise or blend positions. When two personas disagree, one wins. The loser disagrees and commits. The synthesis names the winner explicitly.
+
+### One-Way vs Two-Way Doors
+
+Every hot spot implies a decision. Classify it before debate:
+
+- **One-way door** (irreversible): Architecture choices, public API contracts, data model commitments, third-party lock-in, public positioning that constrains future options. Wei's IRREVERSIBLE DECISIONS section is the primary signal.
+- **Two-way door** (reversible): Feature scope, positioning language, risk rating levels, FAQ framing, internal priorities that can shift later.
+
+The door type changes how votes are weighted — not equally, but by relevance:
+- One-way doors: Wei and Alex's caution carries extra weight. A single REJECT from either forces a rebuttal round.
+- Two-way doors: Dana and Priya's action bias carries extra weight. Persistent splits resolve in favor of action.
+
+### How Consensus Works
+
+**Round 1 (Independent):** All four personas evaluate the hot spot independently, producing their standard structured positions (APPROVE/ITERATE/REJECT with rationale).
+
+**Door-weighted resolution:**
+
+*Two-way doors:*
+- 3-1 or 4-0 → majority wins in one round
+- 2-2 → bias for action (two-way doors are reversible — ship and learn). Round 2 only if the caution side raises a specific falsifiable concern.
+
+*One-way doors:*
+- 4-0 APPROVE → KEEP
+- Any REJECT from Wei or Alex → Round 2 required, regardless of other votes
+- 3-1 with Wei or Alex dissenting → Round 2 (their caution matters on irreversible decisions)
+- 3-1 with Dana or Priya dissenting → majority wins
+
+**Round 2 (Rebuttal, when required):** Each persona sees all Round 1 positions and responds to the strongest counterargument. They may change their verdict if genuinely persuaded, but they must not compromise — either their concern stands or it doesn't.
+
+**Post-Round 2 resolution:**
+- Clear majority → that side wins. Minority disagrees and commits.
+- Persistent split on a one-way door → **escalate to user** with both sides' strongest argument.
+- Persistent split on a two-way door → **bias for action**. Action side wins. Dissent noted.
+
+### Decision Mapping
+
+| Door Type | Consensus Position | Meeting Decision |
+|-----------|-------------------|-----------------|
+| Either | 3-1 or 4-0 APPROVE | KEEP |
+| Either | 3-1 or 4-0 ITERATE/REJECT | REVISE |
+| Two-way | 2-2 split (Round 1) | BIAS-FOR-ACTION — action side wins unless caution raises a falsifiable concern → Round 2 |
+| Two-way | 2-2 split (after Round 2) | BIAS-FOR-ACTION — action side wins, dissent noted |
+| One-way | 2-2 split (after Round 2) | ESCALATED — user decides, both sides' strongest argument presented |
+
+### Synthesis in Hive Mode
+
+The debate narrative is shorter than in regular meetings (3-5 sentences per hot spot, not a full dramatic scene). The goal is to communicate the key tension and the resolution, not to dramatize the conflict. Save the user's reading time — they'll read N summaries, not participate in N debates.
+
+For split decisions, present both sides' strongest single argument and ask the user to decide.
+
+### Hive Summary Format
+
+Same structure as the regular meeting summary (Phase 3b), with `**Mode:** Hive (autonomous consensus)` in the header and this decisions table schema:
+
+| # | Hot Spot | Door | Decision | Resolution | Winning Argument | Dissent |
+|---|----------|------|----------|------------|------------------|---------|
+
+- **Door**: `one-way` or `two-way`
+- **Resolution**: `CONSENSUS`, `BIAS-FOR-ACTION`, or `ESCALATED`
+- Escalated decisions get a `User Action Required` section at the top of the summary
