@@ -100,7 +100,7 @@ Ask the user these questions (adapt based on what they've already shared and wha
    - **Validated** — Post-interviews or post-testing. Some real evidence, iterating on a proven concept.
    - **Growth** — Existing product with users and data. Adding features or repositioning.
 
-   Set `\prfaqstage{value}` in the `.tex` preamble based on the answer. This calibrates evidence expectations for peer review and meetings.
+   Set `\prfaqstage{value}` in the `.tex` preamble based on the answer (always lowercase: `hypothesis`, `validated`, or `growth`). This calibrates evidence expectations for peer review and meetings.
 
 2. **Customer** — Who is the specific target customer? What is their role, context, and daily reality?
 3. **Problem** — What problem does this customer have today? How do they currently cope? What makes existing solutions inadequate?
