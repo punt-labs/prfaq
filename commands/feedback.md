@@ -49,7 +49,7 @@ Interpret user feedback, trace cascading effects across all affected sections, r
 
 5. **Bump the document version.** After all feedback is applied (single or batch), increment `\prfaqversion{M}{m}` in the `.tex` preamble:
 
-   Read the current version using Grep for `\prfaqversion{`. Evaluate the scope of changes from the feedback agent's output:
+   Read the current version using Grep for `\prfaqversion{`. If absent, add `\prfaqversion{1}{0}` to the preamble (after `\prfaqstage`) and treat the current version as v1.0. Then evaluate the scope of changes from the feedback agent's output:
 
    - **Minor bump** (M stays, m+1): Evidence additions, risk re-ratings, wording improvements, research additions, localized edits within existing sections.
    - **Major bump** (M+1, minor resets to 0): Structural shifts — customer persona change, problem reframe, business model change, scope change, new or removed FAQ sections, or stage transition.
