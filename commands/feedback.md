@@ -15,7 +15,7 @@ Interpret user feedback, trace cascading effects across all affected sections, r
 
    **a) Feedback text** — `$ARGUMENTS` is non-empty and does NOT end in `.md`: treat it as literal feedback text (single mode). Skip step 3, proceed to step 4.
 
-   **b) Explicit file path** — `$ARGUMENTS` ends in `.md`: treat it as the meeting summary file path (batch mode). Proceed to step 3.
+   **b) Explicit file path** — `$ARGUMENTS` is a single file path ending in `.md` and the file exists: treat it as the meeting summary file path (batch mode). Proceed to step 3. If the file does not exist, treat `$ARGUMENTS` as feedback text (single mode, same as branch a).
 
    **c) Auto-discover** — `$ARGUMENTS` is empty: search for `meeting-summary-*.md` files in the same directory as the `.tex` document. If one or more are found, show the most recent one's filename and ask the user via AskUserQuestion:
    - **Apply all directives** from this file (batch mode — proceed to step 3, skip its confirmation)
@@ -24,7 +24,7 @@ Interpret user feedback, trace cascading effects across all affected sections, r
 
    If no meeting summary files are found, ask the user what feedback they want to apply (single mode — skip step 3, proceed to step 4).
 
-3. **Parse batch directives (batch mode only).** Read the meeting summary file (from the path in step 2b or auto-discovered in step 2c) and extract directives from the `## Revision Queue` section. Each directive is a `### Directive N: Title` header followed by its body text.
+3. **Parse batch directives (batch mode only).** Read the meeting summary file (from the path in step 2b or auto-discovered in step 2c) and extract directives from the `## Revision Queue (for /prfaq:feedback)` section. Each directive is a `### Directive N: Title` header followed by its body text.
 
    If the user already chose "Apply all directives" in step 2c, skip confirmation and proceed to step 4. Otherwise, confirm with the user via AskUserQuestion:
    - **Apply all N directives**
