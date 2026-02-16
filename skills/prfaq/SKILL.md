@@ -248,9 +248,11 @@ After completing a PR/FAQ, the user can stress-test it with these commands:
 - **`/prfaq:meeting-hive`** — Autonomous consensus meeting. Same four personas, but they debate and reach consensus without user moderation. Uses one-way/two-way door framework to weight caution vs. action. Only escalates to the user on persistent splits over irreversible decisions. Requires claude-flow.
 - **`/prfaq:feedback`** — Directed iteration. Takes a specific feedback directive (from the user or from a meeting's revision queue), traces cascading effects, and surgically redrafts affected sections.
 
+- **`/prfaq:streamline`** — Scalpel editor. Removes redundancy across sections, eliminates weasel words and hollow adjectives, compresses inflated phrases, and applies the "so what" test. Targets 10–20% length reduction without losing meaning. Best used after iteration is complete, before sharing.
+
 - **`/prfaq:rate`** — Anonymous satisfaction feedback. Quick 1-5 rating with optional comment to help improve the plugin.
 
-**Typical flow:** `/prfaq` → `/prfaq:review` → `/prfaq:meeting` (or `:meeting-hive`) → `/prfaq:feedback` (repeat until ready to build).
+**Typical flow:** `/prfaq` → `/prfaq:review` → `/prfaq:meeting` (or `:meeting-hive`) → `/prfaq:feedback` (repeat) → `/prfaq:streamline` (when ready to share).
 
 ## Additional Resources
 
@@ -262,3 +264,4 @@ Detailed guidance for each phase is in the reference files:
 - `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/common-mistakes.md` — Anti-patterns and failure modes
 - `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/decision-quality.md` — Kahneman decision quality checklist for peer review
 - `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/meeting-guide.md` — Meeting orchestration: personas, debate synthesis, decision flow
+- `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/precise-writing.md` — Precise writing rules for streamlining: redundancy, weasel words, "so what" test
