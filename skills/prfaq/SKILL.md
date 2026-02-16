@@ -45,6 +45,15 @@ If the user explicitly asks to start a new PR/FAQ (not revise), proceed to the f
 
 ## Workflow
 
+### Stage Detection
+
+When working with an existing document (revise mode), read the `.tex` file and extract the stage via `\prfaqstage{value}`. Valid stages: **hypothesis**, **validated**, **growth**. If absent, assume hypothesis.
+
+Stage affects evidence expectations throughout the workflow:
+- **Hypothesis** — Pre-validation. No primary customer data required. Logical consistency and testable assumptions matter most. Fictional customer quotes expected. `[CITATION NEEDED]` markers are acknowledged gaps, not failures.
+- **Validated** — Post-interviews or post-testing. Customer interviews and usability data expected. TAM should have real data sources. Risk ratings should reflect actual evidence, not assumptions.
+- **Growth** — Existing product with users. All claims should be data-backed. Usage analytics, churn rates, and unit economics should come from real operations, not projections.
+
 ### Phase 0: Research Discovery
 
 Before asking the user any questions, look for primary research that should ground the entire document.
@@ -86,14 +95,21 @@ Before writing anything, gather the inputs that make a PR/FAQ credible. If Phase
 
 Ask the user these questions (adapt based on what they've already shared and what research revealed):
 
-1. **Customer** — Who is the specific target customer? What is their role, context, and daily reality?
-2. **Problem** — What problem does this customer have today? How do they currently cope? What makes existing solutions inadequate?
-3. **Solution** — What is the product or feature? How does it work at a high level?
-4. **Differentiation** — Why is this better than what exists? What is the unique insight or approach?
-5. **Market** — How large is the opportunity? What evidence exists for demand?
-6. **Risks** — What could go wrong? What assumptions are untested?
+1. **Stage** — What stage is this product at? Ask via AskUserQuestion with three options:
+   - **Hypothesis** — Pre-validation. No users yet, testing whether the idea is worth building.
+   - **Validated** — Post-interviews or post-testing. Some real evidence, iterating on a proven concept.
+   - **Growth** — Existing product with users and data. Adding features or repositioning.
 
-Do not proceed until you have clear answers for at least customer, problem, and solution. The other inputs can be developed during drafting.
+   Set `\prfaqstage{value}` in the `.tex` preamble based on the answer. This calibrates evidence expectations for peer review and meetings.
+
+2. **Customer** — Who is the specific target customer? What is their role, context, and daily reality?
+3. **Problem** — What problem does this customer have today? How do they currently cope? What makes existing solutions inadequate?
+4. **Solution** — What is the product or feature? How does it work at a high level?
+5. **Differentiation** — Why is this better than what exists? What is the unique insight or approach?
+6. **Market** — How large is the opportunity? What evidence exists for demand?
+7. **Risks** — What could go wrong? What assumptions are untested?
+
+Do not proceed until you have clear answers for at least stage, customer, problem, and solution. The other inputs can be developed during drafting.
 
 ### Phase 2: Draft the Press Release
 
@@ -173,7 +189,7 @@ Append the FAQ, risk assessment, and feature appendix sections to the `.tex` fil
 
 Invoke the `peer-reviewer` agent to critically evaluate the completed draft. Use the Task tool with `subagent_type: "prfaq:peer-reviewer"`, passing the path to the `.tex` file.
 
-The peer reviewer reads the draft, loads all reference guides (including the Kahneman decision quality framework), checks available evidence in `./research/` and via web search, and returns structured feedback: critical issues, warnings, strengths, and recommendations.
+The peer reviewer reads the draft, loads all reference guides (including the Kahneman decision quality framework), checks available evidence in `./research/` and via web search, and returns structured feedback: critical issues, warnings, strengths, and recommendations. The reviewer reads `\prfaqstage{}` from the document and calibrates its evidence expectations accordingly — see the Stage Calibration sections in each reference guide.
 
 **Resolution loop:**
 
