@@ -45,9 +45,11 @@ If the user explicitly asks to start a new PR/FAQ (not revise), proceed to the f
 
 ## Workflow
 
-### Stage Detection
+### Stage and Version Detection
 
-When working with an existing document (revise mode), read the `.tex` file and extract the stage via `\prfaqstage{value}`. Valid stages: **hypothesis**, **validated**, **growth**. If absent, assume hypothesis.
+When working with an existing document (revise mode), read the `.tex` file and extract:
+- **Stage** via `\prfaqstage{value}`. Valid stages: **hypothesis**, **validated**, **growth**. If absent, assume hypothesis.
+- **Version** via `\prfaqversion{major}{minor}`. If absent, add `\prfaqversion{1}{0}` to the preamble.
 
 Stage affects evidence expectations throughout the workflow:
 - **Hypothesis** — Pre-validation. No primary customer data required. Logical consistency and testable assumptions matter most. Fictional customer quotes expected. `[CITATION NEEDED]` markers are acknowledged gaps, not failures.
@@ -126,7 +128,7 @@ Write each section of the press release using the user's discovery answers:
 7. **Spokesperson quote** — A fictional internal quote explaining vision and design philosophy
 8. **Call to action** — Where to go, when available, pricing model
 
-Write the LaTeX content into a `.tex` file in the user's project directory (default: `prfaq.tex` in the project root, or a path the user specifies). Replace all placeholder text in the template with generated content. Uncomment the `\addbibresource` line in the preamble and set it to the `.bib` filename.
+Write the LaTeX content into a `.tex` file in the user's project directory (default: `prfaq.tex` in the project root, or a path the user specifies). Replace all placeholder text in the template with generated content. Uncomment the `\addbibresource` line in the preamble and set it to the `.bib` filename. Set `\prfaqversion{1}{0}` — initial generation is always v1.0.
 
 When writing any factual claim — market sizes, statistics, customer behaviors, competitor capabilities, framework attributions — use `\cite{key}` referencing the corresponding `.bib` entry. If a claim has no source, write `[CITATION NEEDED]` as a visible marker and flag it for the user during review.
 
