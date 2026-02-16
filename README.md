@@ -13,7 +13,7 @@ Nine commands form a complete product-thinking workflow:
 | Command | What it does |
 |---------|-------------|
 | `/prfaq` | Generate a new PR/FAQ from scratch (or revise an existing one) |
-| `/prfaq:import` | Import an existing document into the PR/FAQ template with research and review |
+| `/prfaq:import` | Import an existing document and launch the full `/prfaq` workflow with extracted content |
 | `/prfaq:feedback` | Apply pointed feedback — traces cascading effects and surgically redrafts |
 | `/prfaq:meeting` | Amazon-style review meeting with you and four agentic personas |
 | `/prfaq:meeting-hive` | Autonomous meeting — personas debate and decide without you moderating |
@@ -93,7 +93,7 @@ For a new document, the skill walks you through six phases:
 /prfaq:import path/to/existing-document.md
 ```
 
-Already have a PR/FAQ draft, product brief, or pitch deck? Import converts any document into the PR/FAQ template. It extracts your ideas, rewrites them in Working Backwards format, researches factual claims, compiles a PDF, and runs peer review. Sections the source document doesn't cover get `[TODO]` placeholders so you know exactly what to fill in next.
+Already have a PR/FAQ draft, product brief, or pitch deck? Import parses your document, extracts the ideas, and launches the full `/prfaq` generation workflow with that content as a head start. You confirm and refine each section — the same interactive process, just faster because your existing thinking is pre-loaded.
 
 Accepts `.md`, `.txt`, and `.pdf` files, or paste text directly as the argument.
 

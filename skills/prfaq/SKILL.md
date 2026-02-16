@@ -241,7 +241,7 @@ Present the assessment honestly. Identify the weakest sections and suggest speci
 
 ## Related Commands
 
-- **`/prfaq:import`** — Import an existing document (markdown, text, PDF) into the PR/FAQ template. Extracts content, maps to Working Backwards structure, researches claims, compiles PDF, and runs peer review. Accepts any product document and guides it toward PR/FAQ format. Gaps get `[TODO]` placeholders.
+- **`/prfaq:import`** — Import an existing document (markdown, text, PDF) and launch the full `/prfaq` workflow with extracted content as a head start. Parses the source, maps ideas to discovery inputs, confirms with the user, then runs the same generation pipeline (research, draft, review, compile). The source accelerates the conversation — it does not bypass it.
 
 After completing a PR/FAQ, the user can stress-test it with these commands:
 
