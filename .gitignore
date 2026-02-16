@@ -10,3 +10,4 @@
 *.fls
 *.fdb_latexmk
 .DS_Store
+.claude/*.local.md
