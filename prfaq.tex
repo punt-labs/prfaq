@@ -81,7 +81,7 @@
 % Tracks iteration count. Major for structural changes, minor for feedback edits.
 % /prfaq:feedback auto-increments after each application.
 \newcommand{\prfaqversion}[2]{\def\theprfaqmajor{#1}\def\theprfaqminor{#2}}
-\prfaqversion{2}{1}  % v2.1 — stage correction (hypothesis), future dateline, restored customer quote, TAM segments, validation next-step FAQ
+\prfaqversion{2}{2}  % v2.2 — fix overfull hbox (curl URLs on own line), fix /prfaq:rate description, update validation phases
 
 % ── Header/footer ────────────────────────────────────────────────────────────
 \usepackage{fancyhdr}
@@ -217,11 +217,17 @@ After review and debate, \texttt{/prfaq:feedback} takes pointed direction --- ``
 
 \prsection{Getting Started}
 
-Install with one command: \texttt{curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/main/install.sh | bash}. No account required, no subscription, no configuration. Then follow the workflow:
+Install with one command --- no account required, no subscription, no configuration:
+
+\smallskip
+{\small\noindent\texttt{curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/main/install.sh | bash}}
+\smallskip
+
+\noindent Then follow the workflow:
 
 \textbf{Generate.} Type \texttt{/prfaq}. Claude asks discovery questions about the target customer, problem, differentiation, and business model, then drafts a complete PR/FAQ document. Within an hour, the user has a compiled PDF.
 
-\textbf{Stress-test.} Type \texttt{/prfaq:review} for automated peer review, \texttt{/prfaq:research} to find and cite evidence, and \texttt{/prfaq:rate} to evaluate against the four risks. Then type \texttt{/prfaq:meeting} to face a simulated review meeting with five agentic personas who challenge the document from every angle --- or \texttt{/prfaq:meeting-hive} for fully autonomous multi-agent debate.
+\textbf{Stress-test.} Type \texttt{/prfaq:review} for automated peer review and \texttt{/prfaq:research} to find and cite evidence. Then type \texttt{/prfaq:meeting} to face a simulated review meeting with four agentic personas who challenge the document from every angle --- or \texttt{/prfaq:meeting-hive} for fully autonomous multi-agent debate.
 
 \textbf{Iterate.} Type \texttt{/prfaq:feedback} followed by a directional instruction. The plugin traces cascading effects and surgically redrafts every affected section. Repeat until the document --- and the product idea --- is ready.
 
@@ -258,7 +264,13 @@ Install with one command: \texttt{curl -fsSL https://raw.githubusercontent.com/p
 \end{faqpair}
 
 \begin{faqpair}{How do I get started?}
-  Run the one-line installer (\texttt{curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/main/install.sh | bash}), then type \texttt{/prfaq} in any Claude Code session. The plugin walks you through the entire process. No account, no API keys, no configuration. Installation takes under a minute.
+  Run the one-line installer, then type \texttt{/prfaq} in any Claude Code session:
+
+  \smallskip
+  {\small\texttt{curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/main/install.sh | bash}}
+  \smallskip
+
+  \noindent The plugin walks you through the entire process. No account, no API keys, no configuration. Installation takes under a minute.
 \end{faqpair}
 
 \begin{faqpair}{What does the output look like?}
@@ -328,9 +340,9 @@ Install with one command: \texttt{curl -fsSL https://raw.githubusercontent.com/p
 
   \textbf{Phase 1: Hands-on trials (weeks 1--4).} Ask 10--20 target users --- engineers and technical founders who already use Claude Code --- to install the plugin and use it on a real product idea. Recruit from three pools: (1) builders in the punt-labs network who have shipped side projects, (2) active posters in Claude Code community channels (Discord, Reddit r/ClaudeAI), and (3) indie hackers and technical co-founders sourced from Hacker News ``Show HN'' threads. The ask is simple: try \texttt{/prfaq} on your next idea, run the full workflow through \texttt{/prfaq:meeting} or \texttt{/prfaq:meeting-hive}, and tell us what happened. The trial must cover the meeting feature explicitly --- it is the primary differentiator and the feature with the most uncertainty about whether users find simulated cross-functional debate genuinely useful versus theatrical.
 
-  \textbf{Phase 2: Opt-in metrics (concurrent with trials).} With explicit user consent, participants can send anonymized usage metrics back to us: which commands were invoked (\texttt{/prfaq}, \texttt{/prfaq:import}, \texttt{/prfaq:feedback}, \texttt{/prfaq:meeting}, \texttt{/prfaq:meeting-hive}), how many feedback cycles per document, whether the PDF was compiled successfully, and session duration. No document content is transmitted --- only structural signals. This is strictly opt-in; the plugin's default is zero telemetry, and that does not change.
+  \textbf{Phase 2: Qualitative feedback (concurrent with trials).} The plugin already ships \texttt{/prfaq:rate} --- a quick 1--5 satisfaction rating with an optional comment. This is the first feedback signal. During the trial, we ask participants to rate after each completed document. No document content is transmitted; the plugin's default is zero telemetry, and that does not change.
 
-  \textbf{Phase 3: Structured feedback channel (exploratory).} We are exploring a \texttt{/prfaq:feedback-to-us} slash command that lets users send structured feedback --- a short form covering what worked, what did not, and whether the output was useful enough to share --- via a single API call. This reduces the friction of collecting qualitative data from terminal-native users who are unlikely to fill out a Google Form. The command would be opt-in, clearly labeled, and would transmit only the user's explicit responses. This is exploratory; we build it only if the Phase 1 trial reveals that users want to give feedback but the mechanics are too cumbersome.
+  \textbf{Phase 3: Structured feedback channel (exploratory).} If \texttt{/prfaq:rate} proves too shallow, we will explore a richer command (\texttt{/prfaq:feedback-to-us}) that captures structured feedback --- what worked, what did not, and whether the output was useful enough to share --- via a single API call. This reduces the friction of collecting qualitative data from terminal-native users who are unlikely to fill out a Google Form. The command would be opt-in, clearly labeled, and would transmit only the user's explicit responses. This is exploratory; we build it only if Phase~1 reveals that users want to give richer feedback than a 1--5 rating.
 
   \textbf{Signals we are looking for:}
   \begin{enumerate}[nosep]
@@ -359,7 +371,7 @@ Install with one command: \texttt{curl -fsSL https://raw.githubusercontent.com/p
 \subsubsection*{Technical}
 
 \begin{faqpair}{What are the major technical risks?}
-  The full V1 feature set is shipped, including the most technically ambitious features: \texttt{/prfaq:meeting} (v0.6.0) and \texttt{/prfaq:meeting-hive} (v0.8.0). The plugin is a set of markdown files plus a LaTeX template and a shell script. No backend, no API, no database. The LaTeX dependency requires users to have a TeX distribution installed, which is a mild friction point; the installer mitigates with platform-specific setup instructions.
+  The full V1 feature set is shipped, including the most technically ambitious features: multi-agent review meetings (\texttt{/prfaq:meeting} in v0.6.0, \texttt{/prfaq:meeting-hive} in v0.8.0). The plugin is a set of markdown files plus a LaTeX template and a shell script. No backend, no API, no database. The LaTeX dependency requires users to have a TeX distribution installed, which is a mild friction point; the installer mitigates with platform-specific setup instructions.
 
   Multi-agent orchestration --- the primary technical challenge --- is solved and shipping. The remaining refinement risk is persona fidelity across Claude model updates: each agent must stay in character, disagree substantively (not performatively), and produce debate that is genuinely useful rather than theatrical. If a model update degrades persona quality, the meeting commands could regress from ``simulated review meeting'' to ``five versions of the same generic feedback.'' Mitigation: prompt regression testing after model updates and persona calibration guided by user feedback.
 
