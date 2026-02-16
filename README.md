@@ -44,28 +44,30 @@ pip install quarry-mcp
 quarry install
 ```
 
-### Manual Installation
+
+## Quick Start
 
 ```bash
-git clone https://github.com/punt-labs/prfaq.git ~/.claude/plugins/local-plugins/plugins/prfaq
+# 1. Install
+curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/main/install.sh | bash
+
+# 2. Open your project in Claude Code
+cd ~/your-project
+claude
+
+# 3. (Optional) Add your existing research
+mkdir -p research
+# Drop customer interviews, survey data, market reports, or
+# competitive analysis into ./research/ — the plugin reads
+# .md, .txt, and .pdf files and treats them as primary sources.
+
+# 4. Generate your PR/FAQ
+/prfaq
 ```
 
-Then register the plugin in `~/.claude/plugins/local-plugins/.claude-plugin/marketplace.json` by adding an entry to the `plugins` array:
+The plugin walks you through a structured conversation, searches your research for evidence, and produces a compiled PDF. From there: `/prfaq:review` for peer review, `/prfaq:meeting` to stress-test, `/prfaq:feedback` to iterate, `/prfaq:streamline` to tighten.
 
-```json
-{
-  "name": "prfaq",
-  "description": "Amazon Working Backwards PR/FAQ process",
-  "version": "0.9.0",
-  "author": { "name": "Your Name", "email": "you@example.com", "organization": "Your Org" },
-  "source": "./plugins/prfaq",
-  "category": "development"
-}
-```
-
-The automated installer handles this registration automatically.
-
-## Usage
+## Command Reference
 
 ### Generate: `/prfaq`
 
@@ -256,6 +258,25 @@ The typical workflow is: **generate** → **review** → **meeting** → **feedb
 6. `/prfaq:rate` when you're done — helps us improve the plugin
 
 Each step produces a compiled PDF. The document improves with each cycle.
+
+## Manual Installation
+
+```bash
+git clone https://github.com/punt-labs/prfaq.git ~/.claude/plugins/local-plugins/plugins/prfaq
+```
+
+Then register the plugin in `~/.claude/plugins/local-plugins/.claude-plugin/marketplace.json` by adding an entry to the `plugins` array:
+
+```json
+{
+  "name": "prfaq",
+  "description": "Amazon Working Backwards PR/FAQ process",
+  "version": "0.9.0",
+  "author": { "name": "Your Name", "email": "you@example.com", "organization": "Your Org" },
+  "source": "./plugins/prfaq",
+  "category": "development"
+}
+```
 
 ## License
 
