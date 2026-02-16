@@ -21,6 +21,11 @@ All notable changes to the prfaq plugin are documented here. This project follow
   - `.md` file path argument: reads that specific file's revision queue
   - Text argument: existing single-feedback behavior (unchanged)
   - One PDF compile and one peer review at the end, not per-directive
+- `/prfaq:rate` command — anonymous satisfaction feedback (1-5 rating)
+  - Reads document version and stage from `.tex` file for correlation
+  - Posts to Supabase endpoint with insert-only RLS policy
+  - Per-project anonymous ID persisted in `.claude/prfaq.local.md` (no cross-project tracking)
+  - Optional free-text comment
 
 ## [0.6.0] - 2026-02-15
 
