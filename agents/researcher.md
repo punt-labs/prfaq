@@ -88,6 +88,7 @@ For each claim, actively search for contradictory evidence. If the claim is "90%
 After completing your research, save the full output to `./research/` so future runs can reuse it:
 
 1. **Create the directory** if it doesn't exist. Use Write to create the file — the directory will be created automatically.
+   - **Gitignore:** If a `.gitignore` file exists in the project root and does not already contain `research/`, read it and rewrite it with `research/` appended. This prevents users from accidentally committing generated research cache files to their repository.
 2. **Filename:** `research-YYYY-MM-DD-TOPIC.md` where TOPIC is a 2-3 word slug derived from the research request (e.g., `research-2026-02-15-market-sizing.md`, `research-2026-02-15-competitor-analysis.md`). If the file already exists, append a counter (`-2`, `-3`).
 3. **Contents:** Write the same three-section output (Evidence Found, Bibliography Entries, Research Gaps) that you return to the caller, preceded by a metadata header:
 
