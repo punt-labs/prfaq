@@ -22,10 +22,18 @@ Convert an existing document — any format, any structure — into a complete P
 
    If the user chooses to paste, wait for their next message and use that as the document content.
 
-2. **Extract and map content.** Read the input document and identify content that maps to the `/prfaq` discovery questions:
+2. **Check for existing PR/FAQ.** Use Glob to search for `prfaq.tex` in the project root. If found, ask via AskUserQuestion:
+   - **Overwrite** — replace the existing document with the import
+   - **Save as new file** — ask the user for a filename (default: `prfaq-imported.tex`)
+   - **Cancel**
+
+   Remember the chosen output path for step 5.
+
+3. **Extract and map content.** Read the input document and identify content that maps to the `/prfaq` discovery questions:
 
    | Discovery Input | Look for in source document |
    |---|---|
+   | **Stage** | Product maturity indicators — whether users exist, launch status, evidence level (hypothesis / validated / growth) |
    | **Customer** | Target user, persona, role, audience, market segment |
    | **Problem** | Pain points, challenges, current state, workarounds |
    | **Solution** | Product description, approach, how it works, key features |
@@ -45,13 +53,13 @@ Convert an existing document — any format, any structure — into a complete P
 
    **Handling non-PR/FAQ documents:** Accept any product-related document — pitch decks, product briefs, feature specs, strategy memos, meeting notes. Extract what's there; the generation workflow will fill what's missing.
 
-3. **Present the extraction and confirm.** Show the user a summary of what was extracted, organized by discovery input. For each input, show:
+4. **Present the extraction and confirm.** Show the user a summary of what was extracted, organized by discovery input. For each input, show:
    - **Found** — extracted content with a key snippet
    - **Gap** — not covered in source; the generation workflow will ask about this
 
    Ask: "Does this extraction look correct? Reply with any corrections, or say 'looks good' to proceed."
 
-4. **Launch the `/prfaq` generation workflow.** Continue directly into the full `/prfaq` skill workflow (from `SKILL.md`) with the extracted content as pre-populated context:
+5. **Launch the `/prfaq` generation workflow.** Proceed to execute the skill workflow defined in `skills/prfaq/SKILL.md`, starting from Phase 0. Skip revise-mode detection — this is a fresh generation from imported content, not a revision of any existing document. If step 2 chose a non-default output path, use that path for the `.tex` file instead of `prfaq.tex`. Carry the extracted content forward as pre-populated context:
 
    - **Phase 0 (Research Discovery)** — runs normally; the source document's factual claims become additional research targets
    - **Phase 1 (Discovery)** — for inputs marked **Found**, present the extracted content as the proposed answer and ask the user to confirm or refine. For inputs marked **Gap**, ask the discovery question normally. This replaces the blank-slate conversation with a guided confirmation.
