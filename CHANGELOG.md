@@ -4,6 +4,26 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-02-15
+
+### Added
+- `/prfaq:streamline` command — scalpel editor for late-stage document tightening
+  - Five-pass editing: redundancy across sections, weasel words, inflated phrases, throat-clearing, sentence length
+  - Targets 10–20% word count reduction without touching evidence, citations, customer quotes, risk assessments, or structural elements
+  - New `streamliner` agent with `precise-writing.md` reference guide (adapted from Vervago Precision Q+A and Amazon "Write Like an Amazonian")
+- Researcher agent caches findings to `./research/research-YYYY-MM-DD-TOPIC.md`
+  - Future runs reuse cached results instead of re-searching the web
+  - Deduplication via topic/verdict matching in prior research files
+  - Only persists when new web searches were performed
+
+### Fixed
+- Overfull hbox in template Problem section (`CURRENT WORKAROUND` placeholder too long for line — shortened to `WORKAROUND`)
+- Compile script now detects and reports overfull/underfull hbox warnings
+- Three factual claims in dogfood PR/FAQ corrected per researcher findings:
+  - Replit "75% never write code" → CEO pivot statement (verifiable)
+  - Opus "1.7× more than Sonnet" → 5× at list pricing (actual published ratio)
+  - "2–5M Claude Code users" → labeled as rough revenue/ARPU inference with uncertainty caveat
+
 ## [0.8.1] - 2026-02-15
 
 ### Added
@@ -146,7 +166,8 @@ First tagged release.
 - Plugin cache not clearing on reinstall (stale cache hid new agents)
 - FAQ paragraph indentation inconsistency in `faqpair` environment
 
-[Unreleased]: https://github.com/punt-labs/prfaq/compare/v0.8.1...HEAD
+[Unreleased]: https://github.com/punt-labs/prfaq/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/punt-labs/prfaq/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/punt-labs/prfaq/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/punt-labs/prfaq/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/punt-labs/prfaq/compare/v0.6.0...v0.7.0

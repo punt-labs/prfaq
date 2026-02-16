@@ -56,7 +56,7 @@ Then register the plugin in `~/.claude/plugins/local-plugins/.claude-plugin/mark
 {
   "name": "prfaq",
   "description": "Amazon Working Backwards PR/FAQ process",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "author": { "name": "Your Name", "email": "you@example.com", "organization": "Your Org" },
   "source": "./plugins/prfaq",
   "category": "development"
@@ -163,7 +163,7 @@ Every document declares its stage via `\prfaqstage{hypothesis}`, `\prfaqstage{va
 - **validated** — customer interviews done, expects quantitative evidence and specific metrics
 - **growth** — post-launch, expects retention data, unit economics, scaling concerns
 
-All seven agents, the peer reviewer, and the meeting personas adjust their standards based on the document's stage.
+All eight agents, the peer reviewer, and the meeting personas adjust their standards based on the document's stage.
 
 ### Version Tracking
 

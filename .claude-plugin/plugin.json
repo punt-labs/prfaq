@@ -1,7 +1,7 @@
 {
   "name": "prfaq",
   "description": "Amazon Working Backwards PR/FAQ process — generate professional LaTeX documents for product discovery and decision-making",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "author": {
     "name": "punt-labs",
     "email": "hello@punt-labs.com"
