@@ -26,42 +26,22 @@ Seven commands form a complete product-thinking workflow:
 curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/main/install.sh | bash
 ```
 
-The installer clones the plugin, registers it with Claude Code, checks for a TeX distribution, and offers to install claude-flow for autonomous meetings. Restart Claude Code after installing.
+The installer handles everything: clones the plugin, registers it with Claude Code, offers to install a TeX distribution (~4 GB) for PDF compilation, and offers to install [claude-flow](https://github.com/ruvnet/claude-flow) for autonomous consensus meetings. It also prompts for your name, email, and organization. Restart Claude Code after installing.
 
-### Prerequisites
+### What the installer sets up
 
-The core output is a compiled PDF. This requires a TeX distribution (~4 GB) — the installer will offer to set one up:
+| Dependency | What it's for | Size | Required? |
+|-----------|---------------|------|-----------|
+| **TeX distribution** | Compiling the PDF — the core output you circulate and debate | ~4 GB | Yes (without it you only get raw `.tex` source) |
+| **[claude-flow](https://github.com/ruvnet/claude-flow)** | Hive-mind orchestration for `/prfaq:meeting-hive` | ~50 MB | Only for autonomous meetings (use `/prfaq:meeting` without it) |
+| **[quarry-mcp](https://github.com/jmf-pobox/quarry-mcp)** | Semantic search across your indexed documents during research | ~20 MB | No — enhances `/prfaq:research` but not required |
 
-```bash
-# macOS
-brew install --cask mactex
-
-# Ubuntu/Debian
-sudo apt install texlive-full
-```
-
-Without TeX, the plugin still generates `.tex` source files, but you won't get the PDF that you circulate and debate.
-
-### Required for `/prfaq:meeting-hive`: claude-flow
-
-The autonomous consensus meeting requires [claude-flow](https://github.com/ruvnet/claude-flow) for hive-mind orchestration. The installer will offer to install it:
-
-```bash
-npm install -g claude-flow
-```
-
-The installer also registers it as an MCP server in Claude Code. If you skip it during install, `/prfaq:meeting-hive` will not be available — use `/prfaq:meeting` for manual moderation instead.
-
-### Optional: quarry-mcp
-
-If you have [quarry-mcp](https://github.com/jmf-pobox/quarry-mcp) installed, the research agent will automatically search your indexed documents for evidence when writing or revising a PR/FAQ. Install it with:
+The installer offers to install TeX and claude-flow interactively. quarry-mcp is the only dependency you install separately if you want it:
 
 ```bash
 pip install quarry-mcp
 quarry install
 ```
-
-No additional configuration is needed — `quarry install` registers the MCP server with Claude Code.
 
 ### Manual Installation
 
