@@ -241,8 +241,11 @@ if command -v claude-flow &>/dev/null && command -v claude &>/dev/null; then
     ok "claude-flow MCP server already registered"
   else
     info "Registering claude-flow as MCP server..."
-    claude mcp add claude-flow -- claude-flow mcp start
-    ok "claude-flow MCP server registered"
+    if claude mcp add claude-flow -- claude-flow mcp start 2>/dev/null; then
+      ok "claude-flow MCP server registered"
+    else
+      warn "Could not register claude-flow MCP server (run outside Claude Code to register)"
+    fi
   fi
 fi
 
