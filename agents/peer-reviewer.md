@@ -46,6 +46,21 @@ Load the evaluation frameworks. Read these reference guides:
 
 Then read the .tex file to review. If no specific file is provided, search for `prfaq.tex` in the project root using Glob.
 
+## Stage Calibration
+
+Extract `\prfaqstage{value}` from the `.tex` preamble. If absent, assume `hypothesis`. The stage calibrates your evidence expectations — it does not lower your standards for intellectual honesty, only for what evidence is available:
+
+| Expectation | Hypothesis | Validated | Growth |
+|-------------|-----------|-----------|--------|
+| Customer evidence | Fictional quotes OK; flag if no validation plan | Real interviews expected; fictional quotes flagged | Usage data and retention metrics expected |
+| TAM numbers | Range estimates with stated assumptions OK | Bottoms-up estimates with cited sources expected | Actuals from existing market presence expected |
+| `[CITATION NEEDED]` markers | Acknowledged gaps, not failures | Should be shrinking; flag if critical claims still uncited | Should not appear on business-critical claims |
+| Risk ratings | May be based on judgment; flag if all Low | Should reflect real evidence; mismatches are warnings | Must be data-backed; mismatches are critical |
+| Unit economics | Projections with labeled assumptions OK | Should have some real-world data points | Must reflect actual operations |
+| Pre-mortem scenarios | Hypothesis-level scenarios acceptable | Should incorporate learnings from validation | Must address observed failure modes |
+
+**Key principle:** A hypothesis-stage document with strong evidence is excellent. A growth-stage document with hypothesis-level evidence is a problem. Stage sets the floor, not the ceiling.
+
 ## Evidence Gathering
 
 Before forming your assessment, gather available evidence:

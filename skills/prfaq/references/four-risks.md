@@ -116,3 +116,18 @@ After review, the PR/FAQ leads to one of these outcomes:
 | **Not viable** | Viability risk — economics, legal, or strategic conflict | Restructure the business model or kill |
 | **Deprioritized** | Good idea, wrong time — higher-priority work exists | Shelve with a trigger condition for re-evaluation |
 | **Iterate** | Promising but incomplete — specific sections need rework | Revise the PR/FAQ and re-present |
+
+## Stage Calibration
+
+The four risks framework applies at every stage, but which risks dominate shifts with product maturity (`\prfaqstage{}`):
+
+| Risk | Hypothesis | Validated | Growth |
+|------|-----------|-----------|--------|
+| **Value** | Primary risk. Is the problem real? Inferred demand OK if testable. | Should have interview data. Inferred-only demand is a warning. | Must have usage data. Demand should be measured, not claimed. |
+| **Usability** | Speculative. Getting Started describes intent, not tested flow. | Should reflect prototype testing. Three-step onboarding tested with users. | Must reflect real onboarding metrics (completion rate, time-to-value). |
+| **Feasibility** | Focus on identifying unknowns and spike plans. Architecture is directional. | Should have reference class data. Hard problems named with mitigation. | Must reflect build experience. Timeline based on actuals, not estimates. |
+| **Viability** | Projections with labeled assumptions. Unit economics framework OK without real numbers. | Should have some real data points (early pricing tests, cost observations). | Must reflect actual operations (real CAC, LTV, churn from live data). |
+
+**At hypothesis stage**, the most important signal is whether the author has identified the riskiest assumption and proposed a test for it — not whether they have evidence.
+
+**At growth stage**, the most important signal is whether the evidence actually supports the risk ratings — a "Low" rating with no supporting data is a critical issue.

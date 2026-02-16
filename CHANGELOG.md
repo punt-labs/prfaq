@@ -5,6 +5,12 @@ All notable changes to the prfaq plugin are documented here. This project follow
 ## [Unreleased]
 
 ### Added
+- Stage awareness via `\prfaqstage{}` command (hypothesis | validated | growth)
+  - LaTeX template defines `\prfaqstage{}` with `fancyhdr` header badge showing current stage
+  - Phase 1 discovery asks stage as the first question, sets it in the `.tex` preamble
+  - Peer reviewer, meeting personas, and all reference guides calibrate evidence expectations by stage
+  - Stage Calibration sections added to all 9 reference guides
+  - Defaults to `hypothesis` for backwards compatibility — existing documents work unchanged
 - `/prfaq:feedback` batch mode — auto-discovers `meeting-summary-*.md` files and applies all revision queue directives sequentially
   - Empty arguments: auto-discovers most recent meeting summary, offers to apply all directives
   - `.md` file path argument: reads that specific file's revision queue

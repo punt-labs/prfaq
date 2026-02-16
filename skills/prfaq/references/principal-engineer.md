@@ -119,3 +119,17 @@ The principal engineer should focus on three questions, in order:
 1. **What is the hardest technical problem, and is it acknowledged?** If the PR/FAQ glosses over it, the feasibility rating is too low.
 2. **Which decisions are irreversible, and are they deliberate?** Data models, multi-tenancy, encryption, ID schemes — these must be chosen consciously, not defaulted into.
 3. **What is the operational cost of running this for five years?** Build cost is a one-time expense. Operational cost compounds. If the PR/FAQ only estimates build cost, the viability analysis is incomplete.
+
+## Stage Calibration
+
+Feasibility expectations shift with document stage (`\prfaqstage{}`):
+
+| Area | Hypothesis | Validated | Growth |
+|------|-----------|-----------|--------|
+| **Architecture** | Directional. Identify the approach and key trade-offs. Detailed design not expected. | Should reflect prototype learnings. Trade-offs grounded in experience. | Must reflect actual architecture with observed performance characteristics. |
+| **Hard problems** | Name the unknowns. Propose spike plans. Acceptable to say "we don't know yet." | Hard problems should have mitigation plans informed by prototyping. | Hard problems should be solved or have proven workarounds. |
+| **Dependencies** | Identify major dependencies. Fallbacks are aspirational. | Dependencies should be tested or have confirmed availability. | Dependencies should have observed reliability data and SLAs. |
+| **Timeline** | Estimate with acknowledged uncertainty. No reference class expected but absence noted. | Should have reference class data from similar builds or from own prototyping velocity. | Must be based on measured team velocity and actual complexity. |
+| **Operational cost** | Order-of-magnitude estimate acceptable. "Infrastructure will cost roughly X/month at launch." | Should be informed by prototype infrastructure costs. | Must reflect actual operational costs with growth trajectory. |
+
+**At hypothesis stage**, the principal engineer's primary concern is whether the author has **identified** the hard problems — not whether they've solved them. Glossing over feasibility to focus on value is the anti-pattern to catch.
