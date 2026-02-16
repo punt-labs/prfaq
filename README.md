@@ -51,9 +51,8 @@ quarry install
 # 1. Install
 curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/main/install.sh | bash
 
-# 2. Open your project in Claude Code
+# 2. Navigate to your project
 cd ~/your-project
-claude
 
 # 3. (Optional) Add your existing research
 mkdir -p research
@@ -61,7 +60,8 @@ mkdir -p research
 # competitive analysis into ./research/ — the plugin reads
 # .md, .txt, and .pdf files and treats them as primary sources.
 
-# 4. Generate your PR/FAQ
+# 4. Launch Claude Code and generate your PR/FAQ
+claude
 /prfaq
 ```
 
