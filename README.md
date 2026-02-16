@@ -209,8 +209,8 @@ Each agent has a distinct role, loads specific reference guides, and produces st
 
 | Agent | Role | Used by |
 |-------|------|---------|
-| **peer-reviewer** | Adversarial review using Kahneman decision quality framework | `/prfaq:review`, auto-review in `/prfaq` and `/prfaq:feedback` |
-| **researcher** | Evidence search across local files, web, and quarry-mcp | `/prfaq:research`, Phase 0 of `/prfaq` |
+| **peer-reviewer** | Adversarial review using Kahneman decision quality framework | `/prfaq:review`, auto-review in `/prfaq`, `/prfaq:feedback`, `/prfaq:import` |
+| **researcher** | Evidence search across local files, web, and quarry-mcp | `/prfaq:research`, Phase 0 of `/prfaq`, `/prfaq:import` |
 | **feedback** | Cascading redraft engine — traces dependencies, surgically edits | `/prfaq:feedback` |
 | **meeting-engineer** (Wei) | Feasibility risk, irreversible decisions, technical honesty | `/prfaq:meeting`, `/prfaq:meeting-hive` |
 | **meeting-customer** (Priya) | Value risk, customer reality, concrete user scenarios | `/prfaq:meeting`, `/prfaq:meeting-hive` |
