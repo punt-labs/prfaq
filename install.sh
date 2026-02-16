@@ -295,9 +295,10 @@ fi
 
 header "Registration"
 
-# Determine defaults for author: git config > generic
+# Determine defaults: git config > generic
 DEFAULT_NAME="local"
 DEFAULT_EMAIL="local@localhost"
+DEFAULT_ORG=""
 
 MARKETPLACE_DIR="$(dirname "$MARKETPLACE")"
 if command -v git &>/dev/null; then
@@ -307,36 +308,73 @@ if command -v git &>/dev/null; then
   [[ -n "$GIT_EMAIL" ]] && DEFAULT_EMAIL="$GIT_EMAIL"
 fi
 
-if [[ -t 0 ]]; then
-  printf '\033[0;34m  Author name [%s]: \033[0m' "$DEFAULT_NAME"
-  read -r AUTHOR_NAME </dev/tty
-  [[ -z "$AUTHOR_NAME" ]] && AUTHOR_NAME="$DEFAULT_NAME"
-  printf '\033[0;34m  Author email [%s]: \033[0m' "$DEFAULT_EMAIL"
-  read -r AUTHOR_EMAIL </dev/tty
-  [[ -z "$AUTHOR_EMAIL" ]] && AUTHOR_EMAIL="$DEFAULT_EMAIL"
-else
-  AUTHOR_NAME="$DEFAULT_NAME"
-  AUTHOR_EMAIL="$DEFAULT_EMAIL"
+# Read existing values from marketplace.json if present (for defaults on re-run)
+if [[ -f "$MARKETPLACE" ]] && command -v jq &>/dev/null; then
+  PREV_NAME=$(jq -r '.owner.name // ""' "$MARKETPLACE")
+  PREV_EMAIL=$(jq -r '.owner.email // ""' "$MARKETPLACE")
+  PREV_ORG=$(jq -r '.owner.organization // ""' "$MARKETPLACE")
+  [[ -n "$PREV_NAME" && "$PREV_NAME" != "null" ]] && DEFAULT_NAME="$PREV_NAME"
+  [[ -n "$PREV_EMAIL" && "$PREV_EMAIL" != "null" ]] && DEFAULT_EMAIL="$PREV_EMAIL"
+  [[ -n "$PREV_ORG" && "$PREV_ORG" != "null" ]] && DEFAULT_ORG="$PREV_ORG"
 fi
-ok "Author: $AUTHOR_NAME <$AUTHOR_EMAIL>"
+
+# Always prompt — read from /dev/tty so it works in curl | bash
+printf '\033[0;34m  Your name [%s]: \033[0m' "$DEFAULT_NAME"
+read -r AUTHOR_NAME </dev/tty
+[[ -z "$AUTHOR_NAME" ]] && AUTHOR_NAME="$DEFAULT_NAME"
+
+printf '\033[0;34m  Your email [%s]: \033[0m' "$DEFAULT_EMAIL"
+read -r AUTHOR_EMAIL </dev/tty
+[[ -z "$AUTHOR_EMAIL" ]] && AUTHOR_EMAIL="$DEFAULT_EMAIL"
+
+if [[ -n "$DEFAULT_ORG" ]]; then
+  printf '\033[0;34m  Organization [%s]: \033[0m' "$DEFAULT_ORG"
+else
+  printf '\033[0;34m  Organization: \033[0m'
+fi
+read -r AUTHOR_ORG </dev/tty
+[[ -z "$AUTHOR_ORG" ]] && AUTHOR_ORG="$DEFAULT_ORG"
+
+if [[ -n "$AUTHOR_ORG" ]]; then
+  ok "Author: $AUTHOR_NAME <$AUTHOR_EMAIL> ($AUTHOR_ORG)"
+else
+  ok "Author: $AUTHOR_NAME <$AUTHOR_EMAIL>"
+fi
 
 # ── Create or update marketplace.json ────────────────────────────────────────
 
 if [[ ! -f "$MARKETPLACE" ]]; then
   info "Creating marketplace.json..."
   mkdir -p "$MARKETPLACE_DIR"
-  if command -v jq &>/dev/null; then
+fi
+
+# Always update marketplace owner with current registration info
+if command -v jq &>/dev/null; then
+  if [[ ! -f "$MARKETPLACE" ]]; then
     jq -n \
       --arg name "$AUTHOR_NAME" \
       --arg email "$AUTHOR_EMAIL" \
+      --arg org "$AUTHOR_ORG" \
       '{
         "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
         "name": "local",
         "description": "Local plugins",
-        "owner": {"name": $name, "email": $email},
+        "owner": {"name": $name, "email": $email, "organization": $org},
         "plugins": []
       }' > "$MARKETPLACE"
+    ok "Created $MARKETPLACE"
   else
+    TMPFILE="$(mktemp)"
+    jq --arg name "$AUTHOR_NAME" \
+       --arg email "$AUTHOR_EMAIL" \
+       --arg org "$AUTHOR_ORG" \
+       '.owner = {"name": $name, "email": $email, "organization": $org}' \
+       "$MARKETPLACE" > "$TMPFILE"
+    mv "$TMPFILE" "$MARKETPLACE"
+    ok "Updated marketplace owner"
+  fi
+else
+  if [[ ! -f "$MARKETPLACE" ]]; then
     cat > "$MARKETPLACE" <<MANIFEST
 {
   "\$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
@@ -344,13 +382,16 @@ if [[ ! -f "$MARKETPLACE" ]]; then
   "description": "Local plugins",
   "owner": {
     "name": "$AUTHOR_NAME",
-    "email": "$AUTHOR_EMAIL"
+    "email": "$AUTHOR_EMAIL",
+    "organization": "$AUTHOR_ORG"
   },
   "plugins": []
 }
 MANIFEST
+    ok "Created $MARKETPLACE"
+  else
+    warn "jq not found — cannot update marketplace owner"
   fi
-  ok "Created $MARKETPLACE"
 fi
 
 if grep -q "\"$PLUGIN_NAME\"" "$MARKETPLACE" 2>/dev/null; then
@@ -364,10 +405,11 @@ if grep -q "\"$PLUGIN_NAME\"" "$MARKETPLACE" 2>/dev/null; then
          --arg desc "$PLUGIN_DESCRIPTION" \
          --arg author_name "$AUTHOR_NAME" \
          --arg author_email "$AUTHOR_EMAIL" \
+         --arg author_org "$AUTHOR_ORG" \
          '(.plugins[] | select(.name == $name)) |= . + {
            "version": $version,
            "description": $desc,
-           "author": {"name": $author_name, "email": $author_email}
+           "author": {"name": $author_name, "email": $author_email, "organization": $author_org}
          }' "$MARKETPLACE" > "$TMPFILE"
       mv "$TMPFILE" "$MARKETPLACE"
       ok "Updated marketplace entry: $CURRENT_VERSION → $PLUGIN_VERSION"
@@ -385,11 +427,12 @@ else
        --arg desc "$PLUGIN_DESCRIPTION" \
        --arg author_name "$AUTHOR_NAME" \
        --arg author_email "$AUTHOR_EMAIL" \
+       --arg author_org "$AUTHOR_ORG" \
        '.plugins += [{
          "name": $name,
          "description": $desc,
          "version": $version,
-         "author": {"name": $author_name, "email": $author_email},
+         "author": {"name": $author_name, "email": $author_email, "organization": $author_org},
          "source": ("./plugins/" + $name),
          "category": "development"
        }]' "$MARKETPLACE" > "$TMPFILE"
