@@ -72,7 +72,7 @@ Before asking the user any questions, look for primary research that should grou
    - Ask the user: "Do you have primary research — customer interviews, survey data, market analysis, competitive intelligence, or usage analytics — that should inform this PR/FAQ? If so, you can place files in `./research/` or paste key findings directly."
    - If the user provides data inline, capture and organize it the same way.
 
-4. **Invoke the researcher agent.** Use the Task tool with `subagent_type: "prfaq:researcher"`. Pass the user's product description and any specific claims or topics to investigate. The researcher autonomously discovers `./research/` files, searches the web, and queries any available MCP data providers (quarry-mcp, financial data servers, etc.).
+4. **Invoke the researcher agent.** Use the Task tool with `subagent_type: "prfaq:researcher"`. Pass the user's product description and any specific claims or topics to investigate. The researcher autonomously discovers `./research/` files (including its own prior results), searches the web for claims not already cached, and queries any available MCP data providers (quarry-mcp, financial data servers, etc.). Results are persisted to `./research/` for future runs.
 
    The researcher returns three sections:
    - **Evidence Found** — per-claim verdicts (supported/contradicted/unsupported) with sources and recommendations

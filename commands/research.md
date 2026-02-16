@@ -18,6 +18,8 @@ Invoke the `researcher` agent to find evidence for claims in a PR/FAQ document.
    - Bibliography entries ready to append to the `.bib` file
    - Research gaps where no evidence was found
 
+   The researcher automatically saves its findings to `./research/research-YYYY-MM-DD-TOPIC.md`. Future runs reuse cached results instead of re-searching the web.
+
 4. **Offer to update the document.** If the researcher found new sources:
    - Append new `.bib` entries to the bibliography file
    - Add `\cite{}` commands to the `.tex` file where claims now have sources

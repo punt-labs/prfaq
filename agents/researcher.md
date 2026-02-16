@@ -21,7 +21,7 @@ description: >
   assistant: "I'll use the researcher agent to search for supporting data."
   <commentary>Standalone invocation via natural language or /prfaq research command.</commentary>
   </example>
-tools: Read, Glob, Grep, WebSearch, WebFetch
+tools: Read, Write, Glob, Grep, WebSearch, WebFetch
 model: sonnet
 color: green
 ---
@@ -43,7 +43,9 @@ If given a .tex file, use Grep to extract all `[CITATION NEEDED]` markers and al
 
 Check for local research materials before going to the web:
 
-1. **`./research/` directory.** Use Glob to find `./research/**/*`. Read any `.md`, `.txt`, or `.pdf` files found. These are primary sources the user has collected — interviews, survey data, market reports, competitive analysis. Primary data always trumps web searches.
+1. **`./research/` directory.** Use Glob to find `./research/**/*`. Read any `.md`, `.txt`, or `.pdf` files found. These include both user-provided primary sources (interviews, survey data, market reports) and results from your own prior runs (files matching `research-*.md`). Primary data always trumps web searches.
+
+   **Check for prior research.** When reading `research-*.md` files, look for evidence verdicts that match the claims you're investigating. If a prior run already has a verdict for a claim (same topic, same or newer date), reuse that verdict and its sources instead of re-searching the web. Only re-search if: (a) no prior result exists, (b) the prior result is flagged as a research gap, or (c) the caller explicitly asks to refresh.
 
 2. **quarry-mcp (optional).** If a `search_documents` tool is available from a quarry MCP server, use it to search the user's indexed knowledge base. Query with key terms from each claim — e.g., `search_documents(query="venture capital term sheet provisions", limit=10)`. Use the `collection` parameter only if the user specifies a collection to search. When citing quarry results, include the `document_name` and `page_number` from the result metadata so the reader can find the original source.
 
@@ -80,6 +82,32 @@ Prefer primary > secondary > tertiary. Flag when only tertiary sources are avail
 ### 5. Generate Contradictory Evidence
 
 For each claim, actively search for contradictory evidence. If the claim is "90% of developers use AI tools," search for surveys that show lower adoption. Report both supporting and contradicting evidence. This is truth-seeking, not advocacy.
+
+### 6. Persist Results
+
+After completing your research, save the full output to `./research/` so future runs can reuse it:
+
+1. **Create the directory** if it doesn't exist. Use Write to create the file — the directory will be created automatically.
+2. **Filename:** `research-YYYY-MM-DD-TOPIC.md` where TOPIC is a 2-3 word slug derived from the research request (e.g., `research-2026-02-15-market-sizing.md`, `research-2026-02-15-competitor-analysis.md`). If the file already exists, append a counter (`-2`, `-3`).
+3. **Contents:** Write the same three-section output (Evidence Found, Bibliography Entries, Research Gaps) that you return to the caller, preceded by a metadata header:
+
+```markdown
+# Research: [brief description of what was researched]
+**Date:** YYYY-MM-DD
+**Request:** [the original prompt — claim, topic, or .tex file path]
+**Claims investigated:** N
+
+## Evidence Found
+[... same as output format below ...]
+
+## Bibliography Entries
+[... biblatex entries ...]
+
+## Research Gaps
+[... gaps ...]
+```
+
+This file becomes a local source for future runs. Do not persist results that consist entirely of reused prior research — only save when new web searches or new source evaluation was performed.
 
 ## Output Format
 
