@@ -259,7 +259,7 @@ After completing a PR/FAQ, the user can stress-test it with these commands:
 
 - **`/prfaq:vote`** — Go/no-go decision. Reads the document's own evidence (risk ratings, FAQs, citations, feature scope) and assesses three gates: (1) customer problem worth solving, (2) differentiated solution, (3) should we do this now. Binary verdict — GO or NO-GO — with evidence trail. Gate 1 is a hard prerequisite. Supports multi-document portfolio comparison.
 
-- **`/prfaq:rate`** — Anonymous satisfaction feedback. Quick 1-5 rating with optional comment to help improve the plugin.
+- **`/prfaq:feedback-to-us`** — Anonymous satisfaction feedback. Quick 1-5 rating with optional comment to help improve the plugin.
 
 **Typical flow:** `/prfaq` (or `/prfaq:import`) → `/prfaq:review` → `/prfaq:meeting` (or `:meeting-hive`) → `/prfaq:feedback` (repeat) → `/prfaq:streamline` (when ready to share) → `/prfaq:vote` (go/no-go decision) → `/prfaq:externalize` (when ready to announce).
 

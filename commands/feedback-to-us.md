@@ -1,8 +1,8 @@
 ---
-description: Rate your experience with the prfaq plugin (1-5)
+description: Tell us how the prfaq plugin is working for you (anonymous 1-5 feedback)
 ---
 
-# Rate Your Experience
+# Feedback to Us
 
 Send anonymous feedback to help improve the prfaq plugin. One question, one click.
 

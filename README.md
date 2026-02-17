@@ -22,7 +22,7 @@ Eleven commands form a complete product-thinking workflow:
 | `/prfaq:research` | Find evidence for claims using local files, web, and indexed documents |
 | `/prfaq:streamline` | Scalpel edit — remove redundancy, weasel words, and bloat (10–20% tighter) |
 | `/prfaq:vote` | Go/no-go decision — three-gate assessment with binary verdict and evidence trail |
-| `/prfaq:rate` | Rate your experience with the plugin (anonymous 1-5 feedback) |
+| `/prfaq:feedback-to-us` | Tell us how the plugin is working for you (anonymous 1-5 feedback) |
 
 ## Installation
 
@@ -300,7 +300,7 @@ The typical workflow is: **generate** (or **import**) → **review** → **meeti
 5. `/prfaq:streamline` tightens the final document — removes redundancy, weasel words, and bloat
 6. `/prfaq:vote` renders a go/no-go decision based on the document's evidence across three gates
 7. `/prfaq:externalize` turns the internal PR/FAQ into a customer-facing press release for the shipped version
-8. `/prfaq:rate` when you're done — helps us improve the plugin
+8. `/prfaq:feedback-to-us` when you're done — helps us improve the plugin
 
 Each step produces a compiled PDF. The document improves with each cycle.
 
