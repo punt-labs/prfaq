@@ -105,7 +105,7 @@ The three gates map to Cagan's four risks, reframed as actionable questions:
    - Which have the best risk-adjusted return?
    - Which are at a stage where further investment is premature (need validation first)?
 
-   Render: `Gate 3: GO` or `Gate 3: NO-GO` with reasoning. In single-doc mode without an alternatives FAQ, render `Gate 3: NO-GO (insufficient evidence)` and explain why.
+   Render: `Gate 3: GO` or `Gate 3: NO-GO` with reasoning. If no alternatives FAQ exists, flag the gap in the reasoning but assess based on available signals ("Why now?", feature discipline, stage appropriateness). A missing alternatives FAQ weakens the case but is not an automatic NO-GO — the other signals may be sufficient.
 
 8. **Render the overall verdict.**
 
@@ -135,13 +135,20 @@ The three gates map to Cagan's four risks, reframed as actionable questions:
    ```
 
    Overall verdict logic:
-   - Gate 1 NO-GO → overall **NO-GO** (hard prerequisite)
    - Any gate NO-GO → overall **NO-GO**
    - All three gates GO → overall **GO**
 
-   **Multi-document format:** Show each document's individual verdict first, then a portfolio comparison table:
+   **Multi-document format:** Show a condensed verdict for each document, then a portfolio comparison table:
 
    ```
+   DOCUMENT: [filename] (v[version], [stage] stage)
+   - Gate 1: [GO/NO-GO] — [1-sentence summary]
+   - Gate 2: [GO/NO-GO] — [1-sentence summary]
+   - Gate 3: [GO/NO-GO] — [1-sentence summary]
+   - Overall: [GO/NO-GO]
+
+   [repeat for each document]
+
    PORTFOLIO RANKING
 
    | Rank | Document | Stage | Gate 1 | Gate 2 | Gate 3 | Verdict |
