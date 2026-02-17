@@ -4,6 +4,8 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-02-16
+
 ### Added
 - `/prfaq:vote` command — go/no-go decision framework for PR/FAQ documents
   - Auto-saves verdict to `./meetings/vote-YYYY-MM-DD.md` alongside meeting summaries
@@ -199,7 +201,8 @@ First tagged release.
 - Plugin cache not clearing on reinstall (stale cache hid new agents)
 - FAQ paragraph indentation inconsistency in `faqpair` environment
 
-[Unreleased]: https://github.com/punt-labs/prfaq/compare/v0.9.1...HEAD
+[Unreleased]: https://github.com/punt-labs/prfaq/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/punt-labs/prfaq/compare/v0.9.1...v1.0.0
 [0.9.1]: https://github.com/punt-labs/prfaq/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/punt-labs/prfaq/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/punt-labs/prfaq/compare/v0.8.0...v0.8.1
