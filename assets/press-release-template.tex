@@ -1,0 +1,162 @@
+\documentclass[11pt,letterpaper]{article}
+
+% ── Geometry ──────────────────────────────────────────────────────────────────
+\usepackage[margin=1in]{geometry}
+
+% ── Pagination ────────────────────────────────────────────────────────────────
+\usepackage[all]{nowidow}
+\brokenpenalty=10000
+\raggedbottom
+
+% ── Fonts ─────────────────────────────────────────────────────────────────────
+\usepackage[T1]{fontenc}
+\usepackage{newpxtext}     % Palatino-based serif (TeX Gyre Pagella)
+\usepackage{newpxmath}     % Matching math font
+
+% ── Colors ────────────────────────────────────────────────────────────────────
+\usepackage[dvipsnames]{xcolor}
+\definecolor{SectionBlue}{HTML}{1B3A5C}
+\definecolor{AccentGray}{HTML}{4A4A4A}
+\definecolor{QuoteBorder}{HTML}{8B9DAF}
+\definecolor{BoxBg}{HTML}{F7F8FA}
+
+% ── Boxes ─────────────────────────────────────────────────────────────────────
+\usepackage[framemethod=tikz]{mdframed}
+
+% ── Lists ─────────────────────────────────────────────────────────────────────
+\usepackage{enumitem}
+
+% ── Hyperlinks ────────────────────────────────────────────────────────────────
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=SectionBlue,
+  urlcolor=SectionBlue,
+  pdfauthor={},
+  pdftitle={Press Release},
+  pdfsubject={Product Announcement},
+}
+
+% ── Section styling ──────────────────────────────────────────────────────────
+\usepackage{titlesec}
+\titleformat{\section}
+  {\Large\bfseries\color{SectionBlue}}
+  {}
+  {0pt}
+  {}
+
+% ── Header/footer ────────────────────────────────────────────────────────────
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\footnotesize\textcolor{AccentGray}{\thepage}}
+\renewcommand{\headrulewidth}{0pt}
+
+% ══════════════════════════════════════════════════════════════════════════════
+% Custom environments (subset of prfaq-template.tex for visual consistency)
+% ══════════════════════════════════════════════════════════════════════════════
+
+% ── \prsection{title} — styled press release section header ──────────────────
+\newcommand{\prsection}[1]{%
+  \vspace{1em}%
+  {\large\bfseries\color{SectionBlue}#1}%
+  \vspace{0.3em}\par%
+}
+
+% ── customerquote — indented, italic customer quote ──────────────────────────
+\newmdenv[
+  topline=false,
+  bottomline=false,
+  rightline=false,
+  linewidth=3pt,
+  linecolor=QuoteBorder,
+  backgroundcolor=BoxBg,
+  innerleftmargin=12pt,
+  innerrightmargin=12pt,
+  innertopmargin=8pt,
+  innerbottommargin=8pt,
+  skipabove=\baselineskip,
+  skipbelow=\baselineskip,
+]{customerquote}
+
+% ── spokespersonquote — indented spokesperson quote ──────────────────────────
+\newmdenv[
+  topline=false,
+  bottomline=false,
+  rightline=false,
+  linewidth=3pt,
+  linecolor=SectionBlue,
+  backgroundcolor=BoxBg,
+  innerleftmargin=12pt,
+  innerrightmargin=12pt,
+  innertopmargin=8pt,
+  innerbottommargin=8pt,
+  skipabove=\baselineskip,
+  skipbelow=\baselineskip,
+]{spokespersonquote}
+
+% ══════════════════════════════════════════════════════════════════════════════
+% Document
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{document}
+
+% ── Headline block ──────────────────────────────────────────────────────────
+\begin{center}
+  {\LARGE\bfseries\color{SectionBlue} HEADLINE: THE NEWS IN ONE SENTENCE} \\[0.8em]
+  {\large\color{AccentGray} Sub-headline with supporting detail, key numbers, or scope} \\[0.3em]
+  {\large\color{AccentGray} Optional second sub-headline for additional context}
+\end{center}
+
+\vspace{0.5em}
+
+% ── Dateline + Lede ─────────────────────────────────────────────────────────
+CITY, STATE --- DATE --- COMPANY today announced PRODUCT, which provides
+BENEFIT to TARGET CUSTOMER.
+
+\prsection{Problem}
+
+TARGET CUSTOMER struggles with PROBLEM. Today they cope by WORKAROUND,
+which leads to NEGATIVE OUTCOME.
+
+\prsection{Solution}
+
+PRODUCT solves this by APPROACH. Customers can now KEY ACTION, which means
+they experience BENEFIT.
+
+\prsection{Customer Quote}
+
+\begin{customerquote}
+\textit{``CUSTOMER TESTIMONIAL.''}
+
+\raggedleft --- \textbf{Customer Name}, Role at Company
+\end{customerquote}
+
+\prsection{Getting Started}
+
+Getting started with PRODUCT is simple. Customers FIRST STEP, then
+SECOND STEP, and within TIMEFRAME they can INITIAL VALUE.
+
+\prsection{Spokesperson Quote}
+
+\begin{spokespersonquote}
+``SPOKESPERSON STATEMENT ABOUT WHY THIS MATTERS.''
+
+\raggedleft --- \textbf{Spokesperson Name}, Title at Company
+\end{spokespersonquote}
+
+\prsection{Call to Action}
+
+To learn more and get started, visit URL. PRODUCT is available starting
+DATE with PRICING MODEL.
+
+% ── Boilerplate ─────────────────────────────────────────────────────────────
+\vspace{2em}
+\noindent\rule{\textwidth}{0.4pt}
+\vspace{0.5em}
+
+\noindent\textbf{About COMPANY}
+
+\noindent COMPANY DESCRIPTION.
+
+\end{document}

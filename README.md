@@ -8,12 +8,13 @@ A Claude Code plugin that brings Amazon's [Working Backwards](#what-is-working-b
 
 The output is a decision-making artifact, not a brainstorm. It is designed to be read, debated, and revised before committing to building anything.
 
-Nine commands form a complete product-thinking workflow:
+Ten commands form a complete product-thinking workflow:
 
 | Command | What it does |
 |---------|-------------|
 | `/prfaq` | Generate a new PR/FAQ from scratch (or revise an existing one) |
 | `/prfaq:import` | Import an existing document and launch the full `/prfaq` workflow with extracted content |
+| `/prfaq:externalize` | Generate an external press release from the PR/FAQ and CHANGELOG for a specific release |
 | `/prfaq:feedback` | Apply pointed feedback — traces cascading effects and surgically redrafts |
 | `/prfaq:meeting` | Amazon-style review meeting with you and four agentic personas |
 | `/prfaq:meeting-hive` | Autonomous meeting — personas debate and decide without you moderating |
@@ -96,6 +97,16 @@ For a new document, the skill walks you through six phases:
 Already have a PR/FAQ draft, product brief, or pitch deck? Import parses your document, extracts the ideas, and launches the full `/prfaq` generation workflow with that content as a head start. You confirm and refine each section — the same interactive process, just faster because your existing thinking is pre-loaded.
 
 Accepts `.md`, `.txt`, and `.pdf` files, or paste text directly as the argument.
+
+### Externalize: `/prfaq:externalize`
+
+```
+/prfaq:externalize [version]
+```
+
+Turn your internal PR/FAQ into a customer-facing press release for a specific release. Reads `prfaq.tex` and `CHANGELOG.md`, detects the release type (first release, major update, or minor/patch), extracts and rewrites the relevant sections for external audiences, and compiles a PDF.
+
+The output is scoped to what actually shipped — CHANGELOG entries and Feature Appendix shipped items, not aspirational scope. Customer quotes are flagged for replacement with real testimonials. Defaults to the latest CHANGELOG version; pass a version argument to target a specific release.
 
 ### Iterate: `/prfaq:feedback`
 
@@ -259,14 +270,15 @@ The PR/FAQ document includes:
 
 ## The Workflow
 
-The typical workflow is: **generate** (or **import**) → **review** → **meeting** → **feedback** → repeat → **streamline** → share.
+The typical workflow is: **generate** (or **import**) → **review** → **meeting** → **feedback** → repeat → **streamline** → **externalize** → share.
 
 1. `/prfaq` generates the initial document from a structured conversation — or `/prfaq:import` converts an existing document
 2. `/prfaq:review` gives you an adversarial peer review
 3. `/prfaq:meeting` stress-tests with four personas where you make each call — or `/prfaq:meeting-hive` for autonomous consensus via claude-flow
 4. `/prfaq:feedback` applies the meeting's decisions (or your own feedback) surgically
 5. `/prfaq:streamline` tightens the final document — removes redundancy, weasel words, and bloat
-6. `/prfaq:rate` when you're done — helps us improve the plugin
+6. `/prfaq:externalize` turns the internal PR/FAQ into a customer-facing press release for the shipped version
+7. `/prfaq:rate` when you're done — helps us improve the plugin
 
 Each step produces a compiled PDF. The document improves with each cycle.
 

@@ -243,6 +243,8 @@ Present the assessment honestly. Identify the weakest sections and suggest speci
 
 - **`/prfaq:import`** — Import an existing document (markdown, text, PDF) and launch the full `/prfaq` workflow with extracted content as a head start. Parses the source, maps ideas to discovery inputs, confirms with the user, then runs the same generation pipeline (research, draft, review, compile). The source accelerates the conversation — it does not bypass it.
 
+- **`/prfaq:externalize`** — Generate an external press release from the PR/FAQ and CHANGELOG for a specific release. Detects whether this is a first release, major update, or minor/patch and adapts tone, structure, and length accordingly. Scopes content to what actually shipped (CHANGELOG entries + Feature Appendix shipped items). Customer quotes are flagged for replacement with real testimonials.
+
 After completing a PR/FAQ, the user can stress-test it with these commands:
 
 - **`/prfaq:review`** — Static peer review. Returns a structured report (PASS/ITERATE/REJECT) with critical issues, warnings, and recommendations. Good for identifying problems.
@@ -254,7 +256,7 @@ After completing a PR/FAQ, the user can stress-test it with these commands:
 
 - **`/prfaq:rate`** — Anonymous satisfaction feedback. Quick 1-5 rating with optional comment to help improve the plugin.
 
-**Typical flow:** `/prfaq` (or `/prfaq:import`) → `/prfaq:review` → `/prfaq:meeting` (or `:meeting-hive`) → `/prfaq:feedback` (repeat) → `/prfaq:streamline` (when ready to share).
+**Typical flow:** `/prfaq` (or `/prfaq:import`) → `/prfaq:review` → `/prfaq:meeting` (or `:meeting-hive`) → `/prfaq:feedback` (repeat) → `/prfaq:streamline` (when ready to share) → `/prfaq:externalize` (when ready to announce).
 
 ## Additional Resources
 
