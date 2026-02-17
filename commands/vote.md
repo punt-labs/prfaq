@@ -110,6 +110,15 @@ The three gates map to Cagan's four risks, reframed as actionable questions:
    - Feature Appendix discipline — does the Won't Do list show deliberate scoping, or is Must Do bloated?
    - Stage appropriateness — is the investment ask calibrated to the evidence stage? (A growth-stage investment with hypothesis-stage evidence is a misallocation.)
 
+   **Investment proportionality test.** If the document states an investment ask (in a P&L FAQ, funding FAQ, or cost structure FAQ), extract two numbers:
+
+   1. **The stated investment ask** — the total amount requested.
+   2. **The minimum viable test cost** — for each kill criterion or validation milestone in the document, estimate the cheapest way to test it (e.g., phone calls with 5 users: ~$0; manual prototype for 15 users: ~$500; posting in 3 community groups: ~$0). Sum the cheapest viable tests for the next decision gate only, not the full roadmap.
+
+   If the ratio of investment ask to minimum viable test exceeds 5×, flag it: "The stated ask is [X]×  the estimated minimum spend to reach the next decision gate. The gap may fund team runway, overhead, or risk buffer — require explicit justification." This is a calibration signal, not an automatic NO-GO. At hypothesis stage, a large ratio is a stronger concern than at growth stage.
+
+   **Cost breakdown assessment.** Check whether the document separates validation costs from operating costs. If the investment ask bundles sprint/test direct costs with team salaries and runway, flag: "The ask bundles $X in direct test costs with $Y in team operating costs. These are different investment decisions — one funds learning, the other funds existence." If no breakdown is present, note: "No cost breakdown found. The vote cannot distinguish how much of the ask funds validation vs. team runway."
+
    **Multi-document mode:** Compare documents on the same criteria. For each document, extract the core value proposition, the stage, the risk profile, and the resource ask. Then rank by strength of evidence relative to investment required. The ranking should surface:
    - Which projects have the strongest evidence for customer demand?
    - Which have the best risk-adjusted return?
@@ -137,6 +146,8 @@ The three gates map to Cagan's four risks, reframed as actionable questions:
 
    Gate 3: Should We Do This Now — [GO / NO-GO]
      [bullet points of evidence]
+     Investment proportionality: [stated ask] vs [minimum viable test cost] ([ratio]×)
+     Cost breakdown: [test costs vs operating costs, or "No breakdown found."]
 
    Free Evidence Gaps:
      [2-3 near-zero-cost evidence-gathering actions the team could take, or "None identified."]
