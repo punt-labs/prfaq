@@ -8,7 +8,7 @@ A Claude Code plugin that brings Amazon's [Working Backwards](#what-is-working-b
 
 The output is a decision-making artifact, not a brainstorm. It is designed to be read, debated, and revised before committing to building anything.
 
-Ten commands form a complete product-thinking workflow:
+Eleven commands form a complete product-thinking workflow:
 
 | Command | What it does |
 |---------|-------------|
@@ -21,6 +21,7 @@ Ten commands form a complete product-thinking workflow:
 | `/prfaq:review` | Peer review against Working Backwards principles and cognitive biases |
 | `/prfaq:research` | Find evidence for claims using local files, web, and indexed documents |
 | `/prfaq:streamline` | Scalpel edit — remove redundancy, weasel words, and bloat (10–20% tighter) |
+| `/prfaq:vote` | Go/no-go decision — three-gate assessment with binary verdict and evidence trail |
 | `/prfaq:rate` | Rate your experience with the plugin (anonymous 1-5 feedback) |
 
 ## Installation
@@ -179,6 +180,26 @@ Searches local files, web sources, and indexed documents (via quarry-mcp if avai
 
 Scalpel editor for the final document. Removes redundancy across sections, eliminates weasel words and hollow adjectives, compresses inflated phrases, and applies the "so what" test to every sentence. Targets 10–20% length reduction without touching evidence, citations, customer quotes, risk assessments, or structural elements. Best used after iteration is complete, before sharing the document.
 
+### Decide: `/prfaq:vote`
+
+```
+/prfaq:vote [path/to/prfaq.tex ...or multiple paths for portfolio comparison]
+```
+
+Go/no-go decision. Reads the document's own evidence — risk ratings, FAQs, citations, feature scope — and assesses three gates:
+
+1. **Is this a customer problem worth solving?** (value + viability)
+2. **Do we have a differentiated solution?** (usability + feasibility)
+3. **Should we do this now?** (opportunity cost)
+
+Each gate renders a binary **GO** or **NO-GO** with 3-5 bullet points of evidence. Gate 1 is a hard prerequisite — NO-GO on the customer problem means overall NO-GO regardless of solution quality.
+
+**Single-document mode:** assesses one PR/FAQ. If no FAQ addresses opportunity cost or alternatives, the command flags the gap and prompts the team to add one ("What are the best alternatives for us to pursue if we do not build this?").
+
+**Multi-document mode:** pass multiple `.tex` paths for portfolio comparison. Each document gets an individual assessment, then a ranked portfolio view surfaces which projects have the strongest evidence relative to investment required.
+
+The vote also checks for prior deliberation — meeting summaries in `./meetings/` — and notes whether decisions from those meetings have been applied.
+
 ## Document Features
 
 ### Stage Awareness
@@ -270,15 +291,16 @@ The PR/FAQ document includes:
 
 ## The Workflow
 
-The typical workflow is: **generate** (or **import**) → **review** → **meeting** → **feedback** → repeat → **streamline** → **externalize** → share.
+The typical workflow is: **generate** (or **import**) → **review** → **meeting** → **feedback** → repeat → **streamline** → **vote** → **externalize** → share.
 
 1. `/prfaq` generates the initial document from a structured conversation — or `/prfaq:import` converts an existing document
 2. `/prfaq:review` gives you an adversarial peer review
 3. `/prfaq:meeting` stress-tests with four personas where you make each call — or `/prfaq:meeting-hive` for autonomous consensus via claude-flow
 4. `/prfaq:feedback` applies the meeting's decisions (or your own feedback) surgically
 5. `/prfaq:streamline` tightens the final document — removes redundancy, weasel words, and bloat
-6. `/prfaq:externalize` turns the internal PR/FAQ into a customer-facing press release for the shipped version
-7. `/prfaq:rate` when you're done — helps us improve the plugin
+6. `/prfaq:vote` renders a go/no-go decision based on the document's evidence across three gates
+7. `/prfaq:externalize` turns the internal PR/FAQ into a customer-facing press release for the shipped version
+8. `/prfaq:rate` when you're done — helps us improve the plugin
 
 Each step produces a compiled PDF. The document improves with each cycle.
 

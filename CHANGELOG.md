@@ -5,6 +5,14 @@ All notable changes to the prfaq plugin are documented here. This project follow
 ## [Unreleased]
 
 ### Added
+- `/prfaq:vote` command — go/no-go decision framework for PR/FAQ documents
+  - Three decision gates: customer problem worth solving (value + viability), differentiated solution (usability + feasibility), should we do this now (opportunity cost)
+  - Binary verdicts (GO / NO-GO) — no conditional escape hatch
+  - Gate 1 is a hard prerequisite: NO-GO on customer problem = overall NO-GO
+  - Multi-document portfolio comparison: rank projects by evidence strength relative to investment
+  - Single-document mode flags missing opportunity cost FAQ and prompts team to add one
+  - Reads prior meeting summaries for decision trail context
+  - Stage-calibrated evidence expectations (hypothesis accepts inference, growth demands data)
 - `/prfaq:externalize` command — generate a customer-facing press release from the PR/FAQ and CHANGELOG
   - Detects release type: first release (full press release), major update (what's new focus), minor/patch (short release note)
   - Scopes content to what actually shipped (CHANGELOG entries + Feature Appendix shipped items)
