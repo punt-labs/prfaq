@@ -6,7 +6,8 @@ description: >
   "press release FAQ", "test product value", "revise prfaq", "update prfaq",
   "add research to prfaq", "add FAQs", "run a meeting", "review meeting",
   "hive meeting", "autonomous meeting", "consensus meeting",
-  "stress test my prfaq", or wants to use the Amazon Working Backwards
+  "stress test my prfaq", "go/no-go decision", "should we build this",
+  "vote on prfaq", or wants to use the Amazon Working Backwards
   process to evaluate whether a product or feature is worth building.
 ---
 
@@ -256,9 +257,11 @@ After completing a PR/FAQ, the user can stress-test it with these commands:
 
 - **`/prfaq:streamline`** — Scalpel editor. Removes redundancy across sections, eliminates weasel words and hollow adjectives, compresses inflated phrases, and applies the "so what" test. Targets 10–20% length reduction without losing meaning. Best used after iteration is complete, before sharing.
 
+- **`/prfaq:vote`** — Go/no-go decision. Reads the document's own evidence (risk ratings, FAQs, citations, feature scope) and assesses three gates: (1) customer problem worth solving, (2) differentiated solution, (3) should we do this now. Binary verdict — GO or NO-GO — with evidence trail. Gate 1 is a hard prerequisite. Supports multi-document portfolio comparison.
+
 - **`/prfaq:rate`** — Anonymous satisfaction feedback. Quick 1-5 rating with optional comment to help improve the plugin.
 
-**Typical flow:** `/prfaq` (or `/prfaq:import`) → `/prfaq:review` → `/prfaq:meeting` (or `:meeting-hive`) → `/prfaq:feedback` (repeat) → `/prfaq:streamline` (when ready to share) → `/prfaq:externalize` (when ready to announce).
+**Typical flow:** `/prfaq` (or `/prfaq:import`) → `/prfaq:review` → `/prfaq:meeting` (or `:meeting-hive`) → `/prfaq:feedback` (repeat) → `/prfaq:streamline` (when ready to share) → `/prfaq:vote` (go/no-go decision) → `/prfaq:externalize` (when ready to announce).
 
 ## Additional Resources
 
