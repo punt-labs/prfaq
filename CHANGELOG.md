@@ -4,6 +4,14 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+### Added
+- `/prfaq:externalize` command — generate a customer-facing press release from the PR/FAQ and CHANGELOG
+  - Detects release type: first release (full press release), major update (what's new focus), minor/patch (short release note)
+  - Scopes content to what actually shipped (CHANGELOG entries + Feature Appendix shipped items)
+  - Customer quotes flagged for replacement with real testimonials
+  - Version-stamped output: `press-release-vX.Y.Z.tex` / `.pdf` (full semver)
+  - Standalone press release LaTeX template (`assets/press-release-template.tex`) with same visual styling as the PR/FAQ
+
 ## [0.9.1] - 2026-02-16
 
 ### Added
