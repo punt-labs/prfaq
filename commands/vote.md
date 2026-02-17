@@ -160,7 +160,18 @@ The three gates map to Cagan's four risks, reframed as actionable questions:
      [which projects to fund, which to defer, which to kill, and why]
    ```
 
-9. **Offer next steps.** Based on the verdict:
+9. **Save the verdict.** Write the full verdict output (everything from step 8) to `./meetings/vote-YYYY-MM-DD.md` using today's date. Use the Write tool. If a file with that name already exists, append a numeric suffix (e.g., `vote-2026-02-16-2.md`). The file should include a YAML-style header:
+
+   ```
+   # PR/FAQ Vote: Go/No-Go Decision
+   **Date:** YYYY-MM-DD
+   **Document:** [filename] (v[version], [stage] stage)
+   **Command:** /prfaq:vote
+   ```
+
+   Tell the user: `Verdict saved to ./meetings/vote-YYYY-MM-DD.md`
+
+10. **Offer next steps.** Based on the verdict:
 
    - **GO** — "This project clears all three gates. Consider running `/prfaq:externalize` to generate a ship-day press release when ready."
    - **NO-GO on Gate 1** — "The core value proposition needs work. Consider running `/prfaq:meeting` to stress-test the problem statement and customer evidence, then `/prfaq:feedback` to revise."

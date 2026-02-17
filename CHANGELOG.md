@@ -6,6 +6,7 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ### Added
 - `/prfaq:vote` command — go/no-go decision framework for PR/FAQ documents
+  - Auto-saves verdict to `./meetings/vote-YYYY-MM-DD.md` alongside meeting summaries
   - Three decision gates: customer problem worth solving (value + viability), differentiated solution (usability + feasibility), should we do this now (opportunity cost)
   - Binary verdicts (GO / NO-GO) — no conditional escape hatch
   - Gate 1 is a hard prerequisite: NO-GO on customer problem = overall NO-GO
@@ -19,6 +20,10 @@ All notable changes to the prfaq plugin are documented here. This project follow
   - Customer quotes flagged for replacement with real testimonials
   - Version-stamped output: `press-release-vX.Y.Z.tex` / `.pdf` (full semver)
   - Standalone press release LaTeX template (`assets/press-release-template.tex`) with same visual styling as the PR/FAQ
+
+### Changed
+- `/prfaq:rate` renamed to `/prfaq:feedback-to-us` — eliminates ambiguity with `/prfaq:vote`
+- Meeting summaries and vote output now live in `./meetings/` subdirectory
 
 ## [0.9.1] - 2026-02-16
 
