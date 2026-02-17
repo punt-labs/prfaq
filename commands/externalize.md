@@ -53,12 +53,12 @@ Convert the internal PR/FAQ decision document into a customer-facing press relea
 
    Ask: "Does this plan look right? Reply with any corrections, or say 'looks good' to proceed."
 
-6. **Generate the press release.** Write `press-release-vX.Y.tex` using the template at `${CLAUDE_PLUGIN_ROOT}/assets/press-release-template.tex` as the structural skeleton. Fill every placeholder with real content extracted and rewritten from the PR/FAQ and CHANGELOG.
+6. **Generate the press release.** Write `press-release-vX.Y.Z.tex` using the template at `${CLAUDE_PLUGIN_ROOT}/assets/press-release-template.tex` as the structural skeleton. Fill every placeholder with real content extracted and rewritten from the PR/FAQ and CHANGELOG.
 
    For **major updates**, adapt the template: replace `\prsection{Problem}` with `\prsection{What's New}`, replace `\prsection{Getting Started}` with `\prsection{Availability}`, and focus the solution on new capabilities rather than the full product.
 
    For **minor/patch releases**, simplify the template: headline, lede, a bulleted list of key improvements under `\prsection{Key Improvements}`, `\prsection{Availability}`, and boilerplate. Omit the customer quote, spokesperson quote, and problem/solution sections.
 
-7. **Compile to PDF.** Run `bash ${CLAUDE_PLUGIN_ROOT}/scripts/compile_prfaq.sh press-release-vX.Y.tex` to produce the PDF. Fix any compilation errors or overfull hbox warnings before presenting.
+7. **Compile to PDF.** Run `bash ${CLAUDE_PLUGIN_ROOT}/scripts/compile_prfaq.sh press-release-vX.Y.Z.tex` to produce the PDF. Fix any compilation errors or overfull hbox warnings before presenting.
 
 8. **Present and refine.** Show the user the compiled PDF. Remind them to replace the customer quote with a real testimonial if it was flagged. Offer refinement — they can adjust tone, add details, or request a different release type.
