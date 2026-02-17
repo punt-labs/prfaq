@@ -4,6 +4,8 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-02-17
+
 ### Changed
 - `/prfaq:vote` Gate 1 now decomposes evidence into three layers: problem evidence, solution evidence, and willingness-to-pay evidence — prevents conflation of "the problem exists" with "our solution resonates"
 - `/prfaq:vote` adds a free evidence pre-check (step 5): identifies near-zero-cost evidence the team could gather before committing investment
@@ -208,7 +210,8 @@ First tagged release.
 - Plugin cache not clearing on reinstall (stale cache hid new agents)
 - FAQ paragraph indentation inconsistency in `faqpair` environment
 
-[Unreleased]: https://github.com/punt-labs/prfaq/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/punt-labs/prfaq/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/punt-labs/prfaq/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/punt-labs/prfaq/compare/v0.9.1...v1.0.0
 [0.9.1]: https://github.com/punt-labs/prfaq/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/punt-labs/prfaq/compare/v0.8.1...v0.9.0
