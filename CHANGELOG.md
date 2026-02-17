@@ -8,6 +8,8 @@ All notable changes to the prfaq plugin are documented here. This project follow
 - `/prfaq:vote` Gate 1 now decomposes evidence into three layers: problem evidence, solution evidence, and willingness-to-pay evidence — prevents conflation of "the problem exists" with "our solution resonates"
 - `/prfaq:vote` adds a free evidence pre-check (step 5): identifies near-zero-cost evidence the team could gather before committing investment
 - `/prfaq:vote` Gate 3 adds a timing counterfactual: "what specifically changes if we wait 6 months?"
+- `/prfaq:vote` Gate 3 adds investment proportionality test: compares stated investment ask to minimum viable test cost, flags ratios exceeding 5× with explicit justification requirement
+- `/prfaq:vote` Gate 3 adds cost breakdown assessment: distinguishes validation costs from team operating costs when the document bundles them
 
 ## [1.0.0] - 2026-02-16
 
