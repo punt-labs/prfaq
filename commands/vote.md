@@ -47,27 +47,36 @@ The three gates map to Cagan's four risks, reframed as actionable questions:
    - `./meetings/meeting-summary-*.md` and `./meetings/meeting-hive-summary-*.md` — meeting decisions
    - If found, read the most recent one. Note: which hot spots were REVISE vs KEEP vs DEFER, and whether the revision queue has been applied (check if the `.tex` file's version is higher than at meeting time).
 
-5. **Assess Gate 1: Is this a customer problem worth solving?**
+5. **Free evidence pre-check.** Before assessing any gate, identify 2–3 pieces of evidence the team could gather for near-zero cost (under ~$500 / £500) that would materially reduce key unknowns. Examples: a manual test of one unit of the core operation (to get a real cost-per-unit), 5 switching-intent interviews with target users from the founder's network, a competitive audit where someone on the team uses the incumbent product for a week, or a recruitment feasibility test (email 3 communities and measure response). If significant unknowns are resolvable at near-zero cost and the document shows no evidence the team has tried, note this as a calibration signal: "The following unknowns could be resolved before committing investment: [list]. The team has not yet attempted these." Include this in the verdict output under a **Free Evidence Gaps** heading between the gates and the Decision Rationale.
+
+6. **Assess Gate 1: Is this a customer problem worth solving?**
 
    Evaluate value risk and viability risk together. The question is: *even if we build this perfectly, will customers buy it and will the business model sustain it?*
 
+   **Decompose the evidence.** A team can have strong evidence that the problem exists and zero evidence that their proposed solution resonates. Assess three layers separately and state which layers have evidence in the verdict:
+
+   - **Evidence for the problem** — does the target customer have this pain? (interviews, surveys, usage data, or at hypothesis stage: a specific problem description with a concrete validation plan)
+   - **Evidence for this solution** — has the proposed approach been tested with users? (prototype feedback, concept tests, competitive switching intent) — at hypothesis stage, a clear plan to test is acceptable, but note the gap explicitly
+   - **Evidence for willingness to pay** — has pricing or conversion been tested? (pricing surveys, comparable conversion rates, LOIs) — at hypothesis stage, a plausible model is acceptable, but note if WTP evidence comes from a different product than the one proposed
+
    **GO signals** (stage-calibrated):
    - Problem section describes a specific, quantifiable pain for a named customer segment
-   - Customer evidence FAQ cites primary data (interviews, surveys, usage patterns) — at hypothesis stage, a concrete validation plan is acceptable
+   - At least one evidence layer has primary data; remaining layers have concrete plans to gather evidence
    - TAM uses bottoms-up methodology with cited sources — at hypothesis stage, range estimates with stated methodology are acceptable
    - Unit economics are positive at modest scale (or viability lens is appropriate for the product type — see unit-economics.md "When Unit Economics Are Secondary")
    - Value risk and viability risk ratings are consistent with the evidence in the FAQs
 
    **NO-GO signals:**
    - Problem is generic or reverse-engineered from the solution (skills-forward thinking)
-   - No customer evidence and no validation plan
+   - No evidence at any layer and no validation plan
    - TAM is top-down only ("the global market is $X billion") with no bottoms-up grounding
    - Unit economics require implausible scale, or pricing is entirely TBD with no model
    - Value or viability risk rated Low but evidence in the FAQs contradicts the rating
+   - Quantitative evidence tests a different product than the one proposed, and this mismatch is not disclosed or accounted for
 
-   Render: `Gate 1: GO` or `Gate 1: NO-GO` with 3-5 bullet points of evidence.
+   Render: `Gate 1: GO` or `Gate 1: NO-GO` with 3-5 bullet points of evidence. Explicitly state which evidence layers are supported and which are gaps.
 
-6. **Assess Gate 2: Do we have a differentiated solution?**
+7. **Assess Gate 2: Do we have a differentiated solution?**
 
    Evaluate usability risk and feasibility risk together. The question is: *can we build something customers will actually use, and is it meaningfully different from what already exists?*
 
@@ -87,7 +96,7 @@ The three gates map to Cagan's four risks, reframed as actionable questions:
 
    Render: `Gate 2: GO` or `Gate 2: NO-GO` with 3-5 bullet points of evidence.
 
-7. **Assess Gate 3: Should we do this now?**
+8. **Assess Gate 3: Should we do this now?**
 
    Evaluate opportunity cost. The question is: *given everything else we could do with these resources, is this the best bet?*
 
@@ -97,6 +106,7 @@ The three gates map to Cagan's four risks, reframed as actionable questions:
 
    Even without the alternatives FAQ, assess what's available:
    - "Why now?" FAQ — is there a time-sensitive trigger (market shift, technology inflection, competitive vacuum)?
+   - **Timing counterfactual** — if the team delays 6 months, what specifically changes? If no competitor closes the window, no technology becomes unavailable, and no market shifts, the timing urgency is low and the opportunity cost of deploying capital now vs. later should weigh more heavily.
    - Feature Appendix discipline — does the Won't Do list show deliberate scoping, or is Must Do bloated?
    - Stage appropriateness — is the investment ask calibrated to the evidence stage? (A growth-stage investment with hypothesis-stage evidence is a misallocation.)
 
@@ -107,7 +117,7 @@ The three gates map to Cagan's four risks, reframed as actionable questions:
 
    Render: `Gate 3: GO` or `Gate 3: NO-GO` with reasoning. If no alternatives FAQ exists, flag the gap in the reasoning but assess based on available signals ("Why now?", feature discipline, stage appropriateness). A missing alternatives FAQ weakens the case but is not an automatic NO-GO — the other signals may be sufficient.
 
-8. **Render the overall verdict.**
+9. **Render the overall verdict.**
 
    **Single-document format:**
 
@@ -116,13 +126,20 @@ The three gates map to Cagan's four risks, reframed as actionable questions:
    Document: [filename] (v[version], [stage] stage)
 
    Gate 1: Customer Problem Worth Solving — [GO / NO-GO]
-     [bullet points of evidence]
+     Evidence layers:
+       Problem evidence: [strong/moderate/weak/none] — [1-sentence summary]
+       Solution evidence: [strong/moderate/weak/none] — [1-sentence summary]
+       Willingness-to-pay evidence: [strong/moderate/weak/none] — [1-sentence summary]
+     [additional bullet points of evidence]
 
    Gate 2: Differentiated Solution — [GO / NO-GO]
      [bullet points of evidence]
 
    Gate 3: Should We Do This Now — [GO / NO-GO]
      [bullet points of evidence]
+
+   Free Evidence Gaps:
+     [2-3 near-zero-cost evidence-gathering actions the team could take, or "None identified."]
 
    Prior Deliberation:
      [summary of meeting decisions if available, or "No meeting summaries found."]
@@ -160,7 +177,7 @@ The three gates map to Cagan's four risks, reframed as actionable questions:
      [which projects to fund, which to defer, which to kill, and why]
    ```
 
-9. **Save the verdict.** Write the full verdict output (everything from step 8) to `./meetings/vote-YYYY-MM-DD.md` using today's date. Use the Write tool. If a file with that name already exists, append a numeric suffix (e.g., `vote-2026-02-16-2.md`). The file should include a YAML-style header:
+10. **Save the verdict.** Write the full verdict output (everything from step 9) to `./meetings/vote-YYYY-MM-DD.md` using today's date. Use the Write tool. If a file with that name already exists, append a numeric suffix (e.g., `vote-2026-02-16-2.md`). The file should include a YAML-style header:
 
    ```
    # PR/FAQ Vote: Go/No-Go Decision
@@ -171,7 +188,7 @@ The three gates map to Cagan's four risks, reframed as actionable questions:
 
    Tell the user: `Verdict saved to ./meetings/vote-YYYY-MM-DD.md`
 
-10. **Offer next steps.** Based on the verdict:
+11. **Offer next steps.** Based on the verdict:
 
    - **GO** — "This project clears all three gates. Consider running `/prfaq:externalize` to generate a ship-day press release when ready."
    - **NO-GO on Gate 1** — "The core value proposition needs work. Consider running `/prfaq:meeting` to stress-test the problem statement and customer evidence, then `/prfaq:feedback` to revise."
