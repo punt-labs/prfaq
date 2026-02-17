@@ -1,0 +1,179 @@
+\documentclass[11pt,letterpaper]{article}
+
+% ── Geometry ──────────────────────────────────────────────────────────────────
+\usepackage[margin=1in]{geometry}
+
+% ── Pagination ────────────────────────────────────────────────────────────────
+\usepackage[all]{nowidow}
+\brokenpenalty=10000
+\raggedbottom
+
+% ── Fonts ─────────────────────────────────────────────────────────────────────
+\usepackage[T1]{fontenc}
+\usepackage{newpxtext}     % Palatino-based serif (TeX Gyre Pagella)
+\usepackage{newpxmath}     % Matching math font
+
+% ── Colors ────────────────────────────────────────────────────────────────────
+\usepackage[dvipsnames]{xcolor}
+\definecolor{SectionBlue}{HTML}{1B3A5C}
+\definecolor{AccentGray}{HTML}{4A4A4A}
+\definecolor{QuoteBorder}{HTML}{8B9DAF}
+\definecolor{BoxBg}{HTML}{F7F8FA}
+
+% ── Boxes ─────────────────────────────────────────────────────────────────────
+\usepackage[framemethod=tikz]{mdframed}
+
+% ── Lists ─────────────────────────────────────────────────────────────────────
+\usepackage{enumitem}
+
+% ── Hyperlinks ────────────────────────────────────────────────────────────────
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=SectionBlue,
+  urlcolor=SectionBlue,
+  pdfauthor={Punt Labs},
+  pdftitle={prfaq v1.0.0 --- Press Release},
+  pdfsubject={Product Announcement},
+}
+
+% ── Section styling ──────────────────────────────────────────────────────────
+\usepackage{titlesec}
+\titleformat{\section}
+  {\Large\bfseries\color{SectionBlue}}
+  {}
+  {0pt}
+  {}
+
+% ── Header/footer ────────────────────────────────────────────────────────────
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\footnotesize\textcolor{AccentGray}{\thepage}}
+\renewcommand{\headrulewidth}{0pt}
+
+% ══════════════════════════════════════════════════════════════════════════════
+% Custom environments
+% ══════════════════════════════════════════════════════════════════════════════
+
+% ── \prsection{title} — styled press release section header ──────────────────
+\newcommand{\prsection}[1]{%
+  \vspace{1em}%
+  {\large\bfseries\color{SectionBlue}#1}%
+  \vspace{0.3em}\par%
+}
+
+% ── customerquote — indented, italic customer quote ──────────────────────────
+\newmdenv[
+  topline=false,
+  bottomline=false,
+  rightline=false,
+  linewidth=3pt,
+  linecolor=QuoteBorder,
+  backgroundcolor=BoxBg,
+  innerleftmargin=12pt,
+  innerrightmargin=12pt,
+  innertopmargin=8pt,
+  innerbottommargin=8pt,
+  skipabove=\baselineskip,
+  skipbelow=\baselineskip,
+]{customerquote}
+
+% ── spokespersonquote — indented spokesperson quote ──────────────────────────
+\newmdenv[
+  topline=false,
+  bottomline=false,
+  rightline=false,
+  linewidth=3pt,
+  linecolor=SectionBlue,
+  backgroundcolor=BoxBg,
+  innerleftmargin=12pt,
+  innerrightmargin=12pt,
+  innertopmargin=8pt,
+  innerbottommargin=8pt,
+  skipabove=\baselineskip,
+  skipbelow=\baselineskip,
+]{spokespersonquote}
+
+% ══════════════════════════════════════════════════════════════════════════════
+% Document
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{document}
+
+% ── Headline block ──────────────────────────────────────────────────────────
+\begin{center}
+  {\LARGE\bfseries\color{SectionBlue} Free Claude Code Plugin Brings Amazon's\\Working Backwards PR/FAQ Process to the Terminal} \\[0.8em]
+  {\large\color{AccentGray} Punt Labs releases prfaq v1.0.0, an open-source tool with eleven commands\\that generate, review, stress-test, and iterate on product discovery documents} \\[0.3em]
+  {\large\color{AccentGray} Includes autonomous multi-agent review meetings\\where four AI personas debate the document's weak spots}
+\end{center}
+
+\vspace{0.5em}
+
+% ── Dateline + Lede ─────────────────────────────────────────────────────────
+SAN FRANCISCO --- February 16, 2026 --- Punt Labs today released \texttt{prfaq} v1.0.0, a free, open-source Claude Code plugin that guides engineers and founders through Amazon's Working Backwards PR/FAQ process to evaluate product ideas before building them. The plugin runs entirely inside the terminal where builders already work, turning a structured conversation into a professionally typeset decision document --- a mock press release with detailed FAQs, a four-risks assessment, and sourced citations --- compiled to PDF in under an hour.
+
+\prsection{Problem}
+
+AI coding tools let a single person build in a weekend what used to take a team a quarter. The bottleneck has shifted: the hard part is no longer building --- it is knowing what to build and why. Builders using Claude Code, Cursor, and similar tools ship fast, but most lack formal product training. They skip customer definition, competitive analysis, and unit economics --- and discover after weeks of building that the product does not resonate.
+
+A builder who wants product discipline has three options: hire a product manager they cannot afford, read a book and apply frameworks manually, or iterate blindly --- ship something, get feedback, ship again. Iteration works, but every cycle burns tokens, calendar time, and energy. Builders would develop stronger product sense if the frameworks were accessible in the workflow where they already build.
+
+\prsection{Solution}
+
+\texttt{prfaq} brings structured product thinking into the builder's environment. Type \texttt{/prfaq} in any Claude Code session to start a guided conversation: Claude asks about the target customer, the problem, the competitive landscape, and the business model. From the answers, it generates a complete PR/FAQ document --- a mock press release followed by external and internal FAQs, a risk assessment using Marty Cagan's four risks framework, and a scoped feature appendix --- compiled to a professional PDF with sourced citations.
+
+Eleven commands form a complete workflow:
+
+\begin{itemize}[nosep]
+  \item \textbf{Generate} (\texttt{/prfaq}) or \textbf{Import} (\texttt{/prfaq:import}) --- create a new document from scratch or convert an existing draft
+  \item \textbf{Review} (\texttt{/prfaq:review}) --- automated peer review against Working Backwards principles and a cognitive bias checklist
+  \item \textbf{Research} (\texttt{/prfaq:research}) --- find and cite evidence from local files, the web, and indexed documents
+  \item \textbf{Meeting} (\texttt{/prfaq:meeting}) --- simulated Amazon-style review with four agentic personas who challenge the document
+  \item \textbf{Autonomous meeting} (\texttt{/prfaq:meeting-hive}) --- the four personas debate and reach consensus without user moderation
+  \item \textbf{Feedback} (\texttt{/prfaq:feedback}) --- apply pointed direction and surgically redraft affected sections
+  \item \textbf{Streamline} (\texttt{/prfaq:streamline}) --- remove redundancy, weasel words, and bloat (10--20\% tighter)
+  \item \textbf{Vote} (\texttt{/prfaq:vote}) --- three-gate go/no-go decision with binary verdict and evidence trail
+  \item \textbf{Externalize} (\texttt{/prfaq:externalize}) --- generate a customer-facing press release for a shipped version
+\end{itemize}
+
+\prsection{Customer Quote}
+
+\begin{customerquote}
+\textit{``I tried prfaq on a new app I'm building. I ran the full workflow including the hive meeting, where four AI personas debated my document autonomously. It surfaced blind spots I hadn't considered --- questions about my competitive positioning and whether my pricing model made sense at the scale I was targeting. I went from a rough idea to a polished, cited PR/FAQ at version 2.1 in a single session. Pretty amazing. The hive version was awesome.''}
+
+\raggedleft --- \textbf{Eric Bowman}, Creator of Fl\"{o}Do
+\end{customerquote}
+
+\prsection{Getting Started}
+
+Install with one command --- no account, no subscription, no configuration:
+
+\smallskip
+{\small\noindent\texttt{curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/main/install.sh | bash}}
+\smallskip
+
+\noindent Then type \texttt{/prfaq} in any Claude Code session. Claude asks discovery questions about the target customer, problem, differentiation, and business model, then drafts a complete PR/FAQ document. Within an hour, the builder has a compiled PDF ready to share with co-founders, investors, or advisors.
+
+\prsection{Spokesperson Quote}
+
+\begin{spokespersonquote}
+``The people building products with AI make product decisions every day --- they just don't always have the frameworks. We built \texttt{prfaq} because the engineers and founders using Claude Code are also deciding what to build and for whom, and they deserve a tool that meets them where they work. The PR/FAQ process has been proven at Amazon for two decades. We didn't invent it. We made it accessible inside a terminal.''
+
+\raggedleft --- \textbf{Jim Freeman}, Founder, Punt Labs
+\end{spokespersonquote}
+
+\prsection{Call to Action}
+
+\texttt{prfaq} is free and open source, available now at \url{https://github.com/punt-labs/prfaq}. Install it, type \texttt{/prfaq}, and find out if your next product idea is worth building before you build it.
+
+% ── Boilerplate ─────────────────────────────────────────────────────────────
+\vspace{2em}
+\noindent\rule{\textwidth}{0.4pt}
+\vspace{0.5em}
+
+\noindent\textbf{About Punt Labs}
+
+\noindent Punt Labs builds open-source tools that bring structured product thinking to engineers and founders. Based in San Francisco, Punt Labs focuses on making proven product development frameworks accessible inside the workflows where builders already work. Learn more at \url{https://github.com/punt-labs}.
+
+\end{document}
