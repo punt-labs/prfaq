@@ -2,6 +2,10 @@
 
 A Working Backwards press release is a short document (typically one to two pages) written as if the product has already launched. It is written in the customer's language, not engineering jargon. Every sentence must earn its place.
 
+**This is a future press release.** The product PR/FAQ press release describes the world 6–12 months from now. The dateline is a future date. The customer quote is fictional — an aspirational portrait of the customer experience, not a real testimonial. The external FAQs answer questions a hypothetical customer *would* ask about a product that does not exist yet. All of this is by design. The evidence for whether this future is plausible lives in the internal FAQs and risk assessment, not in the press release.
+
+This is distinct from a **ship-day press release** (produced by `/prfaq:externalize`), which describes a product that has already shipped, uses today's date, and requires real customer testimonials before going to wire.
+
 ## Headline
 
 The news in one sentence. Written as a press release headline, not a product name. The headline announces what happened and why it matters.

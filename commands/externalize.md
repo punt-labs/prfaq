@@ -28,7 +28,7 @@ Convert the internal PR/FAQ decision document into a customer-facing press relea
 4. **Extract content.** Read the PR/FAQ and map it to press release sections:
 
    - **Headline, sub-headlines** — rewrite to announce the specific release, not the aspirational product vision. For updates, lead with what's new.
-   - **Lede** — dateline + announcement sentence. First release: introduce the product. Update: announce the new version and its headline capability.
+   - **Lede** — dateline + announcement sentence. **Use today's date** (not the PR/FAQ's future dateline — this is a ship-day press release about a real, shipped product). First release: introduce the product. Update: announce the new version and its headline capability.
    - **Problem** (first release only) — extract from the PR/FAQ's Problem section. Remove internal hedging and risk language.
    - **What's New** (updates only) — synthesize from the target version's CHANGELOG entries. Prioritize Added and Changed sections, but include Fixed entries if substantive. Omit Removed entries unless removal is the headline (e.g., a major simplification). If the CHANGELOG version has no content sections, ask the user to describe what's new. Group by user impact, not by implementation detail.
    - **Solution** — extract from the PR/FAQ's Solution section. Scope to what actually shipped: cross-reference the Feature Appendix's "Must Do" items with the CHANGELOG entries for the target version. Do not include planned or aspirational features.

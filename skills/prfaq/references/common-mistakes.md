@@ -31,7 +31,7 @@ These anti-patterns consistently undermine PR/FAQ quality. Check every draft aga
 **How it shows up in a PR/FAQ:**
 - No risks are rated "high"
 - Competitive analysis dismisses every competitor
-- Customer quote sounds like a testimonial, not a real person
+- Customer quote is generic or implausible — could come from anyone in any industry
 - Internal FAQs have only optimistic answers
 
 **The fix:** Add a "devil's advocate" pass. For every section, ask: "What would a skeptic say?" If you can't articulate the counter-argument, you don't understand the space well enough.
