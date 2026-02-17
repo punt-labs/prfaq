@@ -15,7 +15,7 @@ Convert the internal PR/FAQ decision document into a customer-facing press relea
 
    **a) Version specified** — `$ARGUMENTS` contains a version string (e.g., `v2.0`, `2.0`, `0.9.1`): target that version's CHANGELOG entry. If the version doesn't exist in the CHANGELOG, tell the user and list available versions.
 
-   **b) Empty** — default to the latest version in the CHANGELOG (the topmost `## [X.Y.Z]` entry that is not `[Unreleased]`).
+   **b) Empty** — default to the latest version in the CHANGELOG (the topmost `## [X.Y.Z]` entry that is not `[Unreleased]`). If the CHANGELOG has no versioned releases (only `[Unreleased]`), tell the user that externalize requires at least one versioned release and stop.
 
 3. **Detect the release type.** Read the full CHANGELOG to understand the product's release history. The release type determines the tone, structure, and length of the press release:
 
@@ -30,8 +30,8 @@ Convert the internal PR/FAQ decision document into a customer-facing press relea
    - **Headline, sub-headlines** — rewrite to announce the specific release, not the aspirational product vision. For updates, lead with what's new.
    - **Lede** — dateline + announcement sentence. First release: introduce the product. Update: announce the new version and its headline capability.
    - **Problem** (first release only) — extract from the PR/FAQ's Problem section. Remove internal hedging and risk language.
-   - **What's New** (updates only) — synthesize from the target version's CHANGELOG entries (Added, Changed sections). Group by user impact, not by implementation detail.
-   - **Solution** — extract from the PR/FAQ's Solution section. Scope to what actually shipped: cross-reference the Feature Appendix's "Shipped" or "Must Do" items with the CHANGELOG entries for the target version. Do not include planned or aspirational features.
+   - **What's New** (updates only) — synthesize from the target version's CHANGELOG entries. Prioritize Added and Changed sections, but include Fixed entries if substantive. Omit Removed entries unless removal is the headline (e.g., a major simplification). If the CHANGELOG version has no content sections, ask the user to describe what's new. Group by user impact, not by implementation detail.
+   - **Solution** — extract from the PR/FAQ's Solution section. Scope to what actually shipped: cross-reference the Feature Appendix's "Must Do" items with the CHANGELOG entries for the target version. Do not include planned or aspirational features.
    - **Customer quote** — extract from the PR/FAQ. Add a LaTeX comment `% TODO: Replace with a real customer testimonial` above the quote. Do not rewrite it — flag it for the user.
    - **Getting started** (first release) / **Availability** (updates) — extract from the PR/FAQ's Getting Started section. For updates, mention the upgrade path.
    - **Spokesperson quote** — extract from the PR/FAQ. Keep it authentic to the spokesperson's voice.
@@ -55,9 +55,9 @@ Convert the internal PR/FAQ decision document into a customer-facing press relea
 
 6. **Generate the press release.** Write `press-release-vX.Y.tex` using the template at `${CLAUDE_PLUGIN_ROOT}/assets/press-release-template.tex` as the structural skeleton. Fill every placeholder with real content extracted and rewritten from the PR/FAQ and CHANGELOG.
 
-   For **major updates**, replace the `\prsection{Problem}` with `\prsection{What's New}` and restructure accordingly.
+   For **major updates**, adapt the template: replace `\prsection{Problem}` with `\prsection{What's New}`, replace `\prsection{Getting Started}` with `\prsection{Availability}`, and focus the solution on new capabilities rather than the full product.
 
-   For **minor/patch releases**, use a simplified structure: headline, lede, a bulleted list of key improvements under `\prsection{Key Improvements}`, availability, and boilerplate. Omit the customer quote, spokesperson quote, and getting started sections.
+   For **minor/patch releases**, simplify the template: headline, lede, a bulleted list of key improvements under `\prsection{Key Improvements}`, `\prsection{Availability}`, and boilerplate. Omit the customer quote, spokesperson quote, and problem/solution sections.
 
 7. **Compile to PDF.** Run `bash ${CLAUDE_PLUGIN_ROOT}/scripts/compile_prfaq.sh press-release-vX.Y.tex` to produce the PDF. Fix any compilation errors or overfull hbox warnings before presenting.
 
