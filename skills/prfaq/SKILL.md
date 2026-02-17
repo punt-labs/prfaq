@@ -53,9 +53,11 @@ When working with an existing document (revise mode), read the `.tex` file and e
 - **Version** via `\prfaqversion{major}{minor}`. If absent, add `\prfaqversion{1}{0}` to the preamble.
 
 Stage affects evidence expectations throughout the workflow:
-- **Hypothesis** — Pre-validation. No primary customer data required. Logical consistency and testable assumptions matter most. Fictional customer quotes expected. `[CITATION NEEDED]` markers are acknowledged gaps, not failures.
-- **Validated** — Post-interviews or post-testing. Customer interviews and usability data expected. TAM should have real data sources. Risk ratings should reflect actual evidence, not assumptions.
+- **Hypothesis** — Pre-validation. No primary customer data required. Logical consistency and testable assumptions matter most. `[CITATION NEEDED]` markers are acknowledged gaps, not failures.
+- **Validated** — Post-interviews or post-testing. Customer interviews and usability data expected in the FAQs. TAM should have real data sources. Risk ratings should reflect actual evidence, not assumptions.
 - **Growth** — Existing product with users. All claims should be data-backed. Usage analytics, churn rates, and unit economics should come from real operations, not projections.
+
+The press release customer quote is **fictional at all stages** — it is an aspirational portrait of the customer experience, not a real testimonial. At hypothesis stage, it needs only to be plausible. At validated stage, it should be *informed by* interview insights. At growth stage, it should be *informed by* real usage patterns. The evidence for customer demand lives in the FAQ section, never in the press release quote. See `pr-structure.md` for details.
 
 ### Phase 0: Research Discovery
 

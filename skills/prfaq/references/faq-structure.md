@@ -4,7 +4,9 @@ The FAQ section is where the PR/FAQ earns its credibility. The press release sel
 
 ## External FAQs (Customer-Facing)
 
-External FAQs answer questions a real customer would ask. They are written in plain language, no jargon, no acronyms. If a customer would need a glossary, rewrite.
+External FAQs answer questions a customer would ask about this product. In a product PR/FAQ, the product does not exist yet — these are *hypothetical* questions from the target customer about a future product. They are written in the customer's voice as if the product has already launched (matching the press release's future framing). The answers should be concrete and specific, even though the product is aspirational.
+
+External FAQs are written in plain language, no jargon, no acronyms. If a customer would need a glossary, rewrite.
 
 ### Required Questions
 

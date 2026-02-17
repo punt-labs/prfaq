@@ -52,7 +52,7 @@ Extract `\prfaqstage{value}` from the `.tex` preamble. If absent, assume `hypoth
 
 | Expectation | Hypothesis | Validated | Growth |
 |-------------|-----------|-----------|--------|
-| Customer evidence | Fictional quotes OK; flag if no validation plan | Real interviews expected; fictional quotes flagged | Usage data and retention metrics expected |
+| Customer evidence | Fictional quotes OK; flag if no validation plan | Real interviews expected in FAQs; press release customer quote is still fictional (should be *informed by* interview insights) | Usage data and retention metrics expected in FAQs; press release customer quote is still fictional (should be *informed by* real usage patterns) |
 | TAM numbers | Range estimates with stated assumptions OK | Bottoms-up estimates with cited sources expected | Actuals from existing market presence expected |
 | `[CITATION NEEDED]` markers | Acknowledged gaps, not failures | Should be shrinking; flag if critical claims still uncited | Should not appear on business-critical claims |
 | Risk ratings | May be based on judgment; flag if all Low | Should reflect real evidence; mismatches are warnings | Must be data-backed; mismatches are critical |
