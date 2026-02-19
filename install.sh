@@ -10,6 +10,14 @@ PLUGINS_DIR="$HOME/.claude/plugins/local-plugins/plugins"
 MARKETPLACE="$HOME/.claude/plugins/local-plugins/.claude-plugin/marketplace.json"
 INSTALL_DIR="$PLUGINS_DIR/$PLUGIN_NAME"
 
+# --- Helpers (must be defined before first use) --------------------------------
+
+info()   { printf '\033[0;34m%s\033[0m\n' "$*"; }
+ok()     { printf '\033[0;32m  ✓ %s\033[0m\n' "$*"; }
+warn()   { printf '\033[0;33m  ⚠ %s\033[0m\n' "$*"; }
+fail()   { printf '\033[0;31m  ✗ %s\033[0m\n' "$*"; }
+header() { printf '\n\033[1m%s\033[0m\n' "$*"; }
+
 # Resolve the latest release tag (vX.Y.Z) via git ls-remote
 resolve_latest_tag() {
   git ls-remote --tags --sort=-v:refname "$REPO" 'v*' 2>/dev/null \
@@ -42,12 +50,6 @@ REQUIRED_PACKAGES=(
   changepage      # adjustwidth for indented FAQ answers
   biblatex        # Citation support
 )
-
-info()   { printf '\033[0;34m%s\033[0m\n' "$*"; }
-ok()     { printf '\033[0;32m  ✓ %s\033[0m\n' "$*"; }
-warn()   { printf '\033[0;33m  ⚠ %s\033[0m\n' "$*"; }
-fail()   { printf '\033[0;31m  ✗ %s\033[0m\n' "$*"; }
-header() { printf '\n\033[1m%s\033[0m\n' "$*"; }
 
 # Ask a yes/no question. Returns 0 for yes, 1 for no.
 ask() {
