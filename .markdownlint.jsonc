@@ -1,0 +1,26 @@
+{
+  // List indentation — nested lists in command files use intentional indentation
+  "MD007": false,
+  // Multiple blank lines — used for visual separation in prompts
+  "MD012": false,
+  // Disable line length — tables, URLs, and descriptions routinely exceed any limit
+  "MD013": false,
+  // Blanks around headings — prompt files use compact formatting
+  "MD022": false,
+  // Duplicate headings — repeated section names are expected in skill/agent files
+  "MD024": false,
+  // Ordered list prefix — FAQ numbering is intentional (5, 6, 7... not 1, 2, 3)
+  "MD029": false,
+  // Blanks around fences — prompt files embed code blocks inline
+  "MD031": false,
+  // Blanks around lists — prompt files use tight list formatting
+  "MD032": false,
+  // Emphasis as heading — reference docs use emphasis for attribution
+  "MD036": false,
+  // Fenced code language — example blocks in prompts don't always need a language
+  "MD040": false,
+  // First line heading — agent/skill prompts start with persona text, not headings
+  "MD041": false,
+  // Disable table column style — compact pipes are fine
+  "MD060": false
+}
