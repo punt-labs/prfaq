@@ -27,32 +27,56 @@ Eleven commands form a complete product-thinking workflow:
 ## Installation
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/4bfffe4/install.sh | sh
 ```
 
-The installer handles everything: clones the plugin, registers it with Claude Code, offers to install a TeX distribution (~4 GB) for PDF compilation, and offers to install [claude-flow](https://github.com/ruvnet/claude-flow) for autonomous consensus meetings. It also prompts for your name, email, and organization. Restart Claude Code after installing.
+<details>
+<summary>Manual install</summary>
 
-### What the installer sets up
+```bash
+claude plugin marketplace add punt-labs/claude-plugins
+claude plugin install prfaq@punt-labs
+```
+
+</details>
+
+<details>
+<summary>Verify before running</summary>
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/4bfffe4/install.sh -o install.sh
+shasum -a 256 install.sh
+cat install.sh
+sh install.sh
+```
+
+</details>
+
+The installer registers the Punt Labs marketplace and installs the plugin. It also checks for TeX dependencies needed for PDF output. Restart Claude Code after installing.
+
+### Optional Dependencies
 
 | Dependency | What it's for | Size | Required? |
 |-----------|---------------|------|-----------|
 | **TeX distribution** | Compiling the PDF — the core output you circulate and debate | ~4 GB | Yes (without it you only get raw `.tex` source) |
 | **[claude-flow](https://github.com/ruvnet/claude-flow)** | Hive-mind orchestration for `/prfaq:meeting-hive` | ~50 MB | Only for autonomous meetings (use `/prfaq:meeting` without it) |
-| **[quarry-mcp](https://github.com/jmf-pobox/quarry-mcp)** | Semantic search across your indexed documents during research | ~20 MB | No — enhances `/prfaq:research` but not required |
+| **[punt-quarry](https://github.com/punt-labs/quarry)** | Semantic search across your indexed documents during research | ~20 MB | No — enhances `/prfaq:research` but not required |
 
-The installer offers to install TeX and claude-flow interactively. quarry-mcp is the only dependency you install separately if you want it:
+Install TeX separately if the installer reports it missing:
 
 ```bash
-pip install quarry-mcp
-quarry install
-```
+# macOS
+brew install --cask mactex
 
+# Ubuntu
+sudo apt-get install texlive-full
+```
 
 ## Quick Start
 
 ```bash
 # 1. Install
-curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/4bfffe4/install.sh | sh
 
 # 2. Navigate to your project
 cd ~/your-project
