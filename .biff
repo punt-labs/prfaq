@@ -1,0 +1,5 @@
+[team]
+members = ["jmf-pobox"]
+
+[relay]
+url = "tls://connect.ngs.global"
