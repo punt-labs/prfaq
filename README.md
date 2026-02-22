@@ -59,7 +59,7 @@ The installer registers the Punt Labs marketplace and installs the plugin. It al
 | Dependency | What it's for | Size | Required? |
 |-----------|---------------|------|-----------|
 | **TeX distribution** | Compiling the PDF — the core output you circulate and debate | ~4 GB | Yes (without it you only get raw `.tex` source) |
-| **Agent Teams** | Parallel persona execution for `/prfaq:meeting-hive` — set `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in `.claude/settings.local.json` | None (env var) | Only for autonomous meetings (use `/prfaq:meeting` without it) |
+| **Agent Teams** | Parallel persona execution for `/prfaq:meeting-hive` — enabled via `.claude/settings.json` (shipped with the plugin) | None (env var) | Only for autonomous meetings (use `/prfaq:meeting` without it) |
 | **[punt-quarry](https://github.com/punt-labs/quarry)** | Semantic search across your indexed documents during research | ~20 MB | No — enhances `/prfaq:research` but not required |
 
 Install TeX separately if the installer reports it missing:
@@ -178,7 +178,7 @@ Same four personas, but they debate and reach consensus autonomously using Claud
 
 The output is a consensus summary with a revision queue that feeds into `/prfaq:feedback`.
 
-**Requires** `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in your project's `.claude/settings.local.json` (see the Agent Teams row in the table above).
+**Requires** `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` — shipped in `.claude/settings.json`, enabled automatically when you install the plugin.
 
 ### Review: `/prfaq:review`
 

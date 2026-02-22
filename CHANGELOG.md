@@ -10,7 +10,7 @@ All notable changes to the prfaq plugin are documented here. This project follow
   - Personas run as Agent Teams teammates with isolated context windows and inter-agent messaging
   - Shared task list tracks hot spot progress during autonomous runs
   - Debate logic unchanged — only the orchestration substrate changed
-  - Prerequisite: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in `.claude/settings.local.json` (replaces `npm install -g claude-flow`)
+  - Prerequisite: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` shipped in `.claude/settings.json` (replaces `npm install -g claude-flow`)
 
 ## [1.1.0] - 2026-02-17
 

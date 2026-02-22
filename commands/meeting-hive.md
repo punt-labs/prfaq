@@ -22,7 +22,7 @@ When classifying a decision, look at Wei's IRREVERSIBLE DECISIONS section — if
 
 ## Prerequisites
 
-This command requires Claude Code Agent Teams. If `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is not set to `1` in the environment, tell the user to add it to their project settings (`.claude/settings.local.json`):
+This command requires Claude Code Agent Teams. The plugin ships `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in `.claude/settings.json`, so it should be enabled automatically. If it is not set in the environment, tell the user to ensure `.claude/settings.json` contains:
 
 ```json
 {
