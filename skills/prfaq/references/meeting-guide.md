@@ -291,7 +291,7 @@ For split decisions, present both sides' strongest single argument and ask the u
 
 ### Hive Summary Format
 
-Same structure as the regular meeting summary (Phase 3b), with `**Mode:** Hive (autonomous consensus)` in the header and this decisions table schema:
+Same structure as the regular meeting summary (Phase 3b), with `**Mode:** Hive (autonomous consensus, Agent Teams)` in the header and this decisions table schema:
 
 | # | Hot Spot | Door | Decision | Resolution | Winning Argument | Dissent |
 |---|----------|------|----------|------------|------------------|---------|

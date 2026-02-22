@@ -178,7 +178,7 @@ Same four personas, but they debate and reach consensus autonomously using Claud
 
 The output is a consensus summary with a revision queue that feeds into `/prfaq:feedback`.
 
-**Requires** `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` (already set if you installed this plugin — see `.claude/settings.local.json`).
+**Requires** `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in your project's `.claude/settings.local.json` (see the Agent Teams row in the table above).
 
 ### Review: `/prfaq:review`
 
