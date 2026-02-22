@@ -21,6 +21,8 @@
   "MD040": false,
   // First line heading — agent/skill prompts start with persona text, not headings
   "MD041": false,
+  // Allow HTML elements used in README (trust-tier expandable sections, images)
+  "MD033": { "allowed_elements": ["img", "p", "details", "summary"] },
   // Disable table column style — compact pipes are fine
   "MD060": false
 }
