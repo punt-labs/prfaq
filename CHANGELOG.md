@@ -4,13 +4,18 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-02-22
+
 ### Changed
 - `/prfaq:meeting-hive` migrated from claude-flow hive-mind to Claude Code Agent Teams
-  - Removes `claude-flow` npm package and MCP server dependency entirely
   - Personas run as Agent Teams teammates with isolated context windows and inter-agent messaging
   - Shared task list tracks hot spot progress during autonomous runs
   - Debate logic unchanged — only the orchestration substrate changed
   - Prerequisite: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` shipped in `.claude/settings.json` (replaces `npm install -g claude-flow`)
+
+### Removed
+- `claude-flow` npm package dependency — no longer required
+- claude-flow MCP server registration from `.mcp.json`
 
 ## [1.1.0] - 2026-02-17
 
@@ -218,7 +223,8 @@ First tagged release.
 - Plugin cache not clearing on reinstall (stale cache hid new agents)
 - FAQ paragraph indentation inconsistency in `faqpair` environment
 
-[Unreleased]: https://github.com/punt-labs/prfaq/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/punt-labs/prfaq/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/punt-labs/prfaq/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/punt-labs/prfaq/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/punt-labs/prfaq/compare/v0.9.1...v1.0.0
 [0.9.1]: https://github.com/punt-labs/prfaq/compare/v0.9.0...v0.9.1
