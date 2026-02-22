@@ -27,7 +27,7 @@ Eleven commands form a complete product-thinking workflow:
 ## Installation
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/4bfffe4/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/a4d30cc/install.sh | sh
 ```
 
 <details>
@@ -44,7 +44,7 @@ claude plugin install prfaq@punt-labs
 <summary>Verify before running</summary>
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/4bfffe4/install.sh -o install.sh
+curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/a4d30cc/install.sh -o install.sh
 shasum -a 256 install.sh
 cat install.sh
 sh install.sh
@@ -76,7 +76,7 @@ sudo apt-get install texlive-full
 
 ```bash
 # 1. Install
-curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/4bfffe4/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/a4d30cc/install.sh | sh
 
 # 2. Navigate to your project
 cd ~/your-project
