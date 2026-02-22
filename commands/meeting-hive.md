@@ -22,7 +22,15 @@ When classifying a decision, look at Wei's IRREVERSIBLE DECISIONS section — if
 
 ## Prerequisites
 
-This command requires claude-flow for hive-mind consensus orchestration. If `mcp__claude-flow__hive-mind_init` is not available, tell the user to install claude-flow (`npm install -g claude-flow`) and re-run the installer (`bash install.sh`) to register it as an MCP server, then restart Claude Code. Do not proceed without it — use `/prfaq:meeting` for manual moderation instead.
+This command requires Claude Code Agent Teams. The plugin ships `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in `.claude/settings.json`, so it should be enabled automatically. If it is not set in the environment, tell the user to ensure `.claude/settings.json` contains:
+
+```json
+{
+  "env": { "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1" }
+}
+```
+
+Then restart Claude Code. Do not proceed without it — use `/prfaq:meeting` for manual moderation instead.
 
 ## Steps
 
@@ -36,23 +44,27 @@ This command requires claude-flow for hive-mind consensus orchestration. If `mcp
 
 5. **Show the agenda.** Present the hot spots ranked by severity with door classification. All items will be debated — the user does not select scope. Tell the user: "The hive will debate these autonomously. I'll present the consensus when they're done."
 
-6. **Initialize the hive-mind.**
-   ```
-   mcp__claude-flow__hive-mind_init(queenId: "prfaq-meeting", topology: "mesh")
-   mcp__claude-flow__hive-mind_memory(action: "set", key: "document-stage", value: "<stage>")
-   mcp__claude-flow__hive-mind_memory(action: "set", key: "hot-spots", value: "<JSON array of hot spots with door classification>")
-   ```
+6. **Create the team and task list.** Create a team named `prfaq-hive`. Create one task per hot spot using TaskCreate, named `Debate: [hot spot title]` with the hot spot description and door classification. This gives the user visible progress during the autonomous run.
 
-7. **Run the debate loop.** For each hot spot, run up to two rounds:
+7. **Run the debate loop.** For each hot spot (processing sequentially, one at a time):
+
+   Mark the hot spot task in-progress via TaskUpdate.
 
    **Round 1 — Independent evaluation:**
-   Launch all four persona agents in parallel using the Task tool (same agents as `/prfaq:meeting`):
-   - `subagent_type: "prfaq:meeting-engineer"` (Wei)
-   - `subagent_type: "prfaq:meeting-customer"` (Priya)
-   - `subagent_type: "prfaq:meeting-executive"` (Alex)
-   - `subagent_type: "prfaq:meeting-builder"` (Dana)
+   Spawn all four persona agents as teammates using the Task tool with `team_name: "prfaq-hive"`:
+   - `subagent_type: "prfaq:meeting-engineer"`, `name: "wei"` (Wei)
+   - `subagent_type: "prfaq:meeting-customer"`, `name: "priya"` (Priya)
+   - `subagent_type: "prfaq:meeting-executive"`, `name: "alex"` (Alex)
+   - `subagent_type: "prfaq:meeting-builder"`, `name: "dana"` (Dana)
 
-   Each receives the hot spot description, the relevant document section, the door classification, and meeting state so far.
+   Launch all four in parallel. Each receives in their spawn prompt:
+   - The hot spot description, severity, and door classification
+   - The exact quoted text from the document section under debate
+   - The document stage (`\prfaqstage` value)
+   - Meeting state so far: decisions made on prior hot spots (or "None — this is the first hot spot")
+   - Instruction: "Produce your standard structured response using your mandatory format, then send the complete response to the team lead using the SendMessage tool."
+
+   Collect all four structured positions from their responses.
 
    **Resolve the debate — arguments win, not averages:**
 
@@ -69,39 +81,33 @@ This command requires claude-flow for hive-mind consensus orchestration. If `mcp
    - 3-1 where the dissenter is Dana or Priya → majority wins
 
    **Round 2 — Rebuttal (when required):**
-   Re-launch all four persona agents with ALL Round 1 positions included. Prompt: "Here are all four positions from Round 1. [positions] The question is a [one-way/two-way] door. Respond to the strongest argument against your position. You may change your verdict if genuinely persuaded, but do not compromise — either your concern stands or it doesn't."
+   Spawn all four persona agents again as teammates with ALL Round 1 positions included in each spawn prompt:
+
+   "Here are all four positions from Round 1:
+   - Wei: [full Round 1 response]
+   - Priya: [full Round 1 response]
+   - Alex: [full Round 1 response]
+   - Dana: [full Round 1 response]
+
+   The question is a [one-way/two-way] door. Respond to the strongest argument against your position. You may change your verdict if genuinely persuaded, but do not compromise — either your concern stands or it doesn't. Produce your structured response, then send it to the team lead using the SendMessage tool."
 
    Resolve after Round 2:
    - Clear majority → that side wins. The minority disagrees and commits.
    - Persistent split on a one-way door → **escalate to user**. Present both sides' strongest single argument.
    - Persistent split on a two-way door → **bias for action**. The action side wins. Note the dissent in the summary so the user can revisit after learning more.
 
-   **Hive-mind integration:**
-   After Round 1, store positions in shared memory:
-   ```
-   mcp__claude-flow__hive-mind_memory(action: "set", key: "hotspot-N-wei", value: "<position>")
-   mcp__claude-flow__hive-mind_memory(action: "set", key: "hotspot-N-priya", value: "<position>")
-   mcp__claude-flow__hive-mind_memory(action: "set", key: "hotspot-N-alex", value: "<position>")
-   mcp__claude-flow__hive-mind_memory(action: "set", key: "hotspot-N-dana", value: "<position>")
-   ```
-   Use consensus for formal voting:
-   ```
-   mcp__claude-flow__hive-mind_consensus(action: "propose", type: "meeting-decision", value: "<proposed resolution based on door-weighted rules>")
-   ```
+   Mark the hot spot task complete via TaskUpdate after resolution.
 
 8. **Synthesize the debate.** For each hot spot, write a brief narrative (3-5 sentences) that shows which argument won and why. Name the winner and the loser. Do not soften — "Wei's scalability concern overruled Dana's push to ship" is better than "the group balanced speed and caution." Follow the synthesis voice guidelines from the meeting guide.
 
-9. **Shutdown the hive-mind.**
-   ```
-   mcp__claude-flow__hive-mind_shutdown(queenId: "prfaq-meeting")
-   ```
+9. **Shut down the team.** Send a shutdown request to each teammate using SendMessage with `type: "shutdown_request"`. Wait for acknowledgment, then clean up the team.
 
 10. **Present the consensus summary.** Show:
     - **Consensus decisions:** Items where the hive reached resolution. Show the decision (REVISE/KEEP), the door type, the winning argument, and the noted dissent (if any).
     - **Escalated decisions:** One-way door splits that require user input. Show both sides' strongest argument. Ask the user to decide via AskUserQuestion: REVISE / KEEP / DEFER.
     - **Revision queue:** Specific feedback directives for each REVISE decision, written to work as `/prfaq:feedback` input.
 
-11. **Persist the summary.** Write to `./meetings/meeting-hive-summary-YYYY-MM-DD.md`. If that filename exists, append a counter (`-2`, `-3`, etc.). Use the same format as regular meeting summaries (see Phase 3b in the meeting guide), with `**Mode:** Hive (autonomous consensus)` in the header and this decisions table schema:
+11. **Persist the summary.** Write to `./meetings/meeting-hive-summary-YYYY-MM-DD.md`. If that filename exists, append a counter (`-2`, `-3`, etc.). Use the same format as regular meeting summaries (see Phase 3b in the meeting guide), with `**Mode:** Hive (autonomous consensus, Agent Teams)` in the header and this decisions table schema:
 
     **Migration:** Before writing, use Glob to check for `meeting-summary-*.md` and `meeting-hive-summary-*.md` in the project root (same directory as the `.tex` file). If any are found, move them to `./meetings/` using the Read and Write tools (read content, write to new path, delete old file via Bash `rm`). Tell the user: "Moved N meeting summary file(s) to ./meetings/ for organization."
 

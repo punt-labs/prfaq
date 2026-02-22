@@ -4,6 +4,14 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+### Changed
+- `/prfaq:meeting-hive` migrated from claude-flow hive-mind to Claude Code Agent Teams
+  - Removes `claude-flow` npm package and MCP server dependency entirely
+  - Personas run as Agent Teams teammates with isolated context windows and inter-agent messaging
+  - Shared task list tracks hot spot progress during autonomous runs
+  - Debate logic unchanged — only the orchestration substrate changed
+  - Prerequisite: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` shipped in `.claude/settings.json` (replaces `npm install -g claude-flow`)
+
 ## [1.1.0] - 2026-02-17
 
 ### Changed

@@ -59,7 +59,7 @@ The installer registers the Punt Labs marketplace and installs the plugin. It al
 | Dependency | What it's for | Size | Required? |
 |-----------|---------------|------|-----------|
 | **TeX distribution** | Compiling the PDF — the core output you circulate and debate | ~4 GB | Yes (without it you only get raw `.tex` source) |
-| **[claude-flow](https://github.com/ruvnet/claude-flow)** | Hive-mind orchestration for `/prfaq:meeting-hive` | ~50 MB | Only for autonomous meetings (use `/prfaq:meeting` without it) |
+| **Agent Teams** | Parallel persona execution for `/prfaq:meeting-hive` — enabled via `.claude/settings.json` (shipped with the plugin) | None (env var) | Only for autonomous meetings (use `/prfaq:meeting` without it) |
 | **[punt-quarry](https://github.com/punt-labs/quarry)** | Semantic search across your indexed documents during research | ~20 MB | No — enhances `/prfaq:research` but not required |
 
 Install TeX separately if the installer reports it missing:
@@ -164,19 +164,21 @@ You are the PM and final decision-maker. At each hot spot, the personas debate a
 /prfaq:meeting-hive
 ```
 
-Same four personas, but they debate and reach consensus autonomously via claude-flow hive-mind — you review the final decisions, not each individual debate.
+Same four personas, but they debate and reach consensus autonomously using Claude Code Agent Teams — you review the final decisions, not each individual debate.
 
 **How it works:**
 
 1. Pre-meeting scan identifies 5-8 hot spots in your document
 2. Each hot spot is classified as a **one-way door** (irreversible: architecture, APIs, data models) or **two-way door** (reversible: scope, positioning, framing)
-3. All four personas evaluate each hot spot independently (Round 1)
+3. All four personas evaluate each hot spot independently in parallel (Round 1), each with an isolated context window
 4. Door-weighted resolution: on two-way doors, ties bias toward action (ship and learn); on one-way doors, Wei and Alex's caution carries extra weight
-5. Splits trigger a rebuttal round (Round 2) where personas respond to each other's arguments
+5. Splits trigger a rebuttal round (Round 2) where personas see each other's Round 1 positions and respond to the strongest counterargument
 6. Arguments win or lose — no compromise blending (Amazon LP: Disagree and Commit)
 7. Only persistent splits on one-way doors escalate to you for a decision
 
 The output is a consensus summary with a revision queue that feeds into `/prfaq:feedback`.
+
+**Requires** `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` — shipped in `.claude/settings.json`, enabled automatically when you install the plugin.
 
 ### Review: `/prfaq:review`
 
@@ -321,7 +323,7 @@ The typical workflow is: **generate** (or **import**) → **review** → **meeti
 
 1. `/prfaq` generates the initial document from a structured conversation — or `/prfaq:import` converts an existing document
 2. `/prfaq:review` gives you an adversarial peer review
-3. `/prfaq:meeting` stress-tests with four personas where you make each call — or `/prfaq:meeting-hive` for autonomous consensus via claude-flow
+3. `/prfaq:meeting` stress-tests with four personas where you make each call — or `/prfaq:meeting-hive` for autonomous consensus via Agent Teams
 4. `/prfaq:feedback` applies the meeting's decisions (or your own feedback) surgically
 5. `/prfaq:streamline` tightens the final document — removes redundancy, weasel words, and bloat
 6. `/prfaq:vote` renders a go/no-go decision based on the document's evidence across three gates
