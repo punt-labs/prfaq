@@ -164,7 +164,7 @@ You are the PM and final decision-maker. At each hot spot, the personas debate a
 /prfaq:meeting-hive
 ```
 
-Same four personas, but they debate and reach consensus autonomously using Claude Code Agent Teams — you review the final decisions, not each individual debate.
+Same four personas, but they debate and reach consensus autonomously using Claude Code Agent Teams — you review the final decisions, not each individual debate. [Watch a live recording](https://www.punt-labs.com/demos).
 
 **How it works:**
 
