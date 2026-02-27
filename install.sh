@@ -73,6 +73,10 @@ if ! claude plugin install "${PLUGIN_NAME}@${MARKETPLACE_NAME}"; then
   cleanup_https_rewrite
   fail "Failed to install $PLUGIN_NAME"
 fi
+if ! claude plugin list 2>/dev/null | grep -q "$PLUGIN_NAME@$MARKETPLACE_NAME"; then
+  cleanup_https_rewrite
+  fail "$PLUGIN_NAME install reported success but plugin not found"
+fi
 ok "$PLUGIN_NAME installed"
 
 cleanup_https_rewrite
