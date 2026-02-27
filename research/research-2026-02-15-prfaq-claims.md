@@ -1,6 +1,6 @@
 # Research: PR/FAQ Factual Claims Verification
 **Date:** 2026-02-15
-**Request:** Research factual claims in /Users/jfreeman/Coding/prfaq/prfaq.tex
+**Request:** Research factual claims in prfaq.tex
 **Claims investigated:** 22
 
 ## Evidence Found
