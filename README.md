@@ -1,5 +1,8 @@
 # prfaq
 
+[![License](https://img.shields.io/github/license/punt-labs/prfaq)](LICENSE)
+[![CI](https://img.shields.io/github/actions/workflow/status/punt-labs/prfaq/docs.yml?label=CI)](https://github.com/punt-labs/prfaq/actions/workflows/docs.yml)
+
 A Claude Code plugin that brings Amazon's [Working Backwards](#what-is-working-backwards) PR/FAQ process to engineers and founders — generate, review, stress-test, and iterate on product discovery documents inside the terminal.
 
 ## What It Does
