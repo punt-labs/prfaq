@@ -368,7 +368,7 @@ Then register the plugin in `~/.claude/plugins/local-plugins/.claude-plugin/mark
 {
   "name": "prfaq",
   "description": "Amazon Working Backwards PR/FAQ process",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "author": { "name": "Your Name", "email": "you@example.com", "organization": "Your Org" },
   "source": "./plugins/prfaq",
   "category": "development"

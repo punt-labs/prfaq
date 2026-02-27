@@ -4,6 +4,8 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-02-27
+
 ### Added
 - `/prfaq:badge` command — generate a shields.io badge showing the document's Working Backwards stage
   - Stage-colored: hypothesis (grey), validated (blue), growth (green)
@@ -229,7 +231,8 @@ First tagged release.
 - Plugin cache not clearing on reinstall (stale cache hid new agents)
 - FAQ paragraph indentation inconsistency in `faqpair` environment
 
-[Unreleased]: https://github.com/punt-labs/prfaq/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/punt-labs/prfaq/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/punt-labs/prfaq/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/punt-labs/prfaq/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/punt-labs/prfaq/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/punt-labs/prfaq/compare/v0.9.1...v1.0.0
