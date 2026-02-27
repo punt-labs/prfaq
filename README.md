@@ -11,13 +11,14 @@ A Claude Code plugin that brings Amazon's [Working Backwards](#what-is-working-b
 
 The output is a decision-making artifact, not a brainstorm. It is designed to be read, debated, and revised before committing to building anything.
 
-Eleven commands form a complete product-thinking workflow:
+Twelve commands form a complete product-thinking workflow:
 
 | Command | What it does |
 |---------|-------------|
 | `/prfaq` | Generate a new PR/FAQ from scratch (or revise an existing one) |
 | `/prfaq:import` | Import an existing document and launch the full `/prfaq` workflow with extracted content |
 | `/prfaq:externalize` | Generate an external press release from the PR/FAQ and CHANGELOG for a specific release |
+| `/prfaq:badge` | Embed a stage-colored badge in your README linking to the PR/FAQ PDF |
 | `/prfaq:feedback` | Apply pointed feedback — traces cascading effects and surgically redrafts |
 | `/prfaq:meeting` | Amazon-style review meeting with you and four agentic personas |
 | `/prfaq:meeting-hive` | Autonomous meeting — personas debate and decide without you moderating |
@@ -135,6 +136,24 @@ Accepts `.md`, `.txt`, and `.pdf` files, or paste text directly as the argument.
 Turn your internal PR/FAQ into a customer-facing press release for a specific release. Reads `prfaq.tex` and `CHANGELOG.md`, detects the release type (first release, major update, or minor/patch), extracts and rewrites the relevant sections for external audiences, and compiles a PDF.
 
 The output is scoped to what actually shipped — CHANGELOG entries and Feature Appendix shipped items, not aspirational scope. Customer quotes are flagged for replacement with real testimonials. Defaults to the latest CHANGELOG version; pass a version argument to target a specific release.
+
+### Badge: `/prfaq:badge`
+
+```
+/prfaq:badge [path/to/prfaq.tex]
+```
+
+Embed a stage-colored shields.io badge in your README that links to the compiled PDF. The badge is colored by document stage:
+
+- **hypothesis** — grey
+- **validated** — blue
+- **growth** — green
+
+The command reads `\prfaqstage{}` from your `.tex` file, generates the badge, and embeds it in `README.md` alongside existing badges. If a Working Backwards badge already exists, it updates it in place (useful when the stage changes). Example output:
+
+```markdown
+[![Working Backwards](https://img.shields.io/badge/Working_Backwards-hypothesis-lightgrey)](./prfaq.pdf)
+```
 
 ### Iterate: `/prfaq:feedback`
 
@@ -322,16 +341,17 @@ The PR/FAQ document includes:
 
 ## The Workflow
 
-The typical workflow is: **generate** (or **import**) → **review** → **meeting** → **feedback** → repeat → **streamline** → **vote** → **externalize** → share.
+The typical workflow is: **generate** (or **import**) → **badge** → **review** → **meeting** → **feedback** → repeat → **streamline** → **vote** → **externalize** → share.
 
 1. `/prfaq` generates the initial document from a structured conversation — or `/prfaq:import` converts an existing document
-2. `/prfaq:review` gives you an adversarial peer review
-3. `/prfaq:meeting` stress-tests with four personas where you make each call — or `/prfaq:meeting-hive` for autonomous consensus via Agent Teams
-4. `/prfaq:feedback` applies the meeting's decisions (or your own feedback) surgically
-5. `/prfaq:streamline` tightens the final document — removes redundancy, weasel words, and bloat
-6. `/prfaq:vote` renders a go/no-go decision based on the document's evidence across three gates
-7. `/prfaq:externalize` turns the internal PR/FAQ into a customer-facing press release for the shipped version
-8. `/prfaq:feedback-to-us` when you're done — helps us improve the plugin
+2. `/prfaq:badge` embeds a stage-colored badge in your README linking to the PDF
+3. `/prfaq:review` gives you an adversarial peer review
+4. `/prfaq:meeting` stress-tests with four personas where you make each call — or `/prfaq:meeting-hive` for autonomous consensus via Agent Teams
+5. `/prfaq:feedback` applies the meeting's decisions (or your own feedback) surgically
+6. `/prfaq:streamline` tightens the final document — removes redundancy, weasel words, and bloat
+7. `/prfaq:vote` renders a go/no-go decision based on the document's evidence across three gates
+8. `/prfaq:externalize` turns the internal PR/FAQ into a customer-facing press release for the shipped version
+9. `/prfaq:feedback-to-us` when you're done — helps us improve the plugin
 
 Each step produces a compiled PDF. The document improves with each cycle.
 

@@ -4,6 +4,12 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+### Added
+- `/prfaq:badge` command — generate a shields.io badge showing the document's Working Backwards stage
+  - Stage-colored: hypothesis (grey), validated (blue), growth (green)
+  - Links to compiled PDF in the repo
+  - Optionally embeds in README.md alongside existing badges
+
 ## [1.2.0] - 2026-02-22
 
 ### Changed
