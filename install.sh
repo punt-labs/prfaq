@@ -68,6 +68,7 @@ fi
 
 info "Installing $PLUGIN_NAME..."
 
+claude plugin uninstall "${PLUGIN_NAME}@${MARKETPLACE_NAME}" 2>/dev/null || true
 if ! claude plugin install "${PLUGIN_NAME}@${MARKETPLACE_NAME}"; then
   cleanup_https_rewrite
   fail "Failed to install $PLUGIN_NAME"
