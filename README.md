@@ -64,7 +64,7 @@ The installer registers the Punt Labs marketplace and installs the plugin. It al
 | Dependency | What it's for | Size | Required? |
 |-----------|---------------|------|-----------|
 | **TeX distribution** | Compiling the PDF — the core output you circulate and debate | ~4 GB | Yes (without it you only get raw `.tex` source) |
-| **Agent Teams** | Parallel persona execution for `/prfaq:meeting-hive` — enabled via `.claude/settings.json` (shipped with the plugin) | None (env var) | Only for autonomous meetings (use `/prfaq:meeting` without it) |
+| **[Agent Teams](https://code.claude.com/docs/en/agent-teams)** | Parallel persona execution for `/prfaq:meeting-hive` — enabled via `.claude/settings.json` (shipped with the plugin) | None (env var) | Only for autonomous meetings (use `/prfaq:meeting` without it) |
 | **[punt-quarry](https://github.com/punt-labs/quarry)** | Semantic search across your indexed documents during research | ~20 MB | No — enhances `/prfaq:research` but not required |
 
 Install TeX separately if the installer reports it missing:
@@ -187,7 +187,7 @@ You are the PM and final decision-maker. At each hot spot, the personas debate a
 /prfaq:meeting-hive
 ```
 
-Same four personas, but they debate and reach consensus autonomously using Claude Code Agent Teams — you review the final decisions, not each individual debate. [Watch a live recording](https://www.punt-labs.com/demos).
+Same four personas, but they debate and reach consensus autonomously using Claude Code [Agent Teams](https://code.claude.com/docs/en/agent-teams) — you review the final decisions, not each individual debate. [Watch a live recording](https://www.punt-labs.com/demos).
 
 **How it works:**
 
@@ -347,7 +347,7 @@ The typical workflow is: **generate** (or **import**) → **badge** → **review
 1. `/prfaq` generates the initial document from a structured conversation — or `/prfaq:import` converts an existing document
 2. `/prfaq:badge` embeds a stage-colored badge in your README linking to the PDF
 3. `/prfaq:review` gives you an adversarial peer review
-4. `/prfaq:meeting` stress-tests with four personas where you make each call — or `/prfaq:meeting-hive` for autonomous consensus via Agent Teams
+4. `/prfaq:meeting` stress-tests with four personas where you make each call — or `/prfaq:meeting-hive` for autonomous consensus via [Agent Teams](https://code.claude.com/docs/en/agent-teams)
 5. `/prfaq:feedback` applies the meeting's decisions (or your own feedback) surgically
 6. `/prfaq:streamline` tightens the final document — removes redundancy, weasel words, and bloat
 7. `/prfaq:vote` renders a go/no-go decision based on the document's evidence across three gates
