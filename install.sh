@@ -123,15 +123,22 @@ if command -v jq >/dev/null 2>&1; then
   if [ ! -f "$SETTINGS_FILE" ]; then
     mkdir -p "$(dirname "$SETTINGS_FILE")"
     printf '{}' > "$SETTINGS_FILE"
+  elif ! jq -e . "$SETTINGS_FILE" >/dev/null 2>&1; then
+    warn "Existing $SETTINGS_FILE contains invalid JSON; backing up and recreating"
+    cp "$SETTINGS_FILE" "${SETTINGS_FILE}.bak" 2>/dev/null || true
+    printf '{}' > "$SETTINGS_FILE"
   fi
 
-  # Count existing rules, merge atomically, count new total
-  BEFORE=$(jq '.permissions.allow // [] | length' "$SETTINGS_FILE")
-  jq --argjson new "$PRFAQ_RULES" \
-    '.permissions.allow = ((.permissions.allow // []) + $new | unique)' \
-    "$SETTINGS_FILE" > "${SETTINGS_FILE}.tmp" && mv "${SETTINGS_FILE}.tmp" "$SETTINGS_FILE"
-  AFTER=$(jq '.permissions.allow | length' "$SETTINGS_FILE")
-  ADDED=$((AFTER - BEFORE))
+  # Order-preserving merge: append only rules not already present
+  ADDED=$(jq -r --argjson new "$PRFAQ_RULES" '
+    (.permissions.allow // []) as $orig
+    | [$new[] | select(. as $r | $orig | index($r) | not)] | length
+  ' "$SETTINGS_FILE")
+
+  jq --argjson new "$PRFAQ_RULES" '
+    (.permissions.allow // []) as $orig
+    | .permissions.allow = $orig + [$new[] | select(. as $r | $orig | index($r) | not)]
+  ' "$SETTINGS_FILE" > "${SETTINGS_FILE}.tmp" && mv "${SETTINGS_FILE}.tmp" "$SETTINGS_FILE"
 
   if [ "$ADDED" -gt 0 ]; then
     ok "$ADDED permission rule(s) added to $SETTINGS_FILE"
@@ -141,7 +148,7 @@ if command -v jq >/dev/null 2>&1; then
 else
   warn "jq not found — cannot auto-configure permissions"
   printf '\n'
-  info "Add these rules manually to %s under permissions.allow:" "$SETTINGS_FILE"
+  info "Add these rules manually to $SETTINGS_FILE under permissions.allow:"
   printf '%s\n' "$PRFAQ_RULES"
   printf '\n'
 fi
