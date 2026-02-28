@@ -145,10 +145,17 @@ Do **not** merge immediately after creating a PR. The full flow is:
 
 1. **Create PR** — Push branch, open PR (via MCP or `gh pr create`).
 2. **Trigger GitHub Copilot code review** — Request review so Copilot analyzes the diff.
-3. **Wait for feedback** — Allow time for review comments and suggestions.
+3. **Watch for feedback** — Background the watch so you stay productive:
+   ```bash
+   gh pr checks <number> --watch         # Background this — blocks until all checks resolve
+   ```
+   Do not wait on the user for this. When the watch completes, read feedback:
+   ```bash
+   gh pr view <number> --comments        # Copilot feedback and inline comments
+   ```
 4. **Evaluate feedback** — Read each comment; decide which are valid and actionable.
-5. **Address valid issues** — Commit fixes; push; ensure quality gates pass on each change.
-6. **Merge only when** — All review feedback has been evaluated (addressed or explicitly declined) and quality gates pass on the latest commit.
+5. **Address valid issues** — Commit fixes; push; re-run quality gates on each change.
+6. **Merge only when** — All review feedback has been evaluated (addressed or explicitly declined) and quality gates pass on the latest commit. Merge via MCP (`mcp__github__merge_pull_request`) or `gh pr merge`.
 
 ### Session Close Protocol
 
