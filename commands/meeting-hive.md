@@ -1,6 +1,7 @@
 ---
 description: Run an autonomous PR/FAQ review meeting where four personas debate and reach consensus without user intervention
 argument-hint: "[path/to/prfaq.tex]"
+allowed-tools: Bash(mkdir -p meetings), Read, Write, Glob, Grep
 ---
 
 # PR/FAQ Hive Meeting

@@ -1,6 +1,7 @@
 ---
 description: Generate an external press release from the PR/FAQ and CHANGELOG for a specific release
 argument-hint: "[version, e.g. v2.0]"
+allowed-tools: Bash(bash */compile_prfaq.sh *), Read, Write, Glob, Grep
 ---
 
 # Externalize: PR/FAQ → Press Release

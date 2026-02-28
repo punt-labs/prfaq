@@ -1,5 +1,6 @@
 ---
 description: Tell us how the prfaq plugin is working for you (anonymous 1-5 feedback)
+allowed-tools: Bash(uuidgen), Bash(curl *), Read, Write, Glob, Grep
 ---
 
 # Feedback to Us

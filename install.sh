@@ -87,7 +87,66 @@ ok "$PLUGIN_NAME installed"
 
 cleanup_https_rewrite
 
-# --- Step 5: TeX distribution check ---
+# --- Step 5: Configure permissions ---
+
+info "Configuring plugin permissions..."
+
+SETTINGS_FILE="$HOME/.claude/settings.json"
+
+# Permission rules the plugin needs to operate without constant prompts.
+# Deliberately excluded: Bash(curl *) and all Bash(rm *) — those require manual approval.
+PRFAQ_RULES='[
+  "Bash(bash */compile_prfaq.sh *)",
+  "Bash(bash scripts/compile_prfaq.sh *)",
+  "Bash(uuidgen)",
+  "Bash(mkdir -p meetings)",
+  "Bash(mkdir -p research)",
+  "Write(*prfaq*.tex)",
+  "Write(*prfaq*.bib)",
+  "Write(press-release-*.tex)",
+  "Write(.claude/prfaq.local.md)",
+  "Write(meetings/**)",
+  "Write(research/**)",
+  "Write(.gitignore)",
+  "Write(README.md)",
+  "Edit(*prfaq*.tex)",
+  "Edit(*prfaq*.bib)",
+  "Edit(press-release-*.tex)",
+  "Edit(README.md)",
+  "Edit(.gitignore)",
+  "WebSearch",
+  "WebFetch"
+]'
+
+if command -v jq >/dev/null 2>&1; then
+  # Ensure settings file exists with valid JSON
+  if [ ! -f "$SETTINGS_FILE" ]; then
+    mkdir -p "$(dirname "$SETTINGS_FILE")"
+    printf '{}' > "$SETTINGS_FILE"
+  fi
+
+  # Count existing rules, merge atomically, count new total
+  BEFORE=$(jq '.permissions.allow // [] | length' "$SETTINGS_FILE")
+  jq --argjson new "$PRFAQ_RULES" \
+    '.permissions.allow = ((.permissions.allow // []) + $new | unique)' \
+    "$SETTINGS_FILE" > "${SETTINGS_FILE}.tmp" && mv "${SETTINGS_FILE}.tmp" "$SETTINGS_FILE"
+  AFTER=$(jq '.permissions.allow | length' "$SETTINGS_FILE")
+  ADDED=$((AFTER - BEFORE))
+
+  if [ "$ADDED" -gt 0 ]; then
+    ok "$ADDED permission rule(s) added to $SETTINGS_FILE"
+  else
+    ok "permissions already configured"
+  fi
+else
+  warn "jq not found — cannot auto-configure permissions"
+  printf '\n'
+  info "Add these rules manually to %s under permissions.allow:" "$SETTINGS_FILE"
+  printf '%s\n' "$PRFAQ_RULES"
+  printf '\n'
+fi
+
+# --- Step 6: TeX distribution check ---
 
 info "Checking TeX distribution (optional, needed for PDF output)..."
 

@@ -1,5 +1,6 @@
 ---
 name: prfaq
+allowed-tools: Bash(bash */compile_prfaq.sh *), Read, Write, Edit, Glob, Grep, WebSearch, WebFetch
 description: >
   This skill should be used when the user asks to "write a PR/FAQ",
   "prfaq", "working backwards", "product discovery", "evaluate a product idea",

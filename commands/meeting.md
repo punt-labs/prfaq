@@ -1,6 +1,7 @@
 ---
 description: Run a simulated PR/FAQ review meeting with agentic personas
 argument-hint: "[path/to/prfaq.tex]"
+allowed-tools: Bash(mkdir -p meetings), Read, Write, Glob, Grep
 ---
 
 # PR/FAQ Review Meeting
