@@ -1,6 +1,7 @@
 ---
 description: Research evidence for PR/FAQ claims and generate biblatex citations
 argument-hint: "[claim or topic or path/to/prfaq.tex]"
+allowed-tools: Bash(mkdir -p research), Read, Write, Edit, Glob, Grep, WebSearch, WebFetch
 ---
 
 # Research Evidence for PR/FAQ

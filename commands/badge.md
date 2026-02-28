@@ -1,6 +1,7 @@
 ---
 description: Generate a stage-colored badge and embed it in your README
 argument-hint: "[path/to/prfaq.tex]"
+allowed-tools: Read, Write, Edit, Glob, Grep
 ---
 
 # Embed PR/FAQ Badge in README

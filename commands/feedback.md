@@ -1,6 +1,7 @@
 ---
 description: Incorporate feedback into PR/FAQ and redraft affected sections
 argument-hint: "[feedback text or path/to/meeting-summary.md]"
+allowed-tools: Bash(bash */compile_prfaq.sh *), Read, Edit, Glob, Grep, WebSearch, WebFetch
 ---
 
 # Incorporate Feedback into PR/FAQ

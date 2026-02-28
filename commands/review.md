@@ -1,6 +1,7 @@
 ---
 description: Peer review a PR/FAQ document for quality and decision readiness
 argument-hint: "[path/to/prfaq.tex]"
+allowed-tools: Read, Edit, Glob, Grep, WebSearch, WebFetch
 ---
 
 # Peer Review PR/FAQ

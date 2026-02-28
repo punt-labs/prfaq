@@ -1,6 +1,7 @@
 ---
 description: Assess whether a PR/FAQ should move forward with a structured go/no-go decision
 argument-hint: "[path/to/prfaq.tex ...or multiple paths for portfolio comparison]"
+allowed-tools: Read, Write, Glob, Grep
 ---
 
 # Go/No-Go Decision: PR/FAQ Vote

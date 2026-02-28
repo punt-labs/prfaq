@@ -1,6 +1,7 @@
 ---
 description: Tighten a PR/FAQ by removing redundancy, weasel words, and bloat
 argument-hint: "[optional: section to focus on]"
+allowed-tools: Bash(bash */compile_prfaq.sh *), Read, Edit, Glob, Grep
 ---
 
 # Streamline PR/FAQ

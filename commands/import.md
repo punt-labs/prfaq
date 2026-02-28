@@ -1,6 +1,7 @@
 ---
 description: Import an existing document and launch the full /prfaq workflow with extracted content
 argument-hint: "[path/to/document.md or paste text directly]"
+allowed-tools: Bash(bash */compile_prfaq.sh *), Read, Write, Edit, Glob, Grep, WebSearch, WebFetch
 ---
 
 # Import Document into PR/FAQ
