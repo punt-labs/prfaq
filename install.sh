@@ -23,14 +23,20 @@ MARKETPLACE_REPO="punt-labs/claude-plugins"
 MARKETPLACE_NAME="punt-labs"
 PLUGIN_NAME="prfaq"
 
-# --- Step 1: Claude Code CLI ---
+# --- Step 1: Prerequisites ---
 
-info "Checking Claude Code..."
+info "Checking prerequisites..."
 
 if command -v claude >/dev/null 2>&1; then
   ok "claude CLI found"
 else
   fail "'claude' CLI not found. Install Claude Code first: https://docs.anthropic.com/en/docs/claude-code"
+fi
+
+if command -v git >/dev/null 2>&1; then
+  ok "git found"
+else
+  fail "'git' not found. Install git first: https://git-scm.com/downloads"
 fi
 
 # --- Step 2: Register marketplace ---
