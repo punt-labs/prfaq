@@ -11,5 +11,6 @@
 *.fdb_latexmk
 .DS_Store
 .envrc
-.claude/*.local.md
-.claude/settings.local.json
+# Claude Code (settings.json is tracked; everything else is local/runtime)
+.claude/
+!.claude/settings.json
