@@ -109,6 +109,27 @@ Match the workflow to the bead's scope. The deciding factor is **design ambiguit
 - "Technical" subsubsection widow bug (single LaTeX fix) → **T3: Direct**
 - New reference guide (single file, clear structure) → **T3: Direct**
 
+### CHANGELOG
+
+This project follows [Keep a Changelog](https://keepachangelog.com/) format. Every user-facing change gets an entry under `[Unreleased]` at commit time — not deferred to release.
+
+**When to add an entry:**
+- New commands, agents, or reference guides → `### Added`
+- Behavior changes to existing commands → `### Changed`
+- Bug fixes → `### Fixed`
+- Removed features or commands → `### Removed`
+
+**When NOT to add an entry:**
+- Internal-only changes (CLAUDE.md, CI config, dev tooling)
+- Plugin cache updates
+- Session transcripts or research files
+
+**Format rules:**
+- Group entries under `### Added`, `### Changed`, `### Fixed`, `### Removed` (in that order, omit empty groups)
+- Each entry starts with the command or component name (e.g., `` `/prfaq:vote` ``, `Installer`, `Template`)
+- One logical change per bullet — sub-bullets for supporting detail
+- At release time, move `[Unreleased]` entries to a versioned heading and update comparison links at the bottom of the file
+
 ### Quality Gates
 
 Before every commit:

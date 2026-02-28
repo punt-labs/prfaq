@@ -4,6 +4,14 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+### Added
+- Installer injects plugin permission rules into `~/.claude/settings.json`
+  - 20 rules covering Bash, Read, Write, Edit, Glob, Grep, WebSearch, WebFetch, and Agent tool patterns
+  - Order-preserving idempotent merge via `jq` — existing rules are never reordered or duplicated
+  - Validates existing JSON before modification; backs up and recreates on invalid files
+  - Falls back to printing rules manually when `jq` is unavailable
+- `allowed-tools` frontmatter on all 12 command and skill files declaring the tools each command actually uses
+
 ## [1.3.0] - 2026-02-27
 
 ### Added
