@@ -10,11 +10,17 @@ Play back a completed meeting summary as a voiced conversation between four pers
 
 ## Prerequisites
 
-This command requires the TTS plugin (`punt-tts`) to be installed and active in the session. Check whether `mcp__plugin_tts_vox__speak` is available. If not, tell the user: "TTS plugin is not available. Install punt-tts or run `/voice on` to enable voiced playback." and stop.
+Check whether `mcp__plugin_tts_vox__speak` is available. Set a session flag:
+- **Voiced mode** — TTS is available. Voices will be used.
+- **Text-only mode** — TTS is not available. Tell the user: "TTS plugin not available — playing back as text-only transcript. Install punt-tts for voiced playback." Continue with all steps below, but skip all `mcp__plugin_tts_vox__*` calls. Print dialogue as attributed text instead.
 
 ## Steps
 
-1. **Find the meeting summary.** If `$ARGUMENTS` specifies a path, use it. Otherwise, use Glob to find `./meetings/meeting-*-summary-*.md` and `./meetings/meeting-hive-summary-*.md`. If multiple exist, pick the most recent by filename date. If none exist, tell the user: "No meeting summaries found. Run `/prfaq:meeting` or `/prfaq:meeting-hive` first."
+1. **Find the meeting summary.** If `$ARGUMENTS` specifies a path, use it. Otherwise, use Glob to find meeting summaries with both patterns:
+   - `./meetings/meeting-summary-*.md` (interactive meetings)
+   - `./meetings/meeting-hive-summary-*.md` (hive meetings)
+
+   If multiple exist, parse the `YYYY-MM-DD` date from each filename and choose the latest date. If there are multiple on the same date, choose the one with the highest numeric suffix (e.g., `...-2.md` after the unsuffixed original). If none exist, tell the user: "No meeting summaries found. Run `/prfaq:meeting` or `/prfaq:meeting-hive` first."
 
 2. **Read the meeting summary.** Load the full markdown file. Identify the format:
    - **Hive format** — has columns: `Hot Spot | Door | Decision | Resolution | Winning Argument | Dissent`
@@ -32,7 +38,7 @@ This command requires the TTS plugin (`punt-tts`) to be installed and active in 
    - `voice_fallback` — value `default` means use the provider's default voice
    - `voice_vibe` — expressive tags (ElevenLabs only)
 
-   **Detect the active provider.** Call `mcp__plugin_tts_vox__list_voices` and read the `provider` field from the response. Select the voice field for each persona:
+   **In voiced mode**, detect the active provider. Call `mcp__plugin_tts_vox__list_voices` and read the `provider` field from the response. Select the voice field for each persona:
 
    | Provider | Voice Field | Vibe Tags |
    |----------|-------------|-----------|
@@ -42,7 +48,9 @@ This command requires the TTS plugin (`punt-tts`) to be installed and active in 
 
    When `voice_fallback` is `default`, omit the `voice` parameter entirely from speak calls — let TTS use the provider's default voice. All four personas will share the same voice on fallback providers, but the dialogue text still differentiates them.
 
-4. **Validate ElevenLabs voices (ElevenLabs provider only).** The `voice_elevenlabs` values may be community voices that require the user to add them to their ElevenLabs voice library. Before voicing any hot spots:
+   **In text-only mode**, skip this step entirely.
+
+4. **Validate ElevenLabs voices (voiced mode, ElevenLabs provider only).** The `voice_elevenlabs` values may be community voices that require the user to add them to their ElevenLabs voice library. Before voicing any hot spots:
 
    - Read the `all` array from the `mcp__plugin_tts_vox__list_voices` response (this lists all voices in the user's library)
    - Check whether each persona's `voice_elevenlabs` value appears in the list
@@ -50,10 +58,12 @@ This command requires the TTS plugin (`punt-tts`) to be installed and active in 
 
      | Persona | Custom Voice | Built-in Fallback |
      |---------|-------------|-------------------|
-     | Wei | `yu` | `george` |
-     | Priya | `nila` | `sarah` |
-     | Alex | `bill` | (built-in, always available) |
-     | Dana | `river` | (built-in, always available) |
+     | Wei | `yu` (community) | `george` |
+     | Priya | `nila` (community) | `sarah` |
+     | Alex | `bill` (built-in) | `bill` |
+     | Dana | `river` (built-in) | `river` |
+
+     `bill` and `river` are built-in ElevenLabs voices available to all users — their fallback is identity because they don't require library addition. Only `yu` and `nila` are community voices that need user action.
 
    - If any custom voices are missing, tell the user before starting playback:
      ```
@@ -65,13 +75,21 @@ This command requires the TTS plugin (`punt-tts`) to be installed and active in 
 
 5. **Transform and voice each hot spot.** Process the decisions table row by row. For each hot spot:
 
-   **a. Print the hot spot header:**
+   **a. Normalize the decision and print the hot spot header.** The raw `Decision` cell may contain markdown formatting (`**REVISE**`) or compound values (`RESEARCH + REVISE`). Before display:
+
+   - Strip markdown formatting (`**`, backticks, leading/trailing whitespace) to get a clean decision label.
+   - Derive a canonical decision tone for dialogue guidelines:
+     - Values containing "keep" (and not "revise" or "research") → **KEEP** tone
+     - Values containing "revise", "research", "iterate", or "change" → **REVISE** tone
+     - When ambiguous, default to **REVISE** if the value implies further work
+
+   Print the header with the cleaned label:
 
    ```
-   --- Hot Spot N: [title] | [Decision] ---
+   --- Hot Spot N: [title] | [cleaned Decision label] ---
    ```
 
-   **b. Write the dialogue.** Transform the structured summary into 4-6 lines of natural conversation between personas. The personas speak to each other — no narrator, no stage directions, no attribution labels in the spoken text.
+   **b. Write the dialogue.** Transform the structured summary into 4-6 lines of natural conversation between personas. The personas speak to each other — no narrator, no stage directions.
 
    **For hive summaries** (persona-attributed):
    - The persona named in "Winning Argument" opens with their core point, expanded into natural speech using that persona's verbal style from their agent file
@@ -93,9 +111,17 @@ This command requires the TTS plugin (`punt-tts`) to be installed and active in 
    - Use each persona's verbal tics naturally (Wei: "What's the denominator?", Priya: "Which of those developers am I?", Alex: "Compared to what?", Dana: "You're thinking too small.")
    - Keep each line 1-3 sentences. Spoken dialogue is shorter than written analysis.
    - The conversation should feel like overhearing a real debate, not a script reading
-   - For KEEP decisions, the defending persona should sound confident; for REVISE, the challenger should sound vindicated
+   - For KEEP-tone decisions, the defending persona should sound confident; for REVISE-tone, the challenger should sound vindicated
 
-   **c. Voice each line.** For each line of dialogue, call `mcp__plugin_tts_vox__speak` with:
+   **c. Output each line.** Always print each dialogue line with a speaker label prefix for the transcript, regardless of mode:
+
+   ```
+   **Wei:** The denominator is missing entirely.
+   **Priya:** Which of those developers am I?
+   ```
+
+   **In voiced mode**, also call `mcp__plugin_tts_vox__speak` for each line with:
+   - `text`: The dialogue line text only (without the speaker label — labels are for reading, not speaking)
    - `voice`: The resolved voice for this persona (from step 3/4)
    - `ephemeral`: `true`
    - `vibe_tags` (ElevenLabs only): The persona's `voice_vibe` value. For emotionally charged lines, use situational tags instead:
@@ -105,6 +131,8 @@ This command requires the TTS plugin (`punt-tts`) to be installed and active in 
      - Dana seeing the bigger opportunity: `[excited]`
      - Any persona on a KEEP/vindicated moment: `[satisfied]`
    - For non-ElevenLabs providers: omit `vibe_tags` entirely. Do NOT prepend tags to the text — they will be spoken literally.
+
+   **In text-only mode**, just print the labeled lines. No TTS calls.
 
    Wait for all lines in one hot spot to finish before moving to the next.
 
