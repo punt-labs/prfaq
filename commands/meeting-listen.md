@@ -58,10 +58,12 @@ Check whether `mcp__plugin_tts_vox__speak` is available. Set a session flag:
 
      | Persona | Custom Voice | Built-in Fallback |
      |---------|-------------|-------------------|
-     | Wei | `yu` | `george` |
-     | Priya | `nila` | `sarah` |
-     | Alex | `bill` | `bill` |
-     | Dana | `river` | `river` |
+     | Wei | `yu` (community) | `george` |
+     | Priya | `nila` (community) | `sarah` |
+     | Alex | `bill` (built-in) | `bill` |
+     | Dana | `river` (built-in) | `river` |
+
+     `bill` and `river` are built-in ElevenLabs voices available to all users — their fallback is identity because they don't require library addition. Only `yu` and `nila` are community voices that need user action.
 
    - If any custom voices are missing, tell the user before starting playback:
      ```
