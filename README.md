@@ -12,7 +12,7 @@ A Claude Code plugin that brings Amazon's [Working Backwards](#what-is-working-b
 
 The output is a decision-making artifact, not a brainstorm. It is designed to be read, debated, and revised before committing to building anything.
 
-Twelve commands form a complete product-thinking workflow:
+Thirteen commands form a complete product-thinking workflow:
 
 | Command | What it does |
 |---------|-------------|
@@ -23,6 +23,7 @@ Twelve commands form a complete product-thinking workflow:
 | `/prfaq:feedback` | Apply pointed feedback — traces cascading effects and surgically redrafts |
 | `/prfaq:meeting` | Amazon-style review meeting with you and four agentic personas |
 | `/prfaq:meeting-hive` | Autonomous meeting — personas debate and decide without you moderating |
+| `/prfaq:meeting-listen` | Voiced playback of a completed meeting — four personas speak in distinct voices |
 | `/prfaq:review` | Peer review against Working Backwards principles and cognitive biases |
 | `/prfaq:research` | Find evidence for claims using local files, web, and indexed documents |
 | `/prfaq:streamline` | Scalpel edit — remove redundancy, weasel words, and bloat (10–20% tighter) |
@@ -65,6 +66,7 @@ The installer registers the Punt Labs marketplace and installs the plugin. It al
 |-----------|---------------|------|-----------|
 | **TeX distribution** | Compiling the PDF — the core output you circulate and debate | ~4 GB | Yes (without it you only get raw `.tex` source) |
 | **[Agent Teams](https://code.claude.com/docs/en/agent-teams)** | Parallel persona execution for `/prfaq:meeting-hive` — enabled via `.claude/settings.json` (shipped with the plugin) | None (env var) | Only for autonomous meetings (use `/prfaq:meeting` without it) |
+| **[punt-tts](https://github.com/punt-labs/tts)** | Voiced playback for `/prfaq:meeting-listen` — four personas speak in distinct voices | ~5 MB | No — without it, meeting-listen runs in text-only mode |
 | **[punt-quarry](https://github.com/punt-labs/quarry)** | Semantic search across your indexed documents during research | ~20 MB | No — enhances `/prfaq:research` but not required |
 
 Install TeX separately if the installer reports it missing:
@@ -202,6 +204,18 @@ Same four personas, but they debate and reach consensus autonomously using Claud
 The output is a consensus summary with a revision queue that feeds into `/prfaq:feedback`.
 
 **Requires** `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` — shipped in `.claude/settings.json`, enabled automatically when you install the plugin.
+
+### Listen: `/prfaq:meeting-listen`
+
+```
+/prfaq:meeting-listen [path/to/meeting-summary.md]
+```
+
+Post-production voiced playback of a completed meeting summary. The four personas speak in distinct voices, transforming the structured decisions table into a natural debate you can listen to. Works with both interactive and hive meeting summaries.
+
+**Multi-provider voice support:** Each persona has voice profiles for ElevenLabs (custom community voices with expressive tags), OpenAI, and a fallback for other providers. The command auto-detects the active TTS provider and selects the appropriate voice.
+
+**Requires** [punt-tts](https://github.com/punt-labs/tts) plugin for voiced playback. Without it, the command runs in text-only mode — printing the dialogue with speaker labels but no audio.
 
 ### Review: `/prfaq:review`
 
@@ -342,17 +356,18 @@ The PR/FAQ document includes:
 
 ## The Workflow
 
-The typical workflow is: **generate** (or **import**) → **badge** → **review** → **meeting** → **feedback** → repeat → **streamline** → **vote** → **externalize** → share.
+The typical workflow is: **generate** (or **import**) → **badge** → **review** → **meeting** → **listen** → **feedback** → repeat → **streamline** → **vote** → **externalize** → share.
 
 1. `/prfaq` generates the initial document from a structured conversation — or `/prfaq:import` converts an existing document
 2. `/prfaq:badge` embeds a stage-colored badge in your README linking to the PDF
 3. `/prfaq:review` gives you an adversarial peer review
 4. `/prfaq:meeting` stress-tests with four personas where you make each call — or `/prfaq:meeting-hive` for autonomous consensus via [Agent Teams](https://code.claude.com/docs/en/agent-teams)
-5. `/prfaq:feedback` applies the meeting's decisions (or your own feedback) surgically
-6. `/prfaq:streamline` tightens the final document — removes redundancy, weasel words, and bloat
-7. `/prfaq:vote` renders a go/no-go decision based on the document's evidence across three gates
-8. `/prfaq:externalize` turns the internal PR/FAQ into a customer-facing press release for the shipped version
-9. `/prfaq:feedback-to-us` when you're done — helps us improve the plugin
+5. `/prfaq:meeting-listen` plays back the meeting as a voiced debate between personas (requires [punt-tts](https://github.com/punt-labs/tts))
+6. `/prfaq:feedback` applies the meeting's decisions (or your own feedback) surgically
+7. `/prfaq:streamline` tightens the final document — removes redundancy, weasel words, and bloat
+8. `/prfaq:vote` renders a go/no-go decision based on the document's evidence across three gates
+9. `/prfaq:externalize` turns the internal PR/FAQ into a customer-facing press release for the shipped version
+10. `/prfaq:feedback-to-us` when you're done — helps us improve the plugin
 
 Each step produces a compiled PDF. The document improves with each cycle.
 
