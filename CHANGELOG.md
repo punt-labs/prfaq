@@ -4,7 +4,20 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-02-28
+
 ### Added
+- `/prfaq:meeting-listen` command — post-production voiced playback of completed meeting summaries
+  - Four personas (Wei, Priya, Alex, Dana) speak in distinct voices via the TTS plugin (`punt-tts`)
+  - Multi-provider voice support: ElevenLabs (custom community voices + expressive tags), OpenAI, and fallback providers
+  - ElevenLabs custom voice validation with built-in fallback voices when community voices are not in user's library
+  - Graceful text-only degradation when TTS plugin is unavailable
+  - Supports both hive and interactive meeting summary formats
+  - Decision normalization for compound values (`RESEARCH + REVISE`, `**KEEP AS-IS**`)
+  - Speaker labels always printed in transcript; spoken audio omits labels for natural dialogue
+- Voice profiles added to all four meeting persona agents
+  - Per-provider voice fields: `voice_elevenlabs`, `voice_openai`, `voice_fallback`, `voice_vibe`
+  - Wei: yu/echo, Priya: nila/coral, Alex: bill/onyx, Dana: river/fable
 - Installer injects plugin permission rules into `~/.claude/settings.json`
   - 20 rules covering Bash, Read, Write, Edit, Glob, Grep, WebSearch, WebFetch, and Agent tool patterns
   - Order-preserving idempotent merge via `jq` — existing rules are never reordered or duplicated
@@ -239,7 +252,8 @@ First tagged release.
 - Plugin cache not clearing on reinstall (stale cache hid new agents)
 - FAQ paragraph indentation inconsistency in `faqpair` environment
 
-[Unreleased]: https://github.com/punt-labs/prfaq/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/punt-labs/prfaq/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/punt-labs/prfaq/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/punt-labs/prfaq/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/punt-labs/prfaq/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/punt-labs/prfaq/compare/v1.0.0...v1.1.0
