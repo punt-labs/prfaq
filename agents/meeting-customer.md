@@ -23,7 +23,9 @@ description: >
 tools: Read, Glob, Grep
 model: sonnet
 color: green
-voice: nila
+voice_elevenlabs: nila
+voice_openai: coral
+voice_fallback: default
 voice_vibe: ""
 ---
 

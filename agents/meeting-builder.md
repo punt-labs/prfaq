@@ -23,7 +23,9 @@ description: >
 tools: Read, Glob, Grep
 model: sonnet
 color: magenta
-voice: river
+voice_elevenlabs: river
+voice_openai: fable
+voice_fallback: default
 voice_vibe: "[excited]"
 ---
 

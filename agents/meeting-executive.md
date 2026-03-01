@@ -23,7 +23,9 @@ description: >
 tools: Read, Glob, Grep
 model: sonnet
 color: red
-voice: bill
+voice_elevenlabs: bill
+voice_openai: onyx
+voice_fallback: default
 voice_vibe: "[dramatic tone]"
 ---
 

@@ -23,7 +23,9 @@ description: >
 tools: Read, Glob, Grep
 model: sonnet
 color: cyan
-voice: yu
+voice_elevenlabs: yu
+voice_openai: echo
+voice_fallback: default
 voice_vibe: "[slow]"
 ---
 
