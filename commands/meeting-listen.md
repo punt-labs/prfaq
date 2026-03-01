@@ -20,17 +20,58 @@ This command requires the TTS plugin (`punt-tts`) to be installed and active in 
    - **Hive format** — has columns: `Hot Spot | Door | Decision | Resolution | Winning Argument | Dissent`
    - **Interactive format** — has columns: `Hot Spot | Severity | Decision | Rationale`
 
-3. **Load voice profiles.** Read the four agent files to extract voice and vibe configuration:
+3. **Detect TTS provider and load voice profiles.** Read the four agent files to extract voice configuration:
    - `${CLAUDE_PLUGIN_ROOT}/agents/meeting-engineer.md` — Wei
    - `${CLAUDE_PLUGIN_ROOT}/agents/meeting-customer.md` — Priya
    - `${CLAUDE_PLUGIN_ROOT}/agents/meeting-executive.md` — Alex
    - `${CLAUDE_PLUGIN_ROOT}/agents/meeting-builder.md` — Dana
 
-   Parse the YAML frontmatter for `voice` and `voice_vibe` fields. These override the session's TTS voice and vibe for each persona's lines.
+   Parse the YAML frontmatter for these fields:
+   - `voice_elevenlabs` — ElevenLabs voice name (may be a custom/community voice)
+   - `voice_openai` — OpenAI voice name
+   - `voice_fallback` — value `default` means use the provider's default voice
+   - `voice_vibe` — expressive tags (ElevenLabs only)
 
-4. **Transform and voice each hot spot.** Process the decisions table row by row. For each hot spot:
+   **Detect the active provider.** Call `mcp__plugin_tts_vox__list_voices` and read the `provider` field from the response. Select the voice field for each persona:
 
-   **a. Write the dialogue.** Transform the structured summary into 4-6 lines of natural conversation between personas. The personas speak to each other — no narrator, no stage directions, no attribution labels in the spoken text.
+   | Provider | Voice Field | Vibe Tags |
+   |----------|-------------|-----------|
+   | `elevenlabs` | `voice_elevenlabs` | Use `voice_vibe` + situational tags |
+   | `openai` | `voice_openai` | Skip all vibe tags (not supported) |
+   | Any other | `voice_fallback` | Skip all vibe tags |
+
+   When `voice_fallback` is `default`, omit the `voice` parameter entirely from speak calls — let TTS use the provider's default voice. All four personas will share the same voice on fallback providers, but the dialogue text still differentiates them.
+
+4. **Validate ElevenLabs voices (ElevenLabs provider only).** The `voice_elevenlabs` values may be community voices that require the user to add them to their ElevenLabs voice library. Before voicing any hot spots:
+
+   - Read the `all` array from the `mcp__plugin_tts_vox__list_voices` response (this lists all voices in the user's library)
+   - Check whether each persona's `voice_elevenlabs` value appears in the list
+   - For any missing voices, build a fallback map using built-in ElevenLabs voices:
+
+     | Persona | Custom Voice | Built-in Fallback |
+     |---------|-------------|-------------------|
+     | Wei | `yu` | `george` |
+     | Priya | `nila` | `sarah` |
+     | Alex | `bill` | (built-in, always available) |
+     | Dana | `river` | (built-in, always available) |
+
+   - If any custom voices are missing, tell the user before starting playback:
+     ```
+     Note: Custom voice(s) [names] not found in your ElevenLabs library.
+     Using built-in fallback(s) [names] instead.
+     To use the custom voices, add them to your library at elevenlabs.io.
+     ```
+   - Use the fallback voice for affected personas for the rest of the playback.
+
+5. **Transform and voice each hot spot.** Process the decisions table row by row. For each hot spot:
+
+   **a. Print the hot spot header:**
+
+   ```
+   --- Hot Spot N: [title] | [Decision] ---
+   ```
+
+   **b. Write the dialogue.** Transform the structured summary into 4-6 lines of natural conversation between personas. The personas speak to each other — no narrator, no stage directions, no attribution labels in the spoken text.
 
    **For hive summaries** (persona-attributed):
    - The persona named in "Winning Argument" opens with their core point, expanded into natural speech using that persona's verbal style from their agent file
@@ -54,26 +95,20 @@ This command requires the TTS plugin (`punt-tts`) to be installed and active in 
    - The conversation should feel like overhearing a real debate, not a script reading
    - For KEEP decisions, the defending persona should sound confident; for REVISE, the challenger should sound vindicated
 
-   **b. Voice each line.** For each line of dialogue, call `mcp__plugin_tts_vox__speak` with:
-   - `text`: The dialogue line. Prepend the persona's `voice_vibe` tags if non-empty (e.g., `[slow] The denominator is missing.`). For emotionally charged lines, add situational tags:
+   **c. Voice each line.** For each line of dialogue, call `mcp__plugin_tts_vox__speak` with:
+   - `voice`: The resolved voice for this persona (from step 3/4)
+   - `ephemeral`: `true`
+   - `vibe_tags` (ElevenLabs only): The persona's `voice_vibe` value. For emotionally charged lines, use situational tags instead:
      - Wei finding handwaving: `[frustrated]`
      - Priya losing patience with jargon: `[frustrated]`
      - Alex pattern-matching to a past failure: `[sighs]`
      - Dana seeing the bigger opportunity: `[excited]`
      - Any persona on a KEEP/vindicated moment: `[satisfied]`
-   - `voice`: The persona's `voice` field from frontmatter
-   - `ephemeral`: `true` (playback audio is transient)
-   - Do NOT set `auto_play` to false — each line should play immediately
-
-   **c. Print the hot spot header** before voicing its dialogue:
-
-   ```
-   --- Hot Spot N: [title] | [Decision] ---
-   ```
+   - For non-ElevenLabs providers: omit `vibe_tags` entirely. Do NOT prepend tags to the text — they will be spoken literally.
 
    Wait for all lines in one hot spot to finish before moving to the next.
 
-5. **Close the playback.** After all hot spots, print:
+6. **Close the playback.** After all hot spots, print:
 
    ```
    --- End of meeting playback ---
