@@ -69,6 +69,18 @@ These anti-patterns consistently undermine PR/FAQ quality. Check every draft aga
 
 **The fix:** Ask the customer evidence question: "Is this a top-3 problem for the target customer?" If it's problem #7 on their list, they'll never prioritize adopting the solution, no matter how good it is.
 
+## False Precision in Timeline Estimates
+
+**The mistake:** Presenting detailed hour estimates, month-by-month schedules, or phase-specific targets at hypothesis stage. The planning fallacy (Kahneman, 2011) shows that insiders systematically underestimate time and cost when using an inside view. Adding specific numbers without a reference class creates anchoring --- stakeholders remember "300--500 hours" long after the assumptions behind it have changed. AI-augmented development makes this worse: historical velocity data from human-only teams is no longer a reliable baseline.
+
+**How it shows up in a PR/FAQ:**
+- Per-phase hour estimates ("Phase 1: 80--120 hours, Phase 2: 80--140 hours")
+- Calendar targets tied to phases ("Months 1--2", "Month 6")
+- Total development hour ranges presented as reliable ("Total: 300--500 hours")
+- P\&L sections that treat unvalidated hour estimates as cost inputs
+
+**The fix:** At hypothesis stage, describe phased delivery order and cut discipline --- what comes first, what comes last, what gets cut if scope compresses --- without dates or hours. The timeline FAQ should answer "what order and what gets cut," not "how long." Reserve detailed estimates for validated stage, when prototype velocity data provides a reference class.
+
 ## Stage Calibration
 
 Anti-patterns apply at every stage, but some are more dangerous at specific stages (`\prfaqstage{}`):
@@ -81,3 +93,4 @@ Anti-patterns apply at every stage, but some are more dangerous at specific stag
 | **Discounting competition** | Some tolerance for incomplete competitive analysis if the space is genuinely new. | Must engage seriously with competitors and their likely response. | Must include observed competitive behavior and market share changes. |
 | **Vague customer definition** | Warning. Some vagueness is OK if the document proposes how to narrow it. | Must be specific. Validation should have identified the exact customer. | Must match actual user base, not aspirational target. |
 | **Great product, wrong problem** | Hard to detect without customer data. Flag if no validation plan exists. | Should be detectable from interview data. Flag if problem priority isn't established. | Detectable from usage patterns. Flag if engagement is low despite adoption. |
+| **False precision in timeline estimates** | Most dangerous here. No reference class exists. Specific hours and dates create anchoring and planning fallacy. Flag any per-phase hour estimates or calendar targets. Describe delivery order and cut discipline only. | Becoming acceptable if prototype velocity data provides a reference class. Still flag calendar targets without uncertainty ranges. | Expected. Team velocity data from actual development justifies specific estimates. |

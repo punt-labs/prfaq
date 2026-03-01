@@ -37,7 +37,7 @@ Load the evaluation frameworks. Read these reference guides:
 
 1. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/decision-quality.md` — Kahneman's 12-question decision quality checklist, adapted for PR/FAQ review. This is your primary intellectual framework.
 2. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/four-risks.md` — Cagan four risks framework, review criteria, risk signals.
-3. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/common-mistakes.md` — Six anti-patterns in PR/FAQ writing.
+3. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/common-mistakes.md` — Seven anti-patterns in PR/FAQ writing.
 4. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/pr-structure.md` — Section-by-section press release quality standards.
 5. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/faq-structure.md` — Required FAQ questions and evidence standards.
 6. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/unit-economics.md` — Unit economics evaluation for viability risk: CAC, LTV, payback period, margin analysis.
@@ -125,6 +125,7 @@ Check against common-mistakes.md:
 - Discounting competition (dismissing alternatives without engagement)
 - Vague customer definition ("developers" instead of "senior backend engineers at Series B startups")
 - Great product, wrong problem (elegant solution to a problem nobody has)
+- False precision in timeline estimates (per-phase hours, calendar targets at hypothesis stage)
 
 ## Output Format
 

@@ -65,7 +65,7 @@ Internal FAQs answer questions leadership, finance, and engineering would ask. T
    Name each dependency, its current status, and the fallback if it is not available.
 
 7. **What is the estimated development timeline?**
-   Break into phases with milestones. Include what is cut if the timeline compresses. Be explicit about what "done" means for each phase.
+   Break into phases with delivery order and cut discipline: what comes first, what comes last, what gets cut if scope compresses. Be explicit about what "done" means for each phase. At hypothesis stage, do **not** include specific hour estimates, month-by-month schedules, or calendar targets --- these create false precision without a reference class (see common-mistakes.md: False Precision in Timeline Estimates). Reserve detailed estimates for validated stage, when prototype velocity data exists.
 
 8. **What is the scaling story?**
    If the product succeeds, what breaks first? At 10x users, 100x data, global distribution — where are the bottlenecks?
