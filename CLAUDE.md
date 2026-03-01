@@ -111,7 +111,7 @@ Match the workflow to the bead's scope. The deciding factor is **design ambiguit
 
 ### CHANGELOG
 
-This project follows [Keep a Changelog](https://keepachangelog.com/) format. Every user-facing change gets an entry under `[Unreleased]` at commit time — not deferred to release.
+This project follows [Keep a Changelog](https://keepachangelog.com/) format. CHANGELOG entries are written **in the PR branch, before merge** — not retroactively on main. The entry is part of the diff that gets reviewed.
 
 **When to add an entry:**
 - New commands, agents, or reference guides → `### Added`
@@ -155,7 +155,7 @@ Before creating a PR, verify:
 - [ ] **Template and dogfood in sync** — environment definitions, packages, and `\newpage` structure match
 - [ ] **Version numbers synchronized** — `plugin.json`, `README.md`, and `CHANGELOG.md` agree
 - [ ] **README updated** if user-facing behavior changed (new commands, new install steps, new dependencies)
-- [ ] **CHANGELOG entry** added for notable changes
+- [ ] **CHANGELOG entry included in the PR diff** for notable changes
 - [ ] **Installer updated** if new LaTeX packages added to the template
 - [ ] **Skill prompts updated** if new LaTeX environments or commands added
 - [ ] **Cached plugin copy updated** if skill or reference guide files changed
