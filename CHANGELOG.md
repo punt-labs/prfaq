@@ -4,6 +4,11 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+### Added
+
+- Peer reviewer now flags "False Precision in Timeline Estimates" — detailed hour breakdowns and calendar targets at hypothesis stage are flagged as the 7th anti-pattern
+- Updated timeline FAQ guidance (question 7) to warn against false precision at early stages
+
 ## [1.4.0] - 2026-02-28
 
 ### Added
