@@ -4,11 +4,21 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/punt-labs/prfaq/docs.yml?label=CI)](https://github.com/punt-labs/prfaq/actions/workflows/docs.yml)
 [![Working Backwards](https://img.shields.io/badge/Working_Backwards-hypothesis-lightgrey)](./prfaq.pdf)
 
-A Claude Code plugin that brings Amazon's [Working Backwards](#what-is-working-backwards) PR/FAQ process to engineers and founders — generate, review, stress-test, and iterate on product discovery documents inside the terminal.
+Amazon's [Working Backwards](#what-is-working-backwards) PR/FAQ process, grounded in your data — generate, review, stress-test, and iterate on product discovery documents inside the terminal.
 
 ## What It Does
 
-`prfaq` runs Amazon's Working Backwards process as a terminal command. Type `/prfaq` in any Claude Code session and Claude walks you through a structured conversation: who is the customer, what is their problem, why is this solution different, what are the risks. From your answers, it generates a complete PR/FAQ document — a mock press release followed by detailed FAQs — compiled to a polished PDF.
+A product discovery document without evidence is fiction. `prfaq` starts from your data — customer interviews, survey results, market reports, competitive analysis, usage metrics — and builds a PR/FAQ document grounded in that evidence.
+
+**Your research comes first.** Drop files into a `./research/` directory before running `/prfaq`. The plugin reads `.md`, `.txt`, and `.pdf` files and treats them as primary sources. Every claim in the generated document is traced back to these sources or to web research the plugin performs itself. With [punt-quarry](https://github.com/punt-labs/quarry) installed, the plugin can also search across your indexed knowledge base — any of Quarry's 30+ supported formats (PDFs, spreadsheets, presentations, source code, images, HTML, DOCX, and more).
+
+**Three evidence sources, in priority order:**
+
+1. **Local research files** — your `./research/` directory (highest priority)
+2. **Indexed documents** — semantic search via [punt-quarry](https://github.com/punt-labs/quarry) if installed
+3. **Web search** — the plugin searches the web to fill gaps and corroborate claims
+
+From that evidence base, `/prfaq` walks you through a structured conversation — who is the customer, what is their problem, what are the risks — and produces a complete PR/FAQ document: a mock press release, detailed FAQs, a four-risks assessment, and a feature appendix, compiled to PDF. Every factual claim includes a citation.
 
 The output is a decision-making artifact, not a brainstorm. It is designed to be read, debated, and revised before committing to building anything.
 
@@ -88,18 +98,20 @@ curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/a4d30cc/install.sh 
 # 2. Navigate to your project
 cd ~/your-project
 
-# 3. (Optional) Add your existing research
+# 3. Add your research
 mkdir -p research
-# Drop customer interviews, survey data, market reports, or
-# competitive analysis into ./research/ — the plugin reads
-# .md, .txt, and .pdf files and treats them as primary sources.
+# Drop customer interviews, survey data, market reports, competitive
+# analysis — anything that informs the product decision. The plugin
+# reads .md, .txt, and .pdf files and treats them as primary sources.
+# No research? The plugin still works — it will search the web — but
+# the document is only as good as the evidence behind it.
 
 # 4. Launch Claude Code and generate your PR/FAQ
 claude
 /prfaq
 ```
 
-The plugin walks you through a structured conversation, searches your research for evidence, and produces a compiled PDF. From there: `/prfaq:review` for peer review, `/prfaq:meeting` to stress-test, `/prfaq:feedback` to iterate, `/prfaq:streamline` to tighten.
+The plugin reads your research, searches the web for additional evidence, walks you through a structured conversation, and produces a compiled PDF. From there: `/prfaq:review` for peer review, `/prfaq:meeting` to stress-test, `/prfaq:feedback` to iterate, `/prfaq:streamline` to tighten.
 
 ## Command Reference
 
@@ -231,9 +243,7 @@ Peer review against Working Backwards principles, Cagan's four risks framework, 
 /prfaq:research find evidence that developers lack product training
 ```
 
-Searches local files, web sources, and indexed documents (via quarry-mcp if available) for evidence. Returns structured biblatex citations ready to add to your `.bib` file. Results are cached in `./research/` so future runs reuse prior findings.
-
-**Bring your own research.** Drop customer interviews, survey data, market reports, or competitive analysis into `./research/` before running `/prfaq` or `/prfaq:research`. The researcher reads all `.md`, `.txt`, and `.pdf` files in that directory and treats them as primary sources — they take priority over web search results.
+Searches your local `./research/` files first, then indexed documents (via [punt-quarry](https://github.com/punt-labs/quarry) if installed), then the web. Returns structured biblatex citations ready to add to your `.bib` file. Results are cached in `./research/` so future runs reuse prior findings. Local files always take priority over web results.
 
 ### Streamline: `/prfaq:streamline`
 
