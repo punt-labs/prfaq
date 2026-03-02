@@ -91,25 +91,9 @@ sudo apt-get install texlive-full
 
 ## Quick Start
 
-```bash
-# 1. Install
-curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/a4d30cc/install.sh | sh
-
-# 2. Navigate to your project
-cd ~/your-project
-
-# 3. Add your research
-mkdir -p research
-# Drop customer interviews, survey data, market reports, competitive
-# analysis — anything that informs the product decision. The plugin
-# reads .md, .txt, and .pdf files and treats them as primary sources.
-# No research? The plugin still works — it will search the web — but
-# the document is only as good as the evidence behind it.
-
-# 4. Launch Claude Code and generate your PR/FAQ
-claude
-/prfaq
-```
+1. **Install** the plugin (see [Installation](#installation) above)
+2. **Add your research** — drop customer interviews, survey data, market reports, and competitive analysis into a `./research/` directory in your project. The plugin reads `.md`, `.txt`, and `.pdf` files and treats them as primary sources. No research? It still works — it will search the web — but the document is only as good as the evidence behind it.
+3. **Run `/prfaq`** in Claude Code
 
 The plugin reads your research, searches the web for additional evidence, walks you through a structured conversation, and produces a compiled PDF. From there: `/prfaq:review` for peer review, `/prfaq:meeting` to stress-test, `/prfaq:feedback` to iterate, `/prfaq:streamline` to tighten.
 
