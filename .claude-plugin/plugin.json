@@ -1,5 +1,5 @@
 {
-  "name": "prfaq-dev",
+  "name": "prfaq",
   "description": "Amazon Working Backwards PR/FAQ process — generate professional LaTeX documents for product discovery and decision-making",
   "version": "1.4.0",
   "author": {
