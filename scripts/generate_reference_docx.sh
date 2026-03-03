@@ -226,10 +226,12 @@ fi
 # Add header/footer references to document.xml sectPr
 DOC_XML="$UNZIP_DIR/word/document.xml"
 if [[ -f "$DOC_XML" ]] && ! grep -q 'rIdHeader1' "$DOC_XML"; then
-  sed -i '' 's|<w:sectPr|<w:sectPr><w:headerReference w:type="default" r:id="rIdHeader1"/></w:sectPr><w:sectPr|' "$DOC_XML" 2>/dev/null || true
+  sed -i '' 's|<w:sectPr|<w:sectPr><w:headerReference w:type="default" r:id="rIdHeader1"/></w:sectPr><w:sectPr|' "$DOC_XML" 2>/dev/null || \
+  sed -i 's|<w:sectPr|<w:sectPr><w:headerReference w:type="default" r:id="rIdHeader1"/></w:sectPr><w:sectPr|' "$DOC_XML"
 fi
 if [[ -f "$DOC_XML" ]] && ! grep -q 'rIdFooter1' "$DOC_XML"; then
-  sed -i '' 's|<w:sectPr|<w:sectPr><w:footerReference w:type="default" r:id="rIdFooter1"/></w:sectPr><w:sectPr|' "$DOC_XML" 2>/dev/null || true
+  sed -i '' 's|<w:sectPr|<w:sectPr><w:footerReference w:type="default" r:id="rIdFooter1"/></w:sectPr><w:sectPr|' "$DOC_XML" 2>/dev/null || \
+  sed -i 's|<w:sectPr|<w:sectPr><w:footerReference w:type="default" r:id="rIdFooter1"/></w:sectPr><w:sectPr|' "$DOC_XML"
 fi
 
 # Ensure header1.xml and footer1.xml are in [Content_Types].xml

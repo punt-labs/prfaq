@@ -106,6 +106,9 @@ seen_headline_center=0
 
 while IFS= read -r line; do
 
+  # Skip comment lines (same as Pass 1 — prevents counter divergence)
+  [[ "$line" =~ ^[[:space:]]*% ]] && { echo "$line"; continue; }
+
   # --- Skip multi-line custom definitions ---
   if [[ $in_skip_block -ne 0 ]]; then
     if [[ "$line" == "}" ]] || [[ "$line" == "}{%" ]]; then
