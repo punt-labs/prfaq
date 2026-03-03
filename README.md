@@ -92,6 +92,27 @@ We recommend **TeX** — the PDF is the artifact you circulate and debate. Use p
 | **[punt-tts](https://github.com/punt-labs/tts)** | Voiced playback for `/prfaq:meeting-listen` — four personas speak in distinct voices | ~5 MB | No — without it, meeting-listen runs in text-only mode |
 | **[punt-quarry](https://github.com/punt-labs/quarry)** | Semantic search across your indexed documents during research | ~20 MB | No — enhances `/prfaq:research` but not required |
 
+<details>
+<summary>Setting up Quarry for research</summary>
+
+If you have [punt-quarry](https://github.com/punt-labs/quarry) installed, you can give the researcher agent semantic search over your research files. This is more powerful than keyword matching — quarry finds conceptually related evidence even when the exact words differ.
+
+```bash
+# Create a project-scoped database
+quarry use prfaq
+
+# Ingest your research directory
+quarry ingest ./research/
+
+# (Optional) Add other relevant sources
+quarry ingest https://example.com/market-report
+quarry ingest ~/Documents/customer-interviews/
+```
+
+Once ingested, the `/prfaq:research` agent and Phase 0 research discovery will automatically use quarry's `search_documents` tool to find relevant evidence. Re-run `quarry ingest ./research/` after adding new files.
+
+</details>
+
 Install TeX for PDF output (recommended), or pandoc for lightweight `.docx` export:
 
 ```bash
