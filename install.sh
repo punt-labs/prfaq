@@ -98,6 +98,10 @@ SETTINGS_FILE="$HOME/.claude/settings.json"
 PRFAQ_RULES='[
   "Bash(bash */compile_prfaq.sh *)",
   "Bash(bash scripts/compile_prfaq.sh *)",
+  "Bash(bash */export_prfaq_docx.sh *)",
+  "Bash(bash scripts/export_prfaq_docx.sh *)",
+  "Bash(bash */generate_reference_docx.sh *)",
+  "Bash(bash scripts/generate_reference_docx.sh *)",
   "Bash(uuidgen)",
   "Bash(mkdir -p meetings)",
   "Bash(mkdir -p research)",
@@ -153,27 +157,36 @@ else
   printf '\n'
 fi
 
-# --- Step 6: TeX distribution check ---
+# --- Step 6: Output toolchain checks ---
 
-info "Checking TeX distribution (optional, needed for PDF output)..."
+info "Checking output toolchains..."
 
-MISSING=0
+# 6a: pandoc (needed for DOCX export)
+if command -v pandoc >/dev/null 2>&1; then
+  ok "pandoc found (DOCX export available)"
+else
+  warn "pandoc not found — /prfaq:export (DOCX) will not work"
+  printf '  Install: brew install pandoc (macOS) or apt install pandoc (Linux)\n'
+fi
+
+# 6b: TeX distribution (needed for PDF output)
+TEX_MISSING=0
 
 if command -v pdflatex >/dev/null 2>&1; then
-  ok "pdflatex found"
+  ok "pdflatex found (PDF output available)"
 else
   warn "pdflatex not found — PDF compilation will not work"
-  MISSING=1
+  TEX_MISSING=1
 fi
 
 if command -v biber >/dev/null 2>&1; then
   ok "biber found"
 else
   warn "biber not found — citations will show as [?] in PDFs"
-  MISSING=1
+  TEX_MISSING=1
 fi
 
-if [ "$MISSING" -ne 0 ]; then
+if [ "$TEX_MISSING" -ne 0 ]; then
   printf '\n'
   info "To install a TeX distribution:"
   printf '  macOS:  brew install --cask mactex\n'
@@ -182,6 +195,7 @@ if [ "$MISSING" -ne 0 ]; then
   printf '  Other:  https://tug.org/texlive/\n'
   printf '\n'
   info "The plugin still generates .tex files without TeX installed."
+  info "Use /prfaq:export for Word output (requires only pandoc, ~50 MB)."
 fi
 
 # --- Done ---

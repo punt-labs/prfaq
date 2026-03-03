@@ -22,7 +22,7 @@ From that evidence base, `/prfaq` walks you through a structured conversation �
 
 The output is a decision-making artifact, not a brainstorm. It is designed to be read, debated, and revised before committing to building anything.
 
-Thirteen commands form a complete product-thinking workflow:
+Fourteen commands form a complete product-thinking workflow:
 
 | Command | What it does |
 |---------|-------------|
@@ -36,6 +36,7 @@ Thirteen commands form a complete product-thinking workflow:
 | `/prfaq:meeting-listen` | Voiced playback of a completed meeting — four personas speak in distinct voices |
 | `/prfaq:review` | Peer review against Working Backwards principles and cognitive biases |
 | `/prfaq:research` | Find evidence for claims using local files, web, and indexed documents |
+| `/prfaq:export` | Export as Word document (.docx) via pandoc — no TeX installation required |
 | `/prfaq:streamline` | Scalpel edit — remove redundancy, weasel words, and bloat (10–20% tighter) |
 | `/prfaq:vote` | Go/no-go decision — three-gate assessment with binary verdict and evidence trail |
 | `/prfaq:feedback-to-us` | Tell us how the plugin is working for you (anonymous 1-5 feedback) |
@@ -68,25 +69,28 @@ sh install.sh
 
 </details>
 
-The installer registers the Punt Labs marketplace and installs the plugin. It also checks for TeX dependencies needed for PDF output. Restart Claude Code after installing.
+The installer registers the Punt Labs marketplace and installs the plugin. It checks for pandoc (needed for `.docx` export) and TeX dependencies (needed for PDF output). Restart Claude Code after installing.
 
 ### Optional Dependencies
 
 | Dependency | What it's for | Size | Required? |
 |-----------|---------------|------|-----------|
-| **TeX distribution** | Compiling the PDF — the core output you circulate and debate | ~4 GB | Yes (without it you only get raw `.tex` source) |
+| **[pandoc](https://pandoc.org/)** | DOCX export via `/prfaq:export` — Word output without TeX | ~50 MB | No — only needed for `.docx` output |
+| **TeX distribution** | Compiling the PDF — the highest-fidelity output | ~4 GB | No — use `/prfaq:export` for `.docx` if you don't want TeX |
 | **[Agent Teams](https://code.claude.com/docs/en/agent-teams)** | Parallel persona execution for `/prfaq:meeting-hive` — enabled via `.claude/settings.json` (shipped with the plugin) | None (env var) | Only for autonomous meetings (use `/prfaq:meeting` without it) |
 | **[punt-tts](https://github.com/punt-labs/tts)** | Voiced playback for `/prfaq:meeting-listen` — four personas speak in distinct voices | ~5 MB | No — without it, meeting-listen runs in text-only mode |
 | **[punt-quarry](https://github.com/punt-labs/quarry)** | Semantic search across your indexed documents during research | ~20 MB | No — enhances `/prfaq:research` but not required |
 
-Install TeX separately if the installer reports it missing:
+Install pandoc for `.docx` export, or TeX for PDF output (or both):
 
 ```bash
-# macOS
-brew install --cask mactex
+# pandoc (~50 MB) — for /prfaq:export (.docx output)
+brew install pandoc          # macOS
+sudo apt-get install pandoc  # Ubuntu
 
-# Ubuntu
-sudo apt-get install texlive-full
+# TeX (~4 GB) — for PDF output
+brew install --cask mactex          # macOS
+sudo apt-get install texlive-full   # Ubuntu
 ```
 
 ## Quick Start
@@ -125,6 +129,16 @@ For a new document, the skill walks you through six phases:
 Already have a PR/FAQ draft, product brief, or pitch deck? Import parses your document, extracts the ideas, and launches the full `/prfaq` generation workflow with that content as a head start. You confirm and refine each section — the same interactive process, just faster because your existing thinking is pre-loaded.
 
 Accepts `.md`, `.txt`, and `.pdf` files, or paste text directly as the argument.
+
+### Export: `/prfaq:export`
+
+```
+/prfaq:export
+```
+
+Export the PR/FAQ as a Word document (`.docx`) via pandoc. This is the lightweight alternative to PDF — no TeX installation required, just pandoc (~50 MB vs ~4 GB).
+
+The export pipeline pre-processes custom LaTeX environments into standard LaTeX that pandoc understands, converts to `.docx`, then post-processes the Word document for styled output: Palatino serif body, SectionBlue headings, centered title, and a footer with the document stage and version.
 
 ### Externalize: `/prfaq:externalize`
 
@@ -330,7 +344,8 @@ Each guide includes stage calibration — the same guide produces different expe
 
 - `prfaq.tex` — LaTeX source in your project directory
 - `prfaq.bib` — Bibliography with sourced citations
-- `prfaq.pdf` — Compiled PDF ready for review
+- `prfaq.pdf` — Compiled PDF ready for review (requires TeX)
+- `prfaq.docx` — Word document via `/prfaq:export` (requires pandoc, not TeX)
 - `meetings/meeting-summary-*.md` / `meetings/meeting-hive-summary-*.md` — Meeting decisions log (feeds into `/prfaq:feedback`)
 
 The `.tex` files are standard LaTeX — if you need to make hand edits, open them in [Overleaf](https://www.overleaf.com/) or a local editor like [TeXShop](https://pages.uoregon.edu/koch/texshop/) (macOS).
@@ -350,7 +365,7 @@ The PR/FAQ document includes:
 
 ## The Workflow
 
-The typical workflow is: **generate** (or **import**) → **badge** → **review** → **meeting** → **listen** → **feedback** → repeat → **streamline** → **vote** → **externalize** → share.
+The typical workflow is: **generate** (or **import**) → **badge** → **review** → **meeting** → **listen** → **feedback** → repeat → **streamline** → **vote** → **export** → **externalize** → share.
 
 1. `/prfaq` generates the initial document from a structured conversation — or `/prfaq:import` converts an existing document
 2. `/prfaq:badge` embeds a stage-colored badge in your README linking to the PDF

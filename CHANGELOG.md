@@ -6,6 +6,18 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ### Added
 
+- `/prfaq:export` command — export PR/FAQ as Word document (.docx) via pandoc, no TeX installation required
+  - Pre-processes custom LaTeX environments (faqpair, featureitem, customerquote, spokespersonquote, prsection) into standard LaTeX that pandoc understands
+  - Two-pass counter resolution: FAQ and feature numbering with cross-reference substitution (`\faqref`, `\featureref`)
+  - Styled `reference.docx` template: Palatino serif, SectionBlue headings, ~80% of LaTeX visual quality
+  - Inline cleanup: strips `\textcolor`, `\needspace`, `\discretionary`, and other layout-only commands
+  - Risk table converted from `tabularx` to paragraph layout for readable Word output
+  - Centered title and subtitle with styled fonts (18pt bold SectionBlue / 12pt AccentGray)
+  - Header with document title, footer with stage and version
+  - Code/verbatim style: 8pt SectionBlue bold (compact relative to 11pt body)
+  - Page breaks before Risk Assessment and Feature Appendix sections
+  - Portable bash implementation (no gawk, no associative arrays — works on macOS and Linux)
+- Installer now checks for pandoc alongside TeX distribution and adds export script permission rules
 - Peer reviewer now flags "False Precision in Timeline Estimates" — detailed hour breakdowns and calendar targets at hypothesis stage are flagged as the 7th anti-pattern
 - Updated timeline FAQ guidance (question 7) to warn against false precision at early stages
 
