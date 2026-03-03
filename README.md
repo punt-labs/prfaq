@@ -71,26 +71,35 @@ sh install.sh
 
 The installer registers the Punt Labs marketplace and installs the plugin. It checks for pandoc (needed for `.docx` export) and TeX dependencies (needed for PDF output). Restart Claude Code after installing.
 
-### Optional Dependencies
+### Output Dependencies
+
+You need **at least one** of TeX or pandoc to produce output. Without either, the plugin generates `.tex` source but cannot render it.
+
+| Dependency | What it's for | Size |
+|-----------|---------------|------|
+| **TeX distribution** | `.pdf` output — the recommended, highest-fidelity output | ~4 GB |
+| **[pandoc](https://pandoc.org/)** | `.docx` export via `/prfaq:export` — lightweight alternative when TeX isn't practical | ~50 MB |
+
+We recommend **TeX** — the PDF is the artifact you circulate and debate. Use pandoc if TeX isn't practical for your setup.
+
+### Other Optional Dependencies
 
 | Dependency | What it's for | Size | Required? |
 |-----------|---------------|------|-----------|
-| **[pandoc](https://pandoc.org/)** | DOCX export via `/prfaq:export` — Word output without TeX | ~50 MB | No — only needed for `.docx` output |
-| **TeX distribution** | Compiling the PDF — the highest-fidelity output | ~4 GB | No — use `/prfaq:export` for `.docx` if you don't want TeX |
 | **[Agent Teams](https://code.claude.com/docs/en/agent-teams)** | Parallel persona execution for `/prfaq:meeting-hive` — enabled via `.claude/settings.json` (shipped with the plugin) | None (env var) | Only for autonomous meetings (use `/prfaq:meeting` without it) |
 | **[punt-tts](https://github.com/punt-labs/tts)** | Voiced playback for `/prfaq:meeting-listen` — four personas speak in distinct voices | ~5 MB | No — without it, meeting-listen runs in text-only mode |
 | **[punt-quarry](https://github.com/punt-labs/quarry)** | Semantic search across your indexed documents during research | ~20 MB | No — enhances `/prfaq:research` but not required |
 
-Install pandoc for `.docx` export, or TeX for PDF output (or both):
+Install TeX for PDF output (recommended), or pandoc for lightweight `.docx` export:
 
 ```bash
-# pandoc (~50 MB) — for /prfaq:export (.docx output)
-brew install pandoc          # macOS
-sudo apt-get install pandoc  # Ubuntu
-
-# TeX (~4 GB) — for PDF output
+# TeX (~4 GB) — recommended, for PDF output
 brew install --cask mactex          # macOS
 sudo apt-get install texlive-full   # Ubuntu
+
+# pandoc (~50 MB) — lightweight alternative for .docx output
+brew install pandoc          # macOS
+sudo apt-get install pandoc  # Ubuntu
 ```
 
 ## Quick Start
@@ -347,6 +356,8 @@ Each guide includes stage calibration — the same guide produces different expe
 - `prfaq.pdf` — Compiled PDF ready for review (requires TeX)
 - `prfaq.docx` — Word document via `/prfaq:export` (requires pandoc, not TeX)
 - `meetings/meeting-summary-*.md` / `meetings/meeting-hive-summary-*.md` — Meeting decisions log (feeds into `/prfaq:feedback`)
+
+**Example output** — this plugin's own PR/FAQ, produced by the plugin itself: [PDF](./prfaq.pdf) | [DOCX](./prfaq.docx)
 
 The `.tex` files are standard LaTeX — if you need to make hand edits, open them in [Overleaf](https://www.overleaf.com/) or a local editor like [TeXShop](https://pages.uoregon.edu/koch/texshop/) (macOS).
 

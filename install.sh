@@ -2,9 +2,10 @@
 # Install prfaq — Working Backwards PR/FAQ process for Claude Code.
 # Usage: curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/<SHA>/install.sh | sh
 #
-# The plugin generates .tex files. PDF compilation requires a TeX distribution
-# (MacTeX, TeX Live). The installer checks for pdflatex and biber but does not
-# install them automatically — see the output for instructions if they're missing.
+# The plugin generates .tex files. You need at least one output toolchain:
+#   - pandoc (~50 MB) for Word (.docx) output via /prfaq:export
+#   - TeX distribution (~4 GB) for PDF output via pdflatex
+# The installer checks for both but does not install them automatically.
 set -eu
 
 # --- Colors (disabled when not a terminal) ---
@@ -162,40 +163,52 @@ fi
 info "Checking output toolchains..."
 
 # 6a: pandoc (needed for DOCX export)
+PANDOC_FOUND=0
 if command -v pandoc >/dev/null 2>&1; then
   ok "pandoc found (DOCX export available)"
+  PANDOC_FOUND=1
 else
   warn "pandoc not found — /prfaq:export (DOCX) will not work"
   printf '  Install: brew install pandoc (macOS) or apt install pandoc (Linux)\n'
 fi
 
 # 6b: TeX distribution (needed for PDF output)
-TEX_MISSING=0
+TEX_FOUND=1
 
 if command -v pdflatex >/dev/null 2>&1; then
   ok "pdflatex found (PDF output available)"
 else
   warn "pdflatex not found — PDF compilation will not work"
-  TEX_MISSING=1
+  TEX_FOUND=0
 fi
 
 if command -v biber >/dev/null 2>&1; then
   ok "biber found"
 else
   warn "biber not found — citations will show as [?] in PDFs"
-  TEX_MISSING=1
 fi
 
-if [ "$TEX_MISSING" -ne 0 ]; then
+# 6c: At least one output toolchain required
+if [ "$PANDOC_FOUND" -eq 0 ] && [ "$TEX_FOUND" -eq 0 ]; then
   printf '\n'
-  info "To install a TeX distribution:"
+  warn "Neither pandoc nor TeX found — you need at least one to produce output."
+  printf '\n'
+  info "Recommended: install a TeX distribution for PDF output (~4 GB):"
   printf '  macOS:  brew install --cask mactex\n'
   printf '  Ubuntu: sudo apt-get install texlive-full\n'
   printf '  Fedora: sudo dnf install texlive-scheme-full\n'
   printf '  Other:  https://tug.org/texlive/\n'
   printf '\n'
-  info "The plugin still generates .tex files without TeX installed."
-  info "Use /prfaq:export for Word output (requires only pandoc, ~50 MB)."
+  info "Lightweight alternative: install pandoc (~50 MB) for Word output:"
+  printf '  macOS:  brew install pandoc\n'
+  printf '  Ubuntu: sudo apt-get install pandoc\n'
+elif [ "$TEX_FOUND" -eq 0 ]; then
+  printf '\n'
+  info "The plugin generates .tex source without TeX installed."
+  info "You have pandoc, so /prfaq:export will produce Word (.docx) output."
+  info "For PDF output, install a TeX distribution:"
+  printf '  macOS:  brew install --cask mactex\n'
+  printf '  Ubuntu: sudo apt-get install texlive-full\n'
 fi
 
 # --- Done ---
