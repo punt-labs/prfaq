@@ -114,18 +114,6 @@ Once ingested, the `/prfaq:research` agent and Phase 0 research discovery will a
 
 </details>
 
-Install TeX for PDF output (recommended), or pandoc for lightweight `.docx` export:
-
-```bash
-# TeX (~4 GB) — recommended, for PDF output
-brew install --cask mactex          # macOS
-sudo apt-get install texlive-full   # Ubuntu
-
-# pandoc (~50 MB) — lightweight alternative for .docx output
-brew install pandoc          # macOS
-sudo apt-get install pandoc  # Ubuntu
-```
-
 ## Quick Start
 
 1. **Install** the plugin (see [Installation](#installation) above)
