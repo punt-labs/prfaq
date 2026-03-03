@@ -4,6 +4,8 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/punt-labs/prfaq/docs.yml?label=CI)](https://github.com/punt-labs/prfaq/actions/workflows/docs.yml)
 [![Working Backwards](https://img.shields.io/badge/Working_Backwards-hypothesis-lightgrey)](./prfaq.pdf)
 
+**Platforms:** macOS, Linux
+
 Amazon's [Working Backwards](#what-is-working-backwards) PR/FAQ process, grounded in your data — generate, review, stress-test, and iterate on product discovery documents inside the terminal.
 
 ## What It Does
