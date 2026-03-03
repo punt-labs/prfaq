@@ -98,18 +98,19 @@ We recommend **TeX** — the PDF is the artifact you circulate and debate. Use p
 If you have [punt-quarry](https://github.com/punt-labs/quarry) installed, you can give the researcher agent semantic search over your research files. This is more powerful than keyword matching — quarry finds conceptually related evidence even when the exact words differ.
 
 ```bash
-# Create a project-scoped database
-quarry use prfaq
+# Register your research directory with a project-scoped database
+quarry register ./research/ --db prfaq
 
-# Ingest your research directory
-quarry ingest ./research/
+# Ingest all registered files
+quarry sync --db prfaq
 
-# (Optional) Add other relevant sources
-quarry ingest https://example.com/market-report
-quarry ingest ~/Documents/customer-interviews/
+# (Optional) Ingest a URL or additional directory
+quarry ingest-url https://example.com/market-report --db prfaq
+quarry register ~/Documents/customer-interviews/ --db prfaq
+quarry sync --db prfaq
 ```
 
-Once ingested, the `/prfaq:research` agent and Phase 0 research discovery will automatically use quarry's `search_documents` tool to find relevant evidence. Re-run `quarry ingest ./research/` after adding new files.
+Once ingested, the `/prfaq:research` agent and Phase 0 research discovery will automatically use quarry's `search_documents` tool to find relevant evidence. Re-run `quarry sync --db prfaq` after adding new files — registered directories sync incrementally.
 
 </details>
 
