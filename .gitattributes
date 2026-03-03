@@ -1,3 +1,6 @@
 
+# Binary assets
+assets/reference.docx binary
+
 # Use bd merge for beads JSONL files
 .beads/issues.jsonl merge=beads
