@@ -148,6 +148,14 @@ if block:
     set_font(block, body_font)
     set_color(block, '555555')
 
+# Verbatim/code styles: smaller monospace, blue, bold
+for style_id in ('VerbatimChar', 'SourceCode'):
+    s = find_style(style_id)
+    if s is not None:
+        set_size(s, 16)  # 8pt (vs 11pt body)
+        set_color(s, section_blue)
+        set_bold(s)
+
 tree.write(styles_path, xml_declaration=True, encoding='UTF-8')
 PYTHON
 
@@ -177,26 +185,64 @@ cat > "$HEADER_XML" << 'HEADER'
 </w:hdr>
 HEADER
 
-# Ensure the header relationship exists in document.xml.rels
+# Create footer1.xml with stage/version placeholder
+FOOTER_XML="$UNZIP_DIR/word/footer1.xml"
+cat > "$FOOTER_XML" << 'FOOTER'
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:ftr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+       xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+  <w:p>
+    <w:pPr>
+      <w:jc w:val="center"/>
+      <w:rPr>
+        <w:color w:val="999999"/>
+        <w:sz w:val="16"/>
+      </w:rPr>
+    </w:pPr>
+    <w:r>
+      <w:rPr>
+        <w:color w:val="999999"/>
+        <w:sz w:val="16"/>
+      </w:rPr>
+      <w:t>{{STAGE}}</w:t>
+    </w:r>
+  </w:p>
+</w:ftr>
+FOOTER
+
+# Ensure header/footer relationships exist in document.xml.rels
 RELS_FILE="$UNZIP_DIR/word/_rels/document.xml.rels"
-if [[ -f "$RELS_FILE" ]] && ! grep -q 'header1.xml' "$RELS_FILE"; then
-  # Add header relationship before closing tag
-  sed -i '' 's|</Relationships>|<Relationship Id="rIdHeader1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/header" Target="header1.xml"/></Relationships>|' "$RELS_FILE" 2>/dev/null || \
-  sed -i 's|</Relationships>|<Relationship Id="rIdHeader1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/header" Target="header1.xml"/></Relationships>|' "$RELS_FILE"
+if [[ -f "$RELS_FILE" ]]; then
+  if ! grep -q 'header1.xml' "$RELS_FILE"; then
+    sed -i '' 's|</Relationships>|<Relationship Id="rIdHeader1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/header" Target="header1.xml"/></Relationships>|' "$RELS_FILE" 2>/dev/null || \
+    sed -i 's|</Relationships>|<Relationship Id="rIdHeader1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/header" Target="header1.xml"/></Relationships>|' "$RELS_FILE"
+  fi
+  if ! grep -q 'footer1.xml' "$RELS_FILE"; then
+    sed -i '' 's|</Relationships>|<Relationship Id="rIdFooter1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/></Relationships>|' "$RELS_FILE" 2>/dev/null || \
+    sed -i 's|</Relationships>|<Relationship Id="rIdFooter1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/></Relationships>|' "$RELS_FILE"
+  fi
 fi
 
-# Add header reference to document.xml sectPr
+# Add header/footer references to document.xml sectPr
 DOC_XML="$UNZIP_DIR/word/document.xml"
 if [[ -f "$DOC_XML" ]] && ! grep -q 'rIdHeader1' "$DOC_XML"; then
-  # Insert headerReference inside sectPr
   sed -i '' 's|<w:sectPr|<w:sectPr><w:headerReference w:type="default" r:id="rIdHeader1"/></w:sectPr><w:sectPr|' "$DOC_XML" 2>/dev/null || true
 fi
+if [[ -f "$DOC_XML" ]] && ! grep -q 'rIdFooter1' "$DOC_XML"; then
+  sed -i '' 's|<w:sectPr|<w:sectPr><w:footerReference w:type="default" r:id="rIdFooter1"/></w:sectPr><w:sectPr|' "$DOC_XML" 2>/dev/null || true
+fi
 
-# Ensure header1.xml is in [Content_Types].xml
+# Ensure header1.xml and footer1.xml are in [Content_Types].xml
 CONTENT_TYPES="$UNZIP_DIR/[Content_Types].xml"
-if [[ -f "$CONTENT_TYPES" ]] && ! grep -q 'header1.xml' "$CONTENT_TYPES"; then
-  sed -i '' 's|</Types>|<Override PartName="/word/header1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml"/></Types>|' "$CONTENT_TYPES" 2>/dev/null || \
-  sed -i 's|</Types>|<Override PartName="/word/header1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml"/></Types>|' "$CONTENT_TYPES"
+if [[ -f "$CONTENT_TYPES" ]]; then
+  if ! grep -q 'header1.xml' "$CONTENT_TYPES"; then
+    sed -i '' 's|</Types>|<Override PartName="/word/header1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml"/></Types>|' "$CONTENT_TYPES" 2>/dev/null || \
+    sed -i 's|</Types>|<Override PartName="/word/header1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml"/></Types>|' "$CONTENT_TYPES"
+  fi
+  if ! grep -q 'footer1.xml' "$CONTENT_TYPES"; then
+    sed -i '' 's|</Types>|<Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/></Types>|' "$CONTENT_TYPES" 2>/dev/null || \
+    sed -i 's|</Types>|<Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/></Types>|' "$CONTENT_TYPES"
+  fi
 fi
 
 # Step 5: Repack

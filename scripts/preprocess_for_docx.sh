@@ -100,6 +100,9 @@ feat_ctr=0
 in_skip_block=0
 skip_brace_target=0
 in_table=0
+past_begin_doc=0
+in_headline_center=0
+seen_headline_center=0
 
 while IFS= read -r line; do
 
@@ -149,33 +152,76 @@ while IFS= read -r line; do
 
   # --- Block transformations ---
 
-  # Metadata after \begin{document}
+  # \begin{document} — stage metadata is in the footer, not the body
   if [[ "$line" =~ ^\\begin\{document\} ]]; then
     echo "$line"
-    if [[ -n "$stage" || -n "$version_major" ]]; then
-      echo ""
-      echo "\\begin{center}"
-      printf '{\\footnotesize Stage: %s \\enspace\\textbar\\enspace v%s.%s}\n' \
-        "$stage" "$version_major" "$version_minor"
-      echo "\\end{center}"
-      echo "\\vspace{0.5em}"
-    fi
+    past_begin_doc=1
     continue
   fi
 
-  # tabularx → tabular
+  # Detect headline center block (first \begin{center} after \begin{document})
+  if [[ $past_begin_doc -eq 1 && $seen_headline_center -eq 0 && "$line" =~ ^[[:space:]]*\\begin\{center\} ]]; then
+    in_headline_center=1
+    seen_headline_center=1
+    continue
+  fi
+
+  if [[ $in_headline_center -eq 1 ]]; then
+    if [[ "$line" =~ \\end\{center\} ]]; then
+      in_headline_center=0
+      continue
+    fi
+    # Title line: {\LARGE\bfseries\color{...} text} \\[0.8em]
+    if [[ "$line" =~ \\LARGE ]]; then
+      clean=$(printf '%s' "$line" | sed 's/\\color{[^}]*}//g; s/[{}]//g; s/\\LARGE//g; s/\\bfseries//g; s/\\\\/  /g; s/\[0\.[0-9]*em\]//g; s/^[[:space:]]*//; s/[[:space:]]*$//; s/  */ /g')
+      echo "$clean"
+      echo ""
+      continue
+    fi
+    # Subtitle line: {\large\color{...} text}
+    if [[ "$line" =~ \\large ]]; then
+      clean=$(printf '%s' "$line" | sed 's/\\color{[^}]*}//g; s/[{}]//g; s/\\large//g; s/\\\\/  /g; s/^[[:space:]]*//; s/[[:space:]]*$//; s/  */ /g')
+      echo "$clean"
+      continue
+    fi
+    # Skip \vspace and other spacing within the block
+    continue
+  fi
+
+  # Skip \vspace immediately after headline block
+  if [[ $seen_headline_center -eq 1 && "$line" =~ ^\\vspace ]]; then
+    seen_headline_center=2  # Only skip once
+    continue
+  fi
+
+  # tabularx → paragraphs (tables render too narrow in Word)
   if [[ "$line" =~ \\begin\{tabularx\} ]]; then
     in_table=1
-    echo "\\begin{tabular}{l l p{4in}}"
     continue
   fi
   if [[ $in_table -ne 0 ]]; then
     if [[ "$line" =~ \\end\{tabularx\} ]]; then
       in_table=0
-      echo "\\end{tabular}"
       continue
     fi
-    echo "$line"
+    # Skip table chrome
+    [[ "$line" =~ ^\\toprule ]] && continue
+    [[ "$line" =~ ^\\midrule ]] && continue
+    [[ "$line" =~ ^\\bottomrule ]] && continue
+    # Skip header row (bold column titles)
+    [[ "$line" =~ ^\\textbf.*Risk.*Rating.*Assessment ]] && continue
+    # Data rows: "Name & Rating & Assessment \\"
+    if [[ "$line" =~ ^([^&]+)\&([^&]+)\&(.*)[[:space:]]*\\\\[[:space:]]*$ ]]; then
+      risk_name=$(printf '%s' "${BASH_REMATCH[1]}" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')
+      risk_rating=$(printf '%s' "${BASH_REMATCH[2]}" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')
+      risk_text=$(printf '%s' "${BASH_REMATCH[3]}" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')
+      echo ""
+      echo "\\paragraph*{${risk_name} --- ${risk_rating}}"
+      echo "${risk_text}"
+      echo ""
+    else
+      echo "$line"
+    fi
     continue
   fi
 
@@ -209,6 +255,13 @@ while IFS= read -r line; do
   # prsection → subsection
   if [[ "$line" =~ \\prsection\{([^}]+)\} ]]; then
     echo "\\subsection*{${BASH_REMATCH[1]}}"
+    continue
+  fi
+
+  # Page breaks before major sections
+  if [[ "$line" =~ \\section\*\{Risk\ Assessment\} ]] || [[ "$line" =~ \\section\*\{Feature\ Appendix\} ]]; then
+    echo "\\newpage"
+    echo "$line"
     continue
   fi
 
