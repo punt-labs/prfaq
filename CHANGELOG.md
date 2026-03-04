@@ -4,6 +4,10 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+### Fixed
+
+- `/prfaq:meeting-listen` glob patterns now search from the user's working directory instead of using `./` prefix, with recursive `**/meetings/` fallback — fixes meeting discovery when running from sibling project directories
+
 ## [1.5.1] - 2026-03-04
 
 ### Fixed

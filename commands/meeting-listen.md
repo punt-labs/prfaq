@@ -17,8 +17,10 @@ Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
 ## Steps
 
 1. **Find the meeting summary.** If `$ARGUMENTS` specifies a path, use it. Otherwise, use Glob to find meeting summaries with both patterns:
-   - `./meetings/meeting-summary-*.md` (interactive meetings)
-   - `./meetings/meeting-hive-summary-*.md` (hive meetings)
+   - `meetings/meeting-summary-*.md` (interactive meetings)
+   - `meetings/meeting-hive-summary-*.md` (hive meetings)
+
+   Search from the user's current working directory (not the plugin root). If no results, broaden the search using `**/meetings/meeting-summary-*.md` and `**/meetings/meeting-hive-summary-*.md` to find meetings in subdirectories.
 
    If multiple exist, parse the `YYYY-MM-DD` date from each filename and choose the latest date. If there are multiple on the same date, choose the one with the highest numeric suffix (e.g., `...-2.md` after the unsuffixed original). If none exist, tell the user: "No meeting summaries found. Run `/prfaq:meeting` or `/prfaq:meeting-hive` first."
 
