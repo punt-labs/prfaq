@@ -4,6 +4,13 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+## [1.5.1] - 2026-03-04
+
+### Fixed
+
+- Update `meeting-listen` tool references for vox mic API rename (`mcp__plugin_tts_vox__speak` → `mcp__plugin_vox_mic__unmute`, `list_voices` → `who`)
+- Update README references from `punt-tts` to `punt-vox` with correct GitHub URLs
+
 ## [1.5.0] - 2026-03-04
 
 ### Added
