@@ -10,9 +10,9 @@ Play back a completed meeting summary as a voiced conversation between four pers
 
 ## Prerequisites
 
-Check whether `mcp__plugin_tts_vox__speak` is available. Set a session flag:
+Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
 - **Voiced mode** — TTS is available. Voices will be used.
-- **Text-only mode** — TTS is not available. Tell the user: "TTS plugin not available — playing back as text-only transcript. Install punt-tts for voiced playback." Continue with all steps below, but skip all `mcp__plugin_tts_vox__*` calls. Print dialogue as attributed text instead.
+- **Text-only mode** — TTS is not available. Tell the user: "TTS plugin not available — playing back as text-only transcript. Install punt-vox for voiced playback." Continue with all steps below, but skip all `mcp__plugin_vox_mic__*` calls. Print dialogue as attributed text instead.
 
 ## Steps
 
@@ -38,7 +38,7 @@ Check whether `mcp__plugin_tts_vox__speak` is available. Set a session flag:
    - `voice_fallback` — value `default` means use the provider's default voice
    - `voice_vibe` — expressive tags (ElevenLabs only)
 
-   **In voiced mode**, detect the active provider. Call `mcp__plugin_tts_vox__list_voices` and read the `provider` field from the response. Select the voice field for each persona:
+   **In voiced mode**, detect the active provider. Call `mcp__plugin_vox_mic__who` and read the `provider` field from the response. Select the voice field for each persona:
 
    | Provider | Voice Field | Vibe Tags |
    |----------|-------------|-----------|
@@ -46,13 +46,13 @@ Check whether `mcp__plugin_tts_vox__speak` is available. Set a session flag:
    | `openai` | `voice_openai` | Skip all vibe tags (not supported) |
    | Any other | `voice_fallback` | Skip all vibe tags |
 
-   When `voice_fallback` is `default`, omit the `voice` parameter entirely from speak calls — let TTS use the provider's default voice. All four personas will share the same voice on fallback providers, but the dialogue text still differentiates them.
+   When `voice_fallback` is `default`, omit the `voice` parameter entirely from unmute calls — let TTS use the provider's default voice. All four personas will share the same voice on fallback providers, but the dialogue text still differentiates them.
 
    **In text-only mode**, skip this step entirely.
 
 4. **Validate ElevenLabs voices (voiced mode, ElevenLabs provider only).** The `voice_elevenlabs` values may be community voices that require the user to add them to their ElevenLabs voice library. Before voicing any hot spots:
 
-   - Read the `all` array from the `mcp__plugin_tts_vox__list_voices` response (this lists all voices in the user's library)
+   - Read the `all` array from the `mcp__plugin_vox_mic__who` response (this lists all voices in the user's library)
    - Check whether each persona's `voice_elevenlabs` value appears in the list
    - For any missing voices, build a fallback map using built-in ElevenLabs voices:
 
@@ -120,7 +120,7 @@ Check whether `mcp__plugin_tts_vox__speak` is available. Set a session flag:
    **Priya:** Which of those developers am I?
    ```
 
-   **In voiced mode**, also call `mcp__plugin_tts_vox__speak` for each line with:
+   **In voiced mode**, also call `mcp__plugin_vox_mic__unmute` for each line with:
    - `text`: The dialogue line text only (without the speaker label — labels are for reading, not speaking)
    - `voice`: The resolved voice for this persona (from step 3/4)
    - `ephemeral`: `true`
