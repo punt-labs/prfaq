@@ -89,7 +89,7 @@ We recommend **TeX** — the PDF is the artifact you circulate and debate. Use p
 | Dependency | What it's for | Size | Required? |
 |-----------|---------------|------|-----------|
 | **[Agent Teams](https://code.claude.com/docs/en/agent-teams)** | Parallel persona execution for `/prfaq:meeting-hive` — enabled via `.claude/settings.json` (shipped with the plugin) | None (env var) | Only for autonomous meetings (use `/prfaq:meeting` without it) |
-| **[punt-tts](https://github.com/punt-labs/tts)** | Voiced playback for `/prfaq:meeting-listen` — four personas speak in distinct voices | ~5 MB | No — without it, meeting-listen runs in text-only mode |
+| **[punt-vox](https://github.com/punt-labs/vox)** | Voiced playback for `/prfaq:meeting-listen` — four personas speak in distinct voices | ~5 MB | No — without it, meeting-listen runs in text-only mode |
 | **[punt-quarry](https://github.com/punt-labs/quarry)** | Semantic search across your indexed documents during research | ~20 MB | No — enhances `/prfaq:research` but not required |
 
 <details>
@@ -246,7 +246,7 @@ Post-production voiced playback of a completed meeting summary. The four persona
 
 **Multi-provider voice support:** Each persona has voice profiles for ElevenLabs (custom community voices with expressive tags), OpenAI, and a fallback for other providers. The command auto-detects the active TTS provider and selects the appropriate voice.
 
-**Requires** [punt-tts](https://github.com/punt-labs/tts) plugin for voiced playback. Without it, the command runs in text-only mode — printing the dialogue with speaker labels but no audio.
+**Requires** [punt-vox](https://github.com/punt-labs/vox) plugin for voiced playback. Without it, the command runs in text-only mode — printing the dialogue with speaker labels but no audio.
 
 ### Review: `/prfaq:review`
 
@@ -394,7 +394,7 @@ The typical workflow is: **generate** (or **import**) → **badge** → **review
 2. `/prfaq:badge` embeds a stage-colored badge in your README linking to the PDF
 3. `/prfaq:review` gives you an adversarial peer review
 4. `/prfaq:meeting` stress-tests with four personas where you make each call — or `/prfaq:meeting-hive` for autonomous consensus via [Agent Teams](https://code.claude.com/docs/en/agent-teams)
-5. `/prfaq:meeting-listen` plays back the meeting as a voiced debate between personas (requires [punt-tts](https://github.com/punt-labs/tts))
+5. `/prfaq:meeting-listen` plays back the meeting as a voiced debate between personas (requires [punt-vox](https://github.com/punt-labs/vox))
 6. `/prfaq:feedback` applies the meeting's decisions (or your own feedback) surgically
 7. `/prfaq:streamline` tightens the final document — removes redundancy, weasel words, and bloat
 8. `/prfaq:vote` renders a go/no-go decision based on the document's evidence across three gates
