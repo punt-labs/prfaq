@@ -4,6 +4,8 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-03-04
+
 ### Added
 
 - `/prfaq:export` command — export PR/FAQ as Word document (.docx) via pandoc, no TeX installation required
@@ -269,7 +271,8 @@ First tagged release.
 - Plugin cache not clearing on reinstall (stale cache hid new agents)
 - FAQ paragraph indentation inconsistency in `faqpair` environment
 
-[Unreleased]: https://github.com/punt-labs/prfaq/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/punt-labs/prfaq/compare/v1.5.0...HEAD
+[1.5.0]: https://github.com/punt-labs/prfaq/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/punt-labs/prfaq/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/punt-labs/prfaq/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/punt-labs/prfaq/compare/v1.1.0...v1.2.0
