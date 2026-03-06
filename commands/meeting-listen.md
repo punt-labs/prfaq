@@ -122,21 +122,47 @@ Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
    **Priya:** Which of those developers am I?
    ```
 
-   **In voiced mode**, also call `mcp__plugin_vox_mic__unmute` for each line with:
-   - `text`: The dialogue line text only (without the speaker label — labels are for reading, not speaking)
-   - `voice`: The resolved voice for this persona (from step 3/4)
+   **In voiced mode**, after printing all dialogue lines for the hot spot, make a single `mcp__plugin_vox_mic__unmute` call with:
    - `ephemeral`: `true`
-   - `vibe_tags` (ElevenLabs only): The persona's `voice_vibe` value. For emotionally charged lines, use situational tags instead:
-     - Wei finding handwaving: `[frustrated]`
-     - Priya losing patience with jargon: `[frustrated]`
-     - Alex pattern-matching to a past failure: `[sighs]`
-     - Dana seeing the bigger opportunity: `[excited]`
-     - Any persona on a KEEP/vindicated moment: `[satisfied]`
-   - For non-ElevenLabs providers: omit `vibe_tags` entirely. Do NOT prepend tags to the text — they will be spoken literally.
+   - `segments`: An array starting with a **narrator segment**, then one segment per dialogue line:
+
+     **Narrator segment** (first in array):
+     - `text`: A scene-setter that orients the listener. Synthesize from the summary row:
+       - Name the hot spot and which part of the document it concerns
+       - For hive summaries: mention the door and the core tension from the resolution
+       - For interactive summaries: mention the severity and the gist of the rationale
+       - End with the decision outcome so the listener knows the frame
+       - Example: "Hot spot 3: Pricing model, in the customer FAQ section. The team debated whether per-seat pricing alienates small teams. They decided to revise."
+     - Keep it to 2-3 sentences — enough context to follow the debate, not a full recap
+     - Omit `voice` — uses the session default, naturally distinguishing the narrator from persona voices
+     - Omit `vibe_tags`
+
+     **Dialogue segments** (one per line):
+     - `text`: The dialogue line text only (without the speaker label — labels are for reading, not speaking)
+     - `voice`: The resolved voice for this persona (from step 3/4)
+     - `vibe_tags` (ElevenLabs only): The persona's `voice_vibe` value. For emotionally charged lines, use situational tags instead:
+       - Wei finding handwaving: `[frustrated]`
+       - Priya losing patience with jargon: `[frustrated]`
+       - Alex pattern-matching to a past failure: `[sighs]`
+       - Dana seeing the bigger opportunity: `[excited]`
+       - Any persona on a KEEP/vindicated moment: `[satisfied]`
+     - For non-ElevenLabs providers: omit `vibe_tags` from segments entirely. Do NOT prepend tags to the text — they will be spoken literally.
+
+   Example (ElevenLabs):
+   ```
+   unmute(
+       ephemeral: true,
+       segments: [
+           {"text": "Hot spot 3: Pricing model, in the customer FAQ section. The team debated whether per-seat pricing alienates small teams. They decided to revise."},
+           {"voice": "yu", "text": "The denominator is missing.", "vibe_tags": "[slow]"},
+           {"voice": "nila", "text": "Which of those developers am I?", "vibe_tags": "[frustrated]"},
+           {"voice": "bill", "text": "Compared to what?", "vibe_tags": "[sighs]"},
+           {"voice": "river", "text": "You're thinking too small.", "vibe_tags": "[excited]"}
+       ]
+   )
+   ```
 
    **In text-only mode**, just print the labeled lines. No TTS calls.
-
-   Wait for all lines in one hot spot to finish before moving to the next.
 
 6. **Close the playback.** After all hot spots, print:
 
