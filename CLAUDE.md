@@ -130,6 +130,10 @@ This project follows [Keep a Changelog](https://keepachangelog.com/) format. CHA
 - One logical change per bullet — sub-bullets for supporting detail
 - At release time, move `[Unreleased]` entries to a versioned heading and update comparison links at the bottom of the file
 
+## Scratch Files
+
+Use `.tmp/` at the project root for scratch and temporary files — never `/tmp`. The `TMPDIR` environment variable is set via `.envrc` so that `tempfile` and subprocesses automatically use it. Contents are gitignored; only `.gitkeep` is tracked.
+
 ### Quality Gates
 
 Before every commit:
