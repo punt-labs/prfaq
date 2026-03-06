@@ -11,6 +11,16 @@
 *.fdb_latexmk
 .DS_Store
 .envrc
+
+# Runtime / scratch
+.tmp/
+.tts/
+.vox/
+.biff.local
+
+# Binary assets (voice auditions, etc.)
+research/spike-voices/
+
 # Claude Code (settings.json is tracked; everything else is local/runtime)
 .claude/
 !.claude/settings.json

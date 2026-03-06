@@ -4,6 +4,12 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+### Changed
+
+- `/prfaq:meeting-listen` now batches all dialogue into a single `unmute` call per hot spot using the `segments` parameter — adapts for vox's non-blocking unmute (v1.1.1+)
+  - Each segment carries its own `voice` and `vibe_tags` for per-persona emotional variation
+  - Narrator segment opens each hot spot with a scene-setter: names the hot spot, document section, core tension, and decision outcome before the debate begins
+
 ## [1.5.2] - 2026-03-04
 
 ### Fixed
@@ -284,7 +290,9 @@ First tagged release.
 - Plugin cache not clearing on reinstall (stale cache hid new agents)
 - FAQ paragraph indentation inconsistency in `faqpair` environment
 
-[Unreleased]: https://github.com/punt-labs/prfaq/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/punt-labs/prfaq/compare/v1.5.2...HEAD
+[1.5.2]: https://github.com/punt-labs/prfaq/compare/v1.5.1...v1.5.2
+[1.5.1]: https://github.com/punt-labs/prfaq/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/punt-labs/prfaq/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/punt-labs/prfaq/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/punt-labs/prfaq/compare/v1.2.0...v1.3.0

@@ -1,0 +1,315 @@
+\documentclass[11pt,letterpaper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{palatino}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{xcolor}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  urlcolor=blue!60!black,
+}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{0.5em}{}
+\titleformat{\subsubsection}{\normalsize\itshape}{\thesubsubsection}{0.5em}{}
+
+\title{\textbf{prfaq Plugin: Architecture Overview}}
+\author{Generated from codebase analysis}
+\date{March 2026}
+
+\begin{document}
+\maketitle
+
+\section{What It Is}
+
+\texttt{prfaq} is a Claude Code plugin (v1.5.2) that implements Amazon's Working
+Backwards PR/FAQ process. It generates, reviews, stress-tests, and iterates on
+product discovery documents inside the terminal. The output is a professionally
+typeset LaTeX PDF (or Word \texttt{.docx} via pandoc).
+
+The plugin contains no runtime code. It is composed entirely of prompt
+engineering artifacts---skill definitions, agent system prompts, reference
+guides, LaTeX templates, and shell scripts. Claude Code is the runtime; the
+plugin provides domain expertise and workflow structure.
+
+\section{Project Structure}
+
+The codebase has six component categories:
+
+\begin{description}[style=nextline, leftmargin=2em]
+  \item[\texttt{.claude-plugin/plugin.json}]
+    Plugin manifest declaring name, version, and description.
+
+  \item[\texttt{skills/prfaq/}]
+    One skill (\texttt{SKILL.md}) orchestrating the six-phase generation
+    workflow, plus ten reference guides encoding domain knowledge.
+
+  \item[\texttt{agents/}]
+    Eight specialized subagents, each with a narrow role and specific reference
+    guide dependencies.
+
+  \item[\texttt{commands/}]
+    Thirteen slash commands for post-generation operations (review, meeting,
+    feedback, export, vote, etc.).
+
+  \item[\texttt{assets/}]
+    Two LaTeX templates: one for PR/FAQ documents, one for externalized press
+    releases. Also includes a styled Word reference document for
+    \texttt{.docx} export.
+
+  \item[\texttt{scripts/}]
+    Four shell scripts handling PDF compilation, Word export, LaTeX
+    preprocessing for pandoc, and reference document generation.
+\end{description}
+
+\section{The Skill}
+
+The single skill (\texttt{/prfaq}) is a 280-line prompt that orchestrates
+document generation across six phases:
+
+\begin{enumerate}[nosep]
+  \item \textbf{Phase 0: Research Discovery} --- Scans \texttt{./research/} for
+    primary data, invokes the researcher agent, builds a \texttt{.bib} file.
+  \item \textbf{Phase 1: Discovery} --- Interactive questioning: stage, customer,
+    problem, solution, differentiation, market, risks.
+  \item \textbf{Phase 2: Draft PR} --- Generates the eight press release sections
+    from the LaTeX template and \texttt{pr-structure.md}.
+  \item \textbf{Phase 3: Draft FAQ} --- External FAQs, internal FAQs (by risk
+    category), four-risks assessment, feature appendix, then peer review.
+  \item \textbf{Phase 4: Compile} --- Runs \texttt{compile\_prfaq.sh}, fixes
+    overfull hbox warnings, iterates until clean.
+  \item \textbf{Phase 5: Review} --- Evaluates the document against seven review
+    criteria and identifies the weakest sections.
+\end{enumerate}
+
+The skill also handles revise mode: if \texttt{prfaq.tex} already exists, it
+offers surgical edits instead of regenerating from scratch.
+
+\section{The 13 Commands}
+
+Each command is a focused, single-purpose operation that typically invokes one
+agent and handles its output:
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Command} & \textbf{Purpose} & \textbf{Agent Used} \\
+\midrule
+\texttt{/prfaq:import}       & Parse existing doc, launch workflow  & researcher \\
+\texttt{/prfaq:badge}        & Stage-colored README badge           & (none) \\
+\texttt{/prfaq:review}       & Standalone peer review               & peer-reviewer \\
+\texttt{/prfaq:meeting}      & Interactive 4-persona review         & 4 meeting agents \\
+\texttt{/prfaq:meeting-hive} & Autonomous consensus meeting         & 4 meeting agents \\
+\texttt{/prfaq:meeting-listen} & Voiced playback of meeting         & (none, uses TTS) \\
+\texttt{/prfaq:feedback}     & Surgical redraft from directives     & feedback \\
+\texttt{/prfaq:research}     & Evidence search                      & researcher \\
+\texttt{/prfaq:streamline}   & Remove redundancy and weasel words   & streamliner \\
+\texttt{/prfaq:vote}         & Three-gate go/no-go decision         & (inline) \\
+\texttt{/prfaq:export}       & Convert to \texttt{.docx} via pandoc & (none) \\
+\texttt{/prfaq:externalize}  & Customer-facing press release        & (inline) \\
+\texttt{/prfaq:feedback-to-us} & Anonymous satisfaction rating      & (none) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The intended workflow chains these sequentially: generate $\to$ badge $\to$
+review $\to$ meeting $\to$ feedback (iterate) $\to$ streamline $\to$ vote $\to$
+export $\to$ externalize.
+
+\section{The Eight Agents}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Agent} & \textbf{Role} & \textbf{Key Guides Loaded} \\
+\midrule
+peer-reviewer     & Adversarial review (Kahneman framework)     & All 10 guides \\
+researcher        & Evidence search (local, quarry, web)         & None \\
+feedback          & Cascading redraft engine                     & Context-dependent \\
+streamliner       & Scalpel editor for prose tightening          & precise-writing \\
+meeting-engineer  & Wei: feasibility risk                        & principal-engineer, four-risks \\
+meeting-customer  & Priya: value risk, customer reality          & ux-bar-raiser, four-risks \\
+meeting-executive & Alex: strategic fit, devil's advocate        & unit-economics, four-risks \\
+meeting-builder   & Dana: ambition risk, cost of inaction        & four-risks, common-mistakes \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The four meeting personas embody competing priorities. Wei and Alex pull toward
+caution; Dana pulls toward ambition; Priya grounds both sides in customer
+reality. In interactive mode (\texttt{/prfaq:meeting}), the user resolves
+disagreements. In hive mode (\texttt{/prfaq:meeting-hive}), a door-weighted
+consensus mechanism resolves them autonomously.
+
+\section{The Ten Reference Guides}
+
+Reference guides are the shared knowledge layer. Each is a standalone document
+encoding a framework, evaluation criteria, and stage-calibrated expectations.
+Agents load only the guides they need.
+
+Every guide follows the same structure: framework definition, concrete
+signals and criteria, what to check in the PR/FAQ, and a stage calibration table
+that adjusts expectations for hypothesis, validated, and growth stages.
+
+\subsection{Document Structure Guides}
+
+\begin{description}[style=nextline, leftmargin=2em]
+  \item[\texttt{pr-structure.md}]
+    Section-by-section blueprint for the mock press release. Defines the eight
+    sections (headline through call to action) with strong/weak examples and
+    common failures. Establishes that the customer quote is fictional at all
+    stages by design.
+
+  \item[\texttt{faq-structure.md}]
+    Organization of external FAQs (5 required customer-facing questions) and
+    internal FAQs (organized by value/market, technical, and business categories).
+    Defines the LaTeX environments (\texttt{faqpair}, \texttt{featureitem}) and
+    cross-referencing system (\texttt{\textbackslash faqref\{\}},
+    \texttt{\textbackslash featureref\{\}}).
+\end{description}
+
+\subsection{Framework Guides}
+
+\begin{description}[style=nextline, leftmargin=2em]
+  \item[\texttt{four-risks.md}]
+    Cagan's four risks (value, usability, feasibility, viability) mapped to
+    PR/FAQ sections. Includes low/high risk signals, seven review criteria, and
+    eight named decision outcomes (Go, Not Differentiated, TAM Too Small,
+    Investment Too Risky, Not Feasible, Not Viable, Deprioritized, Iterate).
+
+  \item[\texttt{common-mistakes.md}]
+    Seven anti-patterns: skills-forward thinking, confusing speed with velocity,
+    selling instead of truth-seeking, discounting competition, vague customer
+    definition, great product wrong problem, and false precision in timeline
+    estimates. Each has detection signals and fixes.
+
+  \item[\texttt{decision-quality.md}]
+    Twelve cognitive biases from Kahneman, Lovallo, and Sibony (HBR 2011)
+    adapted to PR/FAQ review: self-interest, affect heuristic, groupthink,
+    saliency, confirmation, availability, anchoring, halo effect, sunk cost,
+    overconfidence, disaster neglect, and loss aversion. Each includes
+    PR/FAQ-specific detection signals.
+\end{description}
+
+\subsection{Meeting Guide}
+
+\begin{description}[style=nextline, leftmargin=2em]
+  \item[\texttt{meeting-guide.md}]
+    Defines the four personas, the meeting flow (pre-meeting scan $\to$ agenda
+    $\to$ per-hot-spot debate $\to$ summary), synthesis guidelines for turning
+    parallel agent outputs into narrative, and hive mode consensus rules.
+    Hot spots are classified as one-way doors (irreversible) or two-way doors
+    (reversible), with door-weighted voting: one-way doors give Wei and Alex
+    veto power; two-way door ties resolve in favor of action.
+\end{description}
+
+\subsection{Risk Lens Guides}
+
+Three guides provide deep expertise for specific risk dimensions, each used
+primarily by one meeting persona:
+
+\begin{description}[style=nextline, leftmargin=2em]
+  \item[\texttt{principal-engineer.md} (Wei)]
+    Feasibility risk. Covers architecture trade-offs (monolith vs.\ services,
+    build vs.\ buy, consistency vs.\ availability), operational complexity at
+    scale, data model decisions as the most expensive to reverse, and dependency
+    risk taxonomy. Core question: ``What is the hardest unsolved technical
+    problem, and does the PR/FAQ acknowledge it?''
+
+  \item[\texttt{unit-economics.md} (Alex)]
+    Viability risk. Defines CAC, LTV, LTV:CAC ratio, payback period, gross
+    margin, and contribution margin. Distinguishes when unit economics are
+    primary (SaaS, marketplace) from when they are secondary (internal tools,
+    open source, strategic moats). Includes concrete benchmarks (LTV:CAC above
+    3:1, payback under 12 months, gross margin above 60\%).
+
+  \item[\texttt{ux-bar-raiser.md} (Priya)]
+    Usability risk. Evaluates the full customer journey in five stages: awareness,
+    evaluation, onboarding, first value, habit formation. Covers cognitive load
+    sources, mental model alignment, the three-step Getting Started test,
+    accessibility minimums, and error recovery principles.
+\end{description}
+
+\subsection{Writing Quality Guide}
+
+\begin{description}[style=nextline, leftmargin=2em]
+  \item[\texttt{precise-writing.md}]
+    Editorial standard for the streamliner agent. Adapted from Vervago's
+    Precision Q+A and Amazon's ``Write Like an Amazonian.'' Defines what to cut
+    (redundancy, weasel words, hollow adjectives, hedge stacking, inflated
+    phrases, throat-clearing sentences) and what to preserve (citations, customer
+    quotes, risk assessments, numbers, structural elements). Target: 10--20\%
+    shorter with zero weasel words.
+\end{description}
+
+\section{Stage Calibration}
+
+Every document declares its stage via \texttt{\textbackslash prfaqstage\{value\}}:
+
+\begin{description}[nosep, leftmargin=2em]
+  \item[hypothesis] Pre-validation. Soft evidence acceptable. Focus on whether
+    the author has identified the riskiest assumption and proposed a test.
+  \item[validated] Post-interviews or post-testing. Quantitative evidence and
+    specific metrics expected. Primary customer data required in FAQs.
+  \item[growth] Post-launch with real users. All claims data-backed. Usage
+    analytics, churn rates, and unit economics from actual operations.
+\end{description}
+
+Every reference guide, every agent, and every meeting persona adjusts its
+behavior based on the document's stage. The stage calibration tables at the end
+of each guide define these adjustments. This means the same guide produces three
+levels of rigor without branching logic in the agent prompts.
+
+\section{Build System}
+
+The quality gate is compilation of two LaTeX files:
+
+\begin{enumerate}[nosep]
+  \item \texttt{prfaq.tex} --- the plugin's own PR/FAQ (dogfood document)
+  \item \texttt{assets/prfaq-template.tex} --- the template used to generate new documents
+\end{enumerate}
+
+Both must compile to valid PDFs via \texttt{compile\_prfaq.sh} (which runs
+\texttt{pdflatex} $\to$ \texttt{biber} $\to$ \texttt{pdflatex} $\times$ 2)
+before every commit. The \texttt{.docx} export pipeline preprocesses custom
+LaTeX environments into standard LaTeX, then hands off to pandoc.
+
+\section{Key Design Decisions}
+
+\begin{enumerate}
+  \item \textbf{Agents as domain experts.} Each of the eight agents has a narrow
+    role with specific reference guides. The meeting agents embody named personas
+    with competing risk lenses from Cagan's framework.
+
+  \item \textbf{Reference guides as encoded knowledge.} Domain expertise is
+    defined once in standalone guides and loaded by multiple agents. No
+    duplication between skill prompts and agent prompts.
+
+  \item \textbf{Stage-aware everything.} A single \texttt{\textbackslash prfaqstage\{\}}
+    declaration calibrates every agent, reviewer, and meeting persona. Hypothesis
+    documents get softer scrutiny than growth documents.
+
+  \item \textbf{LaTeX as the artifact format.} Custom environments
+    (\texttt{faqpair}, \texttt{featureitem}), cross-references
+    (\texttt{\textbackslash faqref\{\}}, \texttt{\textbackslash featureref\{\}}),
+    and bibliography support via biblatex/biber produce a professional,
+    cross-referenced document.
+
+  \item \textbf{No runtime code.} The plugin is pure prompt engineering. Shell
+    scripts handle compilation and export. Claude Code provides all execution
+    capability.
+\end{enumerate}
+
+\end{document}
