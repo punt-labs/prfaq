@@ -4,6 +4,8 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-03-05
+
 ### Changed
 
 - `/prfaq:meeting-listen` now batches all dialogue into a single `unmute` call per hot spot using the `segments` parameter — adapts for vox's non-blocking unmute (v1.1.1+)
