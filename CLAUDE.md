@@ -166,21 +166,17 @@ Before creating a PR, verify:
 
 ### Pull Request and Code Review Workflow
 
-Do **not** merge immediately after creating a PR. The full flow is:
+Do **not** merge immediately after creating a PR. Expect **2–6 review cycles** before merging. The full flow is:
 
-1. **Create PR** — Push branch, open PR (via MCP or `gh pr create`).
-2. **Trigger GitHub Copilot code review** — Request review so Copilot analyzes the diff.
-3. **Watch for feedback** — Background the watch so you stay productive:
+1. **Create PR** — Push branch, open PR via `mcp__github__create_pull_request`.
+2. **Watch for CI and review feedback in the background** — Do not stop waiting:
    ```bash
-   gh pr checks <number> --watch         # Background this — blocks until all checks resolve
+   gh pr checks <number> --watch         # Blocks until all checks resolve — run in background
    ```
-   Do not wait on the user for this. When the watch completes, read feedback:
-   ```bash
-   gh pr view <number> --comments        # Copilot feedback and inline comments
-   ```
-4. **Evaluate feedback** — Read each comment; decide which are valid and actionable.
-5. **Address valid issues** — Commit fixes; push; re-run quality gates on each change.
-6. **Merge only when** — All review feedback has been evaluated (addressed or explicitly declined) and quality gates pass on the latest commit. Merge via MCP (`mcp__github__merge_pull_request`) or `gh pr merge`.
+3. **Read all feedback via MCP** — Use `mcp__github__pull_request_read` with `get_reviews` and `get_review_comments` to read Copilot, Bugbot, and human reviewer feedback. Prefer MCP GitHub tools over `gh` CLI for all read operations.
+4. **Take every comment seriously.** Do not dismiss feedback as "unrelated to the change" or "pre-existing." If a reviewer flags it, investigate and fix it.
+5. **Fix, re-push, repeat** — Commit fixes, run quality gates, push. Go back to step 2.
+6. **Merge only when the last review cycle is uneventful** — Zero new comments, all checks green. Merge via `mcp__github__merge_pull_request` (not `gh pr merge` — it has local side effects in worktrees).
 
 ### Session Close Protocol
 
