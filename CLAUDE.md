@@ -169,9 +169,9 @@ Before creating a PR, verify:
 Do **not** merge immediately after creating a PR. Expect **2–6 review cycles** before merging. The full flow is:
 
 1. **Create PR** — Push branch, open PR via `mcp__github__create_pull_request`.
-2. **Watch for CI and review feedback in the background** — Do not stop waiting:
+2. **Watch for CI and review feedback without blocking your main shell** — Do not stop waiting:
    ```bash
-   gh pr checks <number> --watch         # Blocks until all checks resolve — run in background
+   gh pr checks <number> --watch         # Blocks until all checks resolve — run in background task or separate session
    ```
 3. **Read all feedback via MCP** — Use `mcp__github__pull_request_read` with `get_reviews` and `get_review_comments` to read Copilot, Bugbot, and human reviewer feedback. Prefer MCP GitHub tools over `gh` CLI for all read operations.
 4. **Take every comment seriously.** Do not dismiss feedback as "unrelated to the change" or "pre-existing." If a reviewer flags it, investigate and fix it.
