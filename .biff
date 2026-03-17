@@ -3,3 +3,6 @@ members = ["jmf-pobox"]
 
 [relay]
 url = "tls://connect.ngs.global"
+
+[peers]
+repos = ["punt-labs/.github", "punt-labs/beadle", "punt-labs/biff", "punt-labs/cryptd", "punt-labs/dungeon", "punt-labs/koch-trainer-swift", "punt-labs/langlearn-tts", "punt-labs/lux", "punt-labs/public-website", "punt-labs/punt-kit", "punt-labs/quarry", "punt-labs/quarry-menubar", "punt-labs/vox", "punt-labs/z-spec"]
