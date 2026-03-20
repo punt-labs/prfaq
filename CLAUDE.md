@@ -40,11 +40,14 @@ git checkout -b feat/short-description main
 - Multi-file changes that touch skill prompts, reference guides, and templates together
 - Any work that might take multiple sessions
 
-**When direct-to-main is fine:**
+**When a feature branch is not needed** (PR directly from a short-lived branch):
 - Single-file fixes (compilation, typos, formatting)
-- Version bumps and releases
 - CHANGELOG updates
 - Dogfood document edits that don't change the template
+
+Branch protection is active — all changes require a PR, but these don't need
+a long-lived feature branch. Releases have their own process (see
+[Release Process](#release-process) below).
 
 ### Micro-Commits
 
@@ -133,6 +136,85 @@ This project follows [Keep a Changelog](https://keepachangelog.com/) format. CHA
 - Each entry starts with the command or component name (e.g., `` `/prfaq:vote` ``, `Installer`, `Template`)
 - One logical change per bullet — sub-bullets for supporting detail
 - At release time, move `[Unreleased]` entries to a versioned heading and update comparison links at the bottom of the file
+
+### Release Process
+
+This is a pure plugin — no PyPI artifact. Releases require the dev/prod name
+swap described in `plugins.md § Release flow for pure plugins` in the
+[punt-kit](https://github.com/punt-labs/punt-kit) standards.
+Branch protection is active, so every step that touches main goes through a PR.
+
+**Steps (in order):**
+
+1. **Feature work is merged.** All PRs for the release are on main.
+
+2. **Create a release branch** from main:
+   ```bash
+   git checkout -b release/vX.Y.Z main
+   ```
+
+3. **Bump the version** in `.claude-plugin/plugin.json` (keep the `-dev` name).
+
+4. **Move CHANGELOG entries** from `[Unreleased]` to `[X.Y.Z] - YYYY-MM-DD`.
+   Add reference links at the bottom (`[X.Y.Z]: ...compare...`).
+   Update the `[Unreleased]` link to compare from the new tag.
+
+5. **PR and merge** the release branch (version bump + CHANGELOG).
+
+6. **Pull main**, then do the name swap and tag:
+   ```bash
+   git pull --rebase
+   # Swap plugin name: prfaq-dev → prfaq
+   # (use scripts/release-plugin.sh if working tree is clean,
+   #  or edit plugin.json manually if untracked files exist)
+   git add .claude-plugin/plugin.json
+   git commit --no-verify -m "chore: prepare plugin for release [skip ci]"
+   git tag vX.Y.Z
+   ```
+
+7. **Restore the dev name** immediately:
+   ```bash
+   # Swap plugin name back: prfaq → prfaq-dev
+   git add .claude-plugin/plugin.json
+   git commit --no-verify -m "chore: restore dev plugin state"
+   ```
+
+8. **Push the tag** (branch protection does not block tags):
+   ```bash
+   git push origin vX.Y.Z
+   ```
+   Do **not** push the release/restore commits to `origin/main`. They exist
+   only locally to produce the tagged commit with the prod name. The tag
+   points at that commit; `main` stays on the dev-name state from the
+   release PR. Only the tag is pushed. Reset local main afterward:
+   ```bash
+   git reset --hard origin/main
+   ```
+
+9. **Create a GitHub Release** from the tag:
+   ```bash
+   gh release create vX.Y.Z --repo punt-labs/prfaq --title "vX.Y.Z" --notes "..."
+   ```
+   A tag without a Release object does not appear on the Releases page.
+
+10. **Update the marketplace** — PR to `punt-labs/claude-plugins` updating
+    `source.ref` and `version` for prfaq in `marketplace.json`.
+
+11. **Update downstream SHA pins** — check and update all of these:
+    - `prfaq/README.md` — install.sh SHA pin
+    - `public-website/src/data/projects.json` — version + install SHA
+    - `punt-labs/.github profile/README.md` — only if it has a prfaq-specific pin
+
+12. **Verify** the tag has the prod name:
+    ```bash
+    git show vX.Y.Z:.claude-plugin/plugin.json  # must say "name": "prfaq"
+    ```
+
+**Common mistakes:**
+- Forgetting the name swap (tag ships with `prfaq-dev`) — this broke 4 of 10 releases
+- Pushing a tag without creating a GitHub Release object
+- Not updating the marketplace `source.ref`
+- Not updating README and website SHA pins
 
 ## Scratch Files
 
