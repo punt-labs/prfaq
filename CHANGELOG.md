@@ -4,6 +4,8 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+## [1.6.1] - 2026-03-20
+
 ### Added
 
 - `scripts/release-plugin.sh` and `scripts/restore-dev-plugin.sh` — automate the dev/prod name swap for releases, preventing the `-dev` name from leaking into tagged commits
