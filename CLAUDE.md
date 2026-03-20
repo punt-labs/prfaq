@@ -40,13 +40,14 @@ git checkout -b feat/short-description main
 - Multi-file changes that touch skill prompts, reference guides, and templates together
 - Any work that might take multiple sessions
 
-**When direct-to-main is fine:**
+**When a feature branch is not needed** (PR directly from a short-lived branch):
 - Single-file fixes (compilation, typos, formatting)
 - CHANGELOG updates
 - Dogfood document edits that don't change the template
 
-**Note:** Branch protection is active — even "direct-to-main" changes require a PR.
-Releases have their own process (see [Release Process](#release-process) below).
+Branch protection is active — all changes require a PR, but these don't need
+a long-lived feature branch. Releases have their own process (see
+[Release Process](#release-process) below).
 
 ### Micro-Commits
 
@@ -139,7 +140,8 @@ This project follows [Keep a Changelog](https://keepachangelog.com/) format. CHA
 ### Release Process
 
 This is a pure plugin — no PyPI artifact. Releases require the dev/prod name
-swap described in [plugins.md § Release flow for pure plugins](../punt-kit/standards/plugins.md).
+swap described in `plugins.md § Release flow for pure plugins` in the
+[punt-kit](https://github.com/punt-labs/punt-kit) standards.
 Branch protection is active, so every step that touches main goes through a PR.
 
 **Steps (in order):**
@@ -181,9 +183,13 @@ Branch protection is active, so every step that touches main goes through a PR.
    ```bash
    git push origin vX.Y.Z
    ```
-   The release/restore commits on main cannot be pushed directly — they
-   will be included in the next PR that merges. This is acceptable because
-   the tag is the artifact that matters.
+   Do **not** push the release/restore commits to `origin/main`. They exist
+   only locally to produce the tagged commit with the prod name. The tag
+   points at that commit; `main` stays on the dev-name state from the
+   release PR. Only the tag is pushed. Reset local main afterward:
+   ```bash
+   git reset --hard origin/main
+   ```
 
 9. **Create a GitHub Release** from the tag:
    ```bash
