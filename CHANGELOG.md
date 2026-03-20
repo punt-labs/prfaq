@@ -4,6 +4,8 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+## [1.6.1] - 2026-03-20
+
 ### Added
 
 - `scripts/release-plugin.sh` and `scripts/restore-dev-plugin.sh` — automate the dev/prod name swap for releases, preventing the `-dev` name from leaking into tagged commits
@@ -300,7 +302,9 @@ First tagged release.
 - Plugin cache not clearing on reinstall (stale cache hid new agents)
 - FAQ paragraph indentation inconsistency in `faqpair` environment
 
-[Unreleased]: https://github.com/punt-labs/prfaq/compare/v1.5.2...HEAD
+[Unreleased]: https://github.com/punt-labs/prfaq/compare/v1.6.1...HEAD
+[1.6.1]: https://github.com/punt-labs/prfaq/compare/v1.6.0...v1.6.1
+[1.6.0]: https://github.com/punt-labs/prfaq/compare/v1.5.2...v1.6.0
 [1.5.2]: https://github.com/punt-labs/prfaq/compare/v1.5.1...v1.5.2
 [1.5.1]: https://github.com/punt-labs/prfaq/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/punt-labs/prfaq/compare/v1.4.0...v1.5.0
