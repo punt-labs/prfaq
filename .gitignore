@@ -24,3 +24,4 @@ research/spike-voices/
 # Claude Code (settings.json is tracked; everything else is local/runtime)
 .claude/
 !.claude/settings.json
+.envrc.local
