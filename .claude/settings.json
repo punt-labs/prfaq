@@ -36,7 +36,8 @@
       "mcp__plugin_biff_tty__*",
       "mcp__plugin_github_github__*",
       "mcp__plugin_quarry_quarry__*",
-      "mcp__quarry__*"
+      "mcp__quarry__*",
+      "Bash(make:*)"
     ],
     "deny": [
       "Bash(curl:*)",
