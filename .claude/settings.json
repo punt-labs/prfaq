@@ -111,7 +111,10 @@
       "Skill(z-spec:setup)",
       "Skill(z-spec:doctor)",
       "Skill(z-spec:help)",
-      "Skill(z-spec:cleanup)"
+      "Skill(z-spec:cleanup)",
+      "Read",
+      "Edit",
+      "Write"
     ],
     "deny": [
       "Bash(curl:*)",
