@@ -1,0 +1,3 @@
+[submodule ".punt-labs/ethos"]
+	path = .punt-labs/ethos
+	url = git@github.com:punt-labs/team.git
