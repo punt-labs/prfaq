@@ -220,7 +220,7 @@ Branch protection is active, so every step that touches main goes through a PR.
 
 Identity: `agent: claude` per `.punt-labs/ethos.yaml`. Sub-agent calls (`Agent(subagent_type=…)`) match ethos identity handles.
 
-prfaq is a Claude Code plugin (skills + LaTeX templates) implementing Amazon's Working Backwards PR/FAQ process. Two distinct domains: (1) the *product methodology* — meeting personas, peer review, decision quality — owned by product/PM specialists; (2) the *publishing chain* — LaTeX environments, pdflatex compile gate, plugin packaging — owned by docs/infra specialists. Worker and evaluator must be distinct handles with no shared role. Claude is the leader, never the evaluator.
+prfaq is a Claude Code plugin (skills + LaTeX templates) implementing Amazon's Working Backwards PR/FAQ process. Two distinct domains: (1) the *product methodology* — meeting personas, peer review, decision quality — owned by product/PM specialists; (2) the *publishing chain* — LaTeX environments, pdflatex compile gate, plugin packaging — owned by docs/infra specialists. Within each row, the worker and evaluator must be distinct handles. Claude is the leader, never the evaluator.
 
 | Task type | Worker | Evaluator |
 |-----------|--------|-----------|
