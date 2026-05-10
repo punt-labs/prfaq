@@ -1,6 +1,12 @@
 # bd 1.0.x server-mode setup. Source of truth lives in central Hosted DoltDB,
-# accessed via metadata.json + BEADS_DOLT_* env vars from .envrc.
+# accessed via metadata.json + BEADS_DOLT_* env vars set by the org-root
+# .envrc (in the punt-labs meta-repo) plus ~/.config/beads/server.json for TLS.
 # Local-only files: never tracked.
+#
+# DO NOT add negation patterns (e.g. `!issues.jsonl`) here. Negations would
+# re-enable tracking the auto-export views, which mix the central DB's state
+# with this repo's git history and create merge conflicts on every bd write.
+# The fork-protection rationale from older bd setups still applies.
 
 # Auto-export views (regenerated locally on every bd write; not source of truth)
 issues.jsonl

@@ -26,8 +26,9 @@ password store). See punt-labs/`.envrc` for the canonical setup.
 ## Daily commands
 
 ```bash
-bd ready              # show ready work, scoped to this repo's prefix
-bd list               # everything in the central DB (all prefixes)
+bd list               # issues for THIS repo (auto-scoped via directory.labels)
+bd ready              # ready work — NOTE: bd 1.0.4 does NOT auto-scope bd ready;
+                      #   use: bd ready --label-any repo:prfaq
 bd create "title"     # creates a new bead with this repo's prefix
 bd close <id>         # close an existing bead
 ```
