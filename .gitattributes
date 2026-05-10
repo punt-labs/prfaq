@@ -4,4 +4,3 @@ assets/reference.docx binary
 prfaq.docx binary
 
 # Use bd merge for beads JSONL files
-.beads/issues.jsonl merge=beads
