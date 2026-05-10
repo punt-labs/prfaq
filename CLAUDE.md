@@ -216,6 +216,26 @@ Branch protection is active, so every step that touches main goes through a PR.
 - Not updating the marketplace `source.ref`
 - Not updating README and website SHA pins
 
+## Ethos & Delegation
+
+Identity: `agent: claude` per `.punt-labs/ethos.yaml`. The handles named in the table below (e.g. `adt`, `mcg`, `mdm`) refer to ethos identities and map to plugin-namespaced sub-agents at invocation time (`subagent_type: "prfaq:meeting-customer"` for the Priya / customer persona, `subagent_type: "prfaq:meeting-engineer"` for Wei, etc., per `.claude-plugin/plugin.json`). The ethos handle expresses *who reviews*; the plugin namespace expresses *how the agent is reached*.
+
+prfaq is a Claude Code plugin (skills + LaTeX templates) implementing Amazon's Working Backwards PR/FAQ process. Two distinct domains: (1) the *product methodology* — meeting personas, peer review, decision quality — owned by product/PM specialists; (2) the *publishing chain* — LaTeX environments, pdflatex compile gate, plugin packaging — owned by docs/infra specialists. Within each row, the worker and evaluator must be distinct handles. Claude is the leader, never the evaluator.
+
+| Task type | Worker | Evaluator |
+|-----------|--------|-----------|
+| New PR/FAQ section / methodology guide | `adt` (Hopper) | `mcg` (Cagan) |
+| Meeting persona authoring (Alex, Wei, Priya, Dana) | `mcg` | `tdt` (Torres) |
+| Peer-reviewer / streamliner skill prompt | `adt` | `mcg` |
+| Reference guide (`skills/prfaq/references/*.md`) | `mcg` | `adt` |
+| LaTeX template / environment / `\newpage` structure | `edt` (Tufte) | `mdm` (Pike) |
+| Compile-gate scripts / installer / pdflatex hygiene | `adb` (Lovelace) | `mdm` |
+| Plugin packaging, name swap, marketplace pin | `mdm` | `adb` |
+| Skill orchestration / agent wiring | `adt` | `mdm` |
+| Customer-evidence research integration | `tdt` | `mcg` |
+
+Use the `standard` pipeline for new commands or methodology changes. Use `quick` for compile fixes or single-section edits. Always re-run both compile gates (template + dogfood) after any LaTeX change — broken templates are broken features.
+
 ## Scratch Files
 
 Use `.tmp/` at the project root for scratch and temporary files — never `/tmp`. The `TMPDIR` environment variable is set via `.envrc` so that `tempfile` and subprocesses automatically use it. Contents are gitignored; only `.gitkeep` is tracked.
