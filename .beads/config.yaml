@@ -12,3 +12,21 @@
 # This file is intentionally minimal. Most legacy keys (no-db, no-daemon,
 # no-auto-flush, no-auto-import, sync-branch) were removed in bd 1.0+
 # and reading them would be misleading.
+
+# Auto-scope `bd list` to this repo's records via the central DB's
+# `repo:prfaq` label. The label is backfilled in the Hosted DoltDB.
+# Note: bd 1.0.4's `bd ready` does NOT honor directory.labels — use
+# `bd ready --label-any repo:prfaq` until upstream fixes that.
+directory:
+  labels:
+    prfaq: repo:prfaq
+
+# Source of truth is the central Hosted DoltDB. Local Dolt-native backups
+# and auto-exported JSONL views are noise that creates stale-state
+# confusion (and the backup remote registration hangs on Hosted DoltDB
+# because the server-side mkdir fails on a local-path string).
+backup:
+  enabled: false
+export:
+  auto: false
+  git-add: false
