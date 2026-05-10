@@ -8,7 +8,7 @@
 # with this repo's git history and create merge conflicts on every bd write.
 # The fork-protection rationale from older bd setups still applies.
 
-# Auto-export views (regenerated locally on every bd write; not source of truth)
+# Auto-export views (auto-export disabled via config; run `bd export` manually)
 issues.jsonl
 interactions.jsonl
 
