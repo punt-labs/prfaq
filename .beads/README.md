@@ -12,8 +12,8 @@ in `.beads/metadata.json`.
   `issue_prefix`.
 - `.beads/issues.jsonl` and `.beads/interactions.jsonl` are local
   export views. Auto-export is disabled (`export.auto: false`);
-  run `bd export` manually if needed. They are
-  **gitignored** and not authoritative.
+  run `bd export` manually if needed. They are **gitignored** and
+  not authoritative.
 - `.beads/embeddeddolt/`, `backup/`, etc. are unused in server mode and
   gitignored.
 
