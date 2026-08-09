@@ -31,3 +31,11 @@ research/spike-voices/
 
 # Quarry session-transcript captures (pkit-kcps)
 .punt-labs/quarry/captures/
+
+# The mandated sibling lock every punt CLI takes before mutating a shared
+# host file (tool-enable-disable.md 2.4). Per-machine runtime state, and it
+# persists by design — unlinking a lock file races the next writer. The
+# pattern is broad because the lock's name is the host file's, and tools
+# differ on the suffix — .CLAUDE.md.lock and .CLAUDE.md.punt-import.lock
+# both appear.
+.*.lock
