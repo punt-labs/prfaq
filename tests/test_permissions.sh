@@ -40,6 +40,7 @@ mkdir -p "$WORK/bin"
 # formatting: name on its own line, source repo on the next.
 cat > "$WORK/bin/claude" <<'STUB'
 #!/bin/sh
+[ -n "${CLAUDE_STUB_LOG:-}" ] && echo "$*" >> "$CLAUDE_STUB_LOG"
 case "$*" in
   "plugin marketplace list")
     case "${CLAUDE_STUB_MARKETPLACES:-registered}" in
@@ -51,10 +52,20 @@ case "$*" in
         # name. Ours is not registered.
         printf 'Configured marketplaces:\n\n  \xe2\x9d\xaf someone-else\n    Source: GitHub (mirrors/punt-labs-fork)\n'
         ;;
+      unlisted)
+        # Registered, but under formatting the name-field check cannot read —
+        # stands in for a future CLI that changes its output.
+        printf 'Configured marketplaces:\n\n  1. punt-labs (GitHub: punt-labs/claude-plugins) [enabled]\n'
+        ;;
       none)
         printf 'Configured marketplaces:\n\n'
         ;;
     esac
+    ;;
+  "plugin marketplace add"*)
+    # Adding an already-registered marketplace fails.
+    [ "${CLAUDE_STUB_MARKETPLACES:-registered}" = "unlisted" ] && exit 1
+    exit 0
     ;;
   "plugin list") echo "prfaq@punt-labs" ;;
   *) exit 0 ;;
@@ -63,9 +74,13 @@ STUB
 chmod +x "$WORK/bin/claude"
 
 run_installer() { # run_installer <fake-home> [marketplace-stub-mode]
+  rm -f "$WORK/claude-calls.log"
   env HOME="$1" PATH="$WORK/bin:$PATH" CLAUDE_STUB_MARKETPLACES="${2:-registered}" \
+    CLAUDE_STUB_LOG="$WORK/claude-calls.log" \
     sh "$REPO/install.sh" >"$WORK/installer.out" 2>&1
 }
+
+refreshed() { grep -q "^plugin marketplace update punt-labs$" "$WORK/claude-calls.log"; }
 
 printf '\nProject permissions (scripts/prfaq_permissions.sh)\n'
 
@@ -225,6 +240,26 @@ if grep -q "marketplace already registered" "$WORK/installer.out"; then
   pass "a registered marketplace is recognized by name"
 else
   fail "a registered marketplace is recognized by name"
+fi
+if refreshed; then
+  pass "a registered marketplace is refreshed"
+else
+  fail "a registered marketplace is refreshed"
+fi
+
+# Registered, but the name-field read misses it, so the installer tries to add
+# and the add fails. It must recover — and still refresh, or the install
+# silently resolves against whatever ref was cached last time.
+run_installer "$H" unlisted
+if grep -q "marketplace already registered" "$WORK/installer.out"; then
+  pass "an unreadable listing recovers via the add fallback"
+else
+  fail "an unreadable listing recovers via the add fallback"
+fi
+if refreshed; then
+  pass "the add fallback still refreshes the marketplace"
+else
+  fail "the add fallback still refreshes the marketplace"
 fi
 
 # Another marketplace whose source repo contains our name must not be mistaken

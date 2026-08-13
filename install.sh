@@ -66,18 +66,25 @@ marketplace_mentioned() {
   claude plugin marketplace list 2>/dev/null | grep -q "$MARKETPLACE_NAME"
 }
 
-if marketplace_listed; then
-  ok "marketplace already registered"
+# Every already-registered path has to refresh. Skipping it on one of them
+# resolves the install against whatever ref was cached last time, silently —
+# which is the failure this warning exists to surface.
+refresh_marketplace() {
   if ! claude plugin marketplace update "$MARKETPLACE_NAME" >/dev/null 2>&1; then
-    # Not fatal — the cached marketplace still resolves. But say so, or the
-    # install silently returns whatever ref was cached last time.
+    # Not fatal — the cached marketplace still resolves. But say so.
     warn "could not refresh the marketplace; installing from the cached copy"
     warn "if you end up on an old version, re-run this installer when back online"
   fi
+}
+
+if marketplace_listed; then
+  ok "marketplace already registered"
+  refresh_marketplace
 elif claude plugin marketplace add "$MARKETPLACE_REPO"; then
   ok "marketplace registered"
 elif marketplace_mentioned; then
   ok "marketplace already registered"
+  refresh_marketplace
 else
   fail "Failed to register marketplace"
 fi
