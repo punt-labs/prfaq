@@ -4,6 +4,8 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+## [1.7.1] - 2026-08-13
+
 ### Fixed
 
 - Installer no longer aborts when the global `~/.claude/settings.json` has a key of the right name but the wrong type (`"allow": "WebSearch"` instead of a list). It died inside `jq` under `set -eu`, after the plugin had installed and before the toolchain checks — a raw stack trace instead of a message, and no closing output. It now warns, leaves the file untouched, and finishes.
@@ -333,7 +335,8 @@ First tagged release.
 - Plugin cache not clearing on reinstall (stale cache hid new agents)
 - FAQ paragraph indentation inconsistency in `faqpair` environment
 
-[Unreleased]: https://github.com/punt-labs/prfaq/compare/v1.7.0...HEAD
+[Unreleased]: https://github.com/punt-labs/prfaq/compare/v1.7.1...HEAD
+[1.7.1]: https://github.com/punt-labs/prfaq/compare/v1.7.0...v1.7.1
 [1.7.0]: https://github.com/punt-labs/prfaq/compare/v1.6.1...v1.7.0
 [1.6.1]: https://github.com/punt-labs/prfaq/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/punt-labs/prfaq/compare/v1.5.2...v1.6.0
