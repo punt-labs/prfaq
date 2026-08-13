@@ -24,7 +24,7 @@ From that evidence base, `/prfaq` walks you through a structured conversation �
 
 The output is a decision-making artifact, not a brainstorm. It is designed to be read, debated, and revised before committing to building anything.
 
-Fourteen commands form a complete product-thinking workflow:
+Fifteen commands form a complete product-thinking workflow:
 
 | Command | What it does |
 |---------|-------------|
@@ -42,6 +42,7 @@ Fourteen commands form a complete product-thinking workflow:
 | `/prfaq:streamline` | Scalpel edit — remove redundancy, weasel words, and bloat (10–20% tighter) |
 | `/prfaq:vote` | Go/no-go decision — three-gate assessment with binary verdict and evidence trail |
 | `/prfaq:feedback-to-us` | Tell us how the plugin is working for you (anonymous 1-5 feedback) |
+| `/prfaq:permissions` | Grant prfaq's permissions in the current project — or check and revoke them |
 
 ## Installation
 
@@ -73,6 +74,8 @@ sh install.sh
 
 The installer registers the Punt Labs marketplace and installs the plugin. It checks for pandoc (needed for `.docx` export) and TeX dependencies (needed for PDF output). Restart Claude Code after installing.
 
+The installer does not grant the plugin any permissions. Run `/prfaq:permissions` inside a project to do that — see [Permissions](#permissions) below.
+
 ### Output Dependencies
 
 You need **at least one** of TeX or pandoc to produce output. Without either, the plugin generates `.tex` source but cannot render it.
@@ -88,7 +91,7 @@ We recommend **TeX** — the PDF is the artifact you circulate and debate. Use p
 
 | Dependency | What it's for | Size | Required? |
 |-----------|---------------|------|-----------|
-| **[Agent Teams](https://code.claude.com/docs/en/agent-teams)** | Parallel persona execution for `/prfaq:meeting-hive` — enabled via `.claude/settings.json` (shipped with the plugin) | None (env var) | Only for autonomous meetings (use `/prfaq:meeting` without it) |
+| **[Agent Teams](https://code.claude.com/docs/en/agent-teams)** | Parallel persona execution for `/prfaq:meeting-hive` — set in your project by `/prfaq:permissions` | None (env var) | Only for autonomous meetings (use `/prfaq:meeting` without it) |
 | **[punt-vox](https://github.com/punt-labs/vox)** | Voiced playback for `/prfaq:meeting-listen` — four personas speak in distinct voices | ~5 MB | No — without it, meeting-listen runs in text-only mode |
 | **[punt-quarry](https://github.com/punt-labs/quarry)** | Semantic search across your indexed documents during research | ~20 MB | No — enhances `/prfaq:research` but not required |
 
@@ -113,6 +116,23 @@ quarry sync --db prfaq
 Once ingested, the `/prfaq:research` agent and Phase 0 research discovery will automatically use quarry's `search_documents` tool to find relevant evidence. Re-run `quarry sync --db prfaq` after adding new files — registered directories sync incrementally.
 
 </details>
+
+### Permissions
+
+prfaq's commands compile documents, edit `.tex` files, and search the web. Left alone, Claude Code asks for approval each time. To stop the prompting, run this inside the project you're writing the PR/FAQ in:
+
+```
+/prfaq:permissions
+```
+
+That writes prfaq's rules into the project's `.claude/settings.json` and nothing else. Two consequences worth knowing:
+
+- **The rules are scoped to that project.** prfaq never writes to your global `~/.claude/settings.json` — rules there would apply in every project you open, including projects that have nothing to do with prfaq. Versions 1.5.0 through 1.6.1 did write global rules; installing 1.7.0 or later removes them and leaves a backup next to the file.
+- **`.claude/settings.json` is normally committed**, so the permissions are shared with everyone working in the repo. To keep them to yourself, move the block into `.claude/settings.local.json`, which is gitignored.
+
+`/prfaq:permissions check` reports what's in place; `/prfaq:permissions remove` takes it back out. The rules cover the plugin's own compile and export scripts, edits to `*prfaq*.tex`, `*prfaq*.bib`, `press-release-*.tex`, `meetings/**`, `research/**`, `README.md`, and `.gitignore`, plus `WebSearch` and `WebFetch` for the researcher agent. `Bash(curl *)` and every `Bash(rm *)` form are deliberately left out — those keep prompting.
+
+Requires `jq`. Without it, the command reads out the rule list so you can paste it in by hand.
 
 ## Quick Start
 
@@ -234,7 +254,7 @@ Same four personas, but they debate and reach consensus autonomously using Claud
 
 The output is a consensus summary with a revision queue that feeds into `/prfaq:feedback`.
 
-**Requires** `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` — shipped in `.claude/settings.json`, enabled automatically when you install the plugin.
+**Requires** `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`. Run `/prfaq:permissions` to set it in the project's `.claude/settings.json`, then restart Claude Code.
 
 ### Listen: `/prfaq:meeting-listen`
 
@@ -291,6 +311,14 @@ Each gate renders a binary **GO** or **NO-GO** with 3-5 bullet points of evidenc
 **Multi-document mode:** pass multiple `.tex` paths for portfolio comparison. Each document gets an individual assessment, then a ranked portfolio view surfaces which projects have the strongest evidence relative to investment required.
 
 The vote also checks for prior deliberation — meeting summaries in `./meetings/` — and notes whether decisions from those meetings have been applied.
+
+### Permissions: `/prfaq:permissions`
+
+```
+/prfaq:permissions [check|remove]
+```
+
+Grant prfaq's permission rules in the current project, report which are in place, or revoke them. Writes only the project's own `.claude/settings.json` — see [Permissions](#permissions) above for what the rules cover and why they are never global.
 
 ## Document Features
 

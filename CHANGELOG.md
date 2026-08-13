@@ -4,6 +4,23 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+### Added
+
+- `/prfaq:permissions` — grant prfaq's permission rules in the current project, check what is in place, or revoke them
+  - Writes the project's own `.claude/settings.json` only; refuses to write the global settings file
+  - Idempotent — a second run adds nothing and leaves the file byte-identical
+  - Also sets `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`, which `/prfaq:meeting-hive` requires
+  - Backed by `scripts/prfaq_permissions.sh` (`--add`, `--check`, `--remove`), which requires `jq`
+
+### Changed
+
+- Installer no longer writes permission rules to the global `~/.claude/settings.json`. Permissions are project-scoped and opt-in via `/prfaq:permissions`. Global rules apply in every project the user opens, including projects unrelated to prfaq.
+
+### Fixed
+
+- Installer now removes the 24 permission rules that versions 1.5.0 through 1.6.1 wrote to `~/.claude/settings.json`, backing the file up first and printing every rule it removed. Eight of those rules used the `Write(path)` form, which Claude Code no longer matches — it prints a warning per unmatched rule at every session start, in every project. Path rules now use `Edit(path)`, which covers the Write, Edit, and NotebookEdit tools.
+- README claimed `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` shipped with the plugin and was enabled on install. It was set only in the prfaq repo's own settings file, so `/prfaq:meeting-hive` did not work for anyone else. `/prfaq:permissions` now sets it.
+
 ## [1.6.1] - 2026-03-20
 
 ### Added
