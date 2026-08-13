@@ -93,6 +93,32 @@ sh "$PERMS" --add "$P" >/dev/null 2>&1 || STATUS=$?
 check "non-object settings file is refused" "1" "$STATUS"
 check "non-object settings file is left alone" "[1,2,3]" "$(cat "$P/.claude/settings.json")"
 
+# --- Keys of the right name but the wrong type ---
+# These parse as JSON and then die inside jq mid-query. The script must name
+# the offending key rather than emit a raw jq stack trace, and must not treat
+# a user's typo as an empty list.
+for BAD_KEY in 'permissions' 'permissions.allow' 'env'; do
+  case "$BAD_KEY" in
+    permissions)       BAD_JSON='{"permissions":"nope"}' ;;
+    permissions.allow) BAD_JSON='{"permissions":{"allow":"nope"}}' ;;
+    env)               BAD_JSON='{"env":"nope"}' ;;
+  esac
+  P="$WORK/malformed-$(printf '%s' "$BAD_KEY" | tr '.' '-')"
+  mkdir -p "$P/.claude"
+  printf '%s' "$BAD_JSON" > "$P/.claude/settings.json"
+  for MODE in --check --add --remove; do
+    STATUS=0
+    OUT=$(sh "$PERMS" "$MODE" "$P" 2>&1) || STATUS=$?
+    check "$MODE on a malformed \"$BAD_KEY\" key exits 1" "1" "$STATUS"
+    case "$OUT" in
+      *"jq: error"*) fail "$MODE on \"$BAD_KEY\" leaked a jq stack trace" ;;
+      *"$BAD_KEY"*)  pass "$MODE on \"$BAD_KEY\" names the offending key" ;;
+      *)             fail "$MODE on \"$BAD_KEY\" does not name the offending key — got [$OUT]" ;;
+    esac
+  done
+  check "malformed \"$BAD_KEY\" file is left alone" "$BAD_JSON" "$(cat "$P/.claude/settings.json")"
+done
+
 # --- The global settings file is off limits ---
 # Run against a fake HOME: if the guard ever regresses, this test must not
 # rewrite the developer's own ~/.claude/settings.json.
@@ -141,6 +167,27 @@ STATUS=0
 run_installer "$H" || STATUS=$?
 check "non-object global settings does not abort the install" "0" "$STATUS"
 check "non-object global settings is left alone" '["not","an","object"]' "$(cat "$H/.claude/settings.json")"
+
+# --- A malformed global settings file must not abort the install ---
+# install.sh is piped from curl. A hard exit here strands the user after the
+# plugin installed but before the toolchain checks and the closing message.
+H="$WORK/home-malformed-allow"
+mkdir -p "$H/.claude"
+printf '{"permissions":{"allow":"nope"}}' > "$H/.claude/settings.json"
+STATUS=0
+run_installer "$H" || STATUS=$?
+check "malformed global permissions.allow does not abort the install" "0" "$STATUS"
+check "malformed global settings is left alone" '{"permissions":{"allow":"nope"}}' "$(cat "$H/.claude/settings.json")"
+if grep -q "jq: error" "$WORK/installer.out"; then
+  fail "installer leaked a jq stack trace on a malformed settings file"
+else
+  pass "installer leaks no jq stack trace on a malformed settings file"
+fi
+if grep -q "is ready!" "$WORK/installer.out"; then
+  pass "installer still reaches its closing message"
+else
+  fail "installer still reaches its closing message"
+fi
 
 # --- No global settings file at all ---
 H="$WORK/home-empty"
