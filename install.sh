@@ -88,15 +88,32 @@ ok "$PLUGIN_NAME installed"
 
 cleanup_https_rewrite
 
-# --- Step 5: Configure permissions ---
+# --- Step 5: Remove legacy global permission rules ---
 
-info "Configuring plugin permissions..."
+# Versions 1.5.0 through 1.6.1 wrote permission rules into the user's global
+# ~/.claude/settings.json. That was wrong twice over:
+#
+#   1. Global rules apply in every project the user opens, including projects
+#      that have nothing to do with prfaq. A plugin has no business granting
+#      itself standing permission outside the directory it works in.
+#   2. Eight of those rules used the Write(path) form. Claude Code matches
+#      path-scoped rules under Edit(path) only — Edit rules cover Write, Edit,
+#      and NotebookEdit — so it prints a warning for each unmatched Write rule
+#      at every session start, in every project.
+#
+# Permissions are now project-scoped and opt-in: run /prfaq:permissions inside
+# a project to grant them there. This step only takes back what earlier
+# installers gave themselves.
+#
+# LEGACY_GLOBAL_RULES is a frozen historical record: every rule string prfaq
+# ever wrote to the global settings file. Never add to it. Project rules live
+# in scripts/prfaq_permissions.sh.
+
+info "Removing legacy global permission rules..."
 
 SETTINGS_FILE="$HOME/.claude/settings.json"
 
-# Permission rules the plugin needs to operate without constant prompts.
-# Deliberately excluded: Bash(curl *) and all Bash(rm *) — those require manual approval.
-PRFAQ_RULES='[
+LEGACY_GLOBAL_RULES='[
   "Bash(bash */compile_prfaq.sh *)",
   "Bash(bash scripts/compile_prfaq.sh *)",
   "Bash(bash */export_prfaq_docx.sh *)",
@@ -123,39 +140,55 @@ PRFAQ_RULES='[
   "WebFetch"
 ]'
 
-if command -v jq >/dev/null 2>&1; then
-  # Ensure settings file exists with valid JSON
-  if [ ! -f "$SETTINGS_FILE" ]; then
-    mkdir -p "$(dirname "$SETTINGS_FILE")"
-    printf '{}' > "$SETTINGS_FILE"
-  elif ! jq -e . "$SETTINGS_FILE" >/dev/null 2>&1; then
-    warn "Existing $SETTINGS_FILE contains invalid JSON; backing up and recreating"
-    cp "$SETTINGS_FILE" "${SETTINGS_FILE}.bak" 2>/dev/null || true
-    printf '{}' > "$SETTINGS_FILE"
-  fi
-
-  # Order-preserving merge: append only rules not already present
-  ADDED=$(jq -r --argjson new "$PRFAQ_RULES" '
-    (.permissions.allow // []) as $orig
-    | [$new[] | select(. as $r | $orig | index($r) | not)] | length
+if [ ! -f "$SETTINGS_FILE" ]; then
+  ok "no global settings file — nothing to clean up"
+elif ! command -v jq >/dev/null 2>&1; then
+  warn "jq not found — cannot clean up automatically"
+  printf '\n'
+  info "Remove these rules by hand from $SETTINGS_FILE under permissions.allow:"
+  printf '%s\n' "$LEGACY_GLOBAL_RULES"
+  printf '\n'
+elif ! jq -e . "$SETTINGS_FILE" >/dev/null 2>&1; then
+  warn "$SETTINGS_FILE is not valid JSON — leaving it untouched"
+  info "Remove any prfaq rules by hand, then re-run this installer."
+else
+  FOUND=$(jq -r --argjson legacy "$LEGACY_GLOBAL_RULES" '
+    [(.permissions.allow // [])[] | select(. as $r | $legacy | index($r))] | length
   ' "$SETTINGS_FILE")
 
-  jq --argjson new "$PRFAQ_RULES" '
-    (.permissions.allow // []) as $orig
-    | .permissions.allow = $orig + [$new[] | select(. as $r | $orig | index($r) | not)]
-  ' "$SETTINGS_FILE" > "${SETTINGS_FILE}.tmp" && mv "${SETTINGS_FILE}.tmp" "$SETTINGS_FILE"
-
-  if [ "$ADDED" -gt 0 ]; then
-    ok "$ADDED permission rule(s) added to $SETTINGS_FILE"
+  if [ "$FOUND" -eq 0 ]; then
+    ok "no legacy global rules found"
   else
-    ok "permissions already configured"
+    BACKUP="${SETTINGS_FILE}.prfaq-backup.$(date +%Y%m%d%H%M%S)"
+    cp "$SETTINGS_FILE" "$BACKUP" || fail "Could not back up $SETTINGS_FILE"
+
+    jq -r --argjson legacy "$LEGACY_GLOBAL_RULES" '
+      (.permissions.allow // [])[] | select(. as $r | $legacy | index($r)) | "      " + .
+    ' "$SETTINGS_FILE" > "${SETTINGS_FILE}.prfaq-removed" || true
+
+    if jq --argjson legacy "$LEGACY_GLOBAL_RULES" '
+      .permissions.allow = [(.permissions.allow // [])[] | select(. as $r | $legacy | index($r) | not)]
+    ' "$SETTINGS_FILE" > "${SETTINGS_FILE}.tmp"; then
+      mv "${SETTINGS_FILE}.tmp" "$SETTINGS_FILE"
+    else
+      rm -f "${SETTINGS_FILE}.tmp"
+      fail "Could not rewrite $SETTINGS_FILE (backup kept at $BACKUP)"
+    fi
+
+    ok "$FOUND legacy rule(s) removed from $SETTINGS_FILE"
+    ok "backup saved to $BACKUP"
+    printf '\n'
+    info "Removed:"
+    cat "${SETTINGS_FILE}.prfaq-removed"
+    rm -f "${SETTINGS_FILE}.prfaq-removed"
+    printf '\n'
+    warn "A few of those rules are generic (WebSearch, WebFetch, Bash(uuidgen),"
+    warn "Edit/Write of README.md and .gitignore). If you had added any of them"
+    warn "yourself, restore them from the backup — prfaq no longer manages them."
+    printf '\n'
+    info "To grant prfaq permissions inside a project, run /prfaq:permissions there."
+    printf '\n'
   fi
-else
-  warn "jq not found — cannot auto-configure permissions"
-  printf '\n'
-  info "Add these rules manually to $SETTINGS_FILE under permissions.allow:"
-  printf '%s\n' "$PRFAQ_RULES"
-  printf '\n'
 fi
 
 # --- Step 6: Output toolchain checks ---
