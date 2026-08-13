@@ -44,12 +44,49 @@ fi
 
 info "Registering Punt Labs marketplace..."
 
-if claude plugin marketplace list 2>/dev/null | grep -q "$MARKETPLACE_NAME"; then
+# `claude plugin marketplace list` prints the name on its own line and the
+# source repo on the next one:
+#
+#     ❯ punt-labs
+#       Source: GitHub (punt-labs/claude-plugins)
+#
+# so a substring test for the name also matches any other marketplace whose
+# source repo happens to contain it. Match a line that holds nothing but the
+# name (any leading decoration allowed) to read the name field alone.
+marketplace_listed() {
+  claude plugin marketplace list 2>/dev/null \
+    | grep -qE "^[^A-Za-z0-9]*[[:space:]]*${MARKETPLACE_NAME}[[:space:]]*$"
+}
+
+# Neither match direction is trusted on its own: the format above is not a
+# stable contract, so a future change could make the check miss an entry that
+# is in fact registered. Registering again is then the recoverable path — if
+# add fails, look for the name anywhere in the listing before giving up.
+marketplace_mentioned() {
+  claude plugin marketplace list 2>/dev/null | grep -q "$MARKETPLACE_NAME"
+}
+
+# Every already-registered path has to refresh. Skipping it on one of them
+# resolves the install against whatever ref was cached last time, silently —
+# which is the failure this warning exists to surface.
+refresh_marketplace() {
+  if ! claude plugin marketplace update "$MARKETPLACE_NAME" >/dev/null 2>&1; then
+    # Not fatal — the cached marketplace still resolves. But say so.
+    warn "could not refresh the marketplace; installing from the cached copy"
+    warn "if you end up on an old version, re-run this installer when back online"
+  fi
+}
+
+if marketplace_listed; then
   ok "marketplace already registered"
-  claude plugin marketplace update "$MARKETPLACE_NAME" 2>/dev/null || true
-else
-  claude plugin marketplace add "$MARKETPLACE_REPO" || fail "Failed to register marketplace"
+  refresh_marketplace
+elif claude plugin marketplace add "$MARKETPLACE_REPO"; then
   ok "marketplace registered"
+elif marketplace_mentioned; then
+  ok "marketplace already registered"
+  refresh_marketplace
+else
+  fail "Failed to register marketplace"
 fi
 
 # --- Step 3: SSH fallback for plugin install ---
@@ -160,11 +197,19 @@ elif ! command -v jq >/dev/null 2>&1; then
   info "Remove these rules by hand from $SETTINGS_FILE under permissions.allow:"
   printf '%s\n' "$LEGACY_GLOBAL_RULES"
   printf '\n'
-elif ! jq -e 'type == "object"' "$SETTINGS_FILE" >/dev/null 2>&1; then
-  # Not valid JSON, or valid JSON that is not an object. Either way the
-  # queries below would abort the installer, so stop short of them.
-  warn "$SETTINGS_FILE is not a JSON object — leaving it untouched"
-  info "Remove any prfaq rules by hand, then re-run this installer."
+elif ! jq -e '
+  type == "object"
+  and ((has("permissions") | not) or (.permissions | type) == "object")
+  and (((.permissions // {}) | has("allow") | not) or (.permissions.allow | type) == "array")
+' "$SETTINGS_FILE" >/dev/null 2>&1; then
+  # Invalid JSON, a non-object root, or a permissions/allow key of the wrong
+  # type. Every query below would die inside jq, and under set -eu that would
+  # abort the installer — after the plugin is already installed, before the
+  # toolchain checks, with a raw stack trace instead of a message. Skip the
+  # step and keep going.
+  warn "$SETTINGS_FILE is not shaped like a settings file — leaving it untouched"
+  info "Check its permissions.allow list, remove any prfaq rules by hand,"
+  info "then re-run this installer."
 else
   # Match only string entries: an allow list holding an object or a number
   # would otherwise abort the installer inside jq.

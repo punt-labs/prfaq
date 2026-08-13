@@ -33,7 +33,8 @@ global `~/.claude/settings.json`.
 
 4. **Report the result.** Relay the script's output. When rules were added,
    tell the user two things:
-   - The rules take effect after a Claude Code restart.
+   - Claude Code watches settings files, so the rules apply without a restart.
+     Tell the user to restart only if they do not seem to have taken.
    - `.claude/settings.json` is checked into the repo, so committing it shares
      the permissions with the team. To keep them to themselves, they can move
      the block to `.claude/settings.local.json`, which is gitignored.

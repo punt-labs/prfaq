@@ -106,6 +106,20 @@ fi
 
 if [ -f "$SETTINGS_FILE" ]; then
   jq -e 'type == "object"' "$SETTINGS_FILE" >/dev/null 2>&1 || fail "$SETTINGS_FILE is not a JSON object. Fix or move it, then re-run."
+
+  # A key of the right name but the wrong type — "allow": "WebSearch" instead
+  # of a list, say — parses fine and then blows up inside jq mid-query. Name
+  # the offending key here instead of letting a raw jq stack trace out, and
+  # never paper over it: a typo the user should fix is not an empty list.
+  MALFORMED=$(jq -r '
+    if (has("permissions") and (.permissions | type) != "object") then "permissions"
+    elif ((.permissions // {} | has("allow")) and (.permissions.allow | type) != "array") then "permissions.allow"
+    elif (has("env") and (.env | type) != "object") then "env"
+    else "" end
+  ' "$SETTINGS_FILE" 2>/dev/null) || fail "Could not read $SETTINGS_FILE."
+  if [ -n "$MALFORMED" ]; then
+    fail "$SETTINGS_FILE has a \"$MALFORMED\" key of the wrong type. Fix it, then re-run."
+  fi
 elif [ "$MODE" = "remove" ]; then
   fail "No $SETTINGS_FILE — nothing to remove."
 fi
@@ -122,6 +136,17 @@ PRESENT=$(read_settings | jq -r --argjson rules "$PRFAQ_PROJECT_RULES" '
   [(.permissions.allow? // [])[] | select(. as $r | $rules | index($r))] | length
 ')
 TOTAL=$(printf '%s' "$PRFAQ_PROJECT_RULES" | jq -r 'length')
+
+# set -e does not see a failure inside $(...), and sh has no pipefail, so a jq
+# that died leaves an empty string here. Untrapped, "$((TOTAL - PRESENT))"
+# would then read 0 and the script would report "all rules already present"
+# having looked at nothing.
+for n in "$PRESENT" "$TOTAL"; do
+  case "$n" in
+    ''|*[!0-9]*) fail "Could not count the rules in $SETTINGS_FILE — jq returned nothing usable." ;;
+  esac
+done
+
 ADDED=$((TOTAL - PRESENT))
 TEAMS=$(read_settings | jq -r '.env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS // "unset"')
 
@@ -194,7 +219,8 @@ if [ "$MODE" = "add" ]; then
   [ -n "$BACKUP" ] && ok "backup saved to $BACKUP"
   printf '\n'
   info "These rules apply in this project only. Commit the file to share them."
-  info "Restart Claude Code for them to take effect."
+  info "Claude Code watches settings files, so they apply without a restart."
+  info "Restart if they do not seem to have taken."
   printf '\n'
 else
   read_settings | jq --argjson rules "$PRFAQ_PROJECT_RULES" '
