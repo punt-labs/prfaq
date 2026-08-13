@@ -94,9 +94,19 @@ check "non-object settings file is refused" "1" "$STATUS"
 check "non-object settings file is left alone" "[1,2,3]" "$(cat "$P/.claude/settings.json")"
 
 # --- The global settings file is off limits ---
+# Run against a fake HOME: if the guard ever regresses, this test must not
+# rewrite the developer's own ~/.claude/settings.json.
+FAKE_HOME="$WORK/guard-home"
+mkdir -p "$FAKE_HOME"
 STATUS=0
-sh "$PERMS" --add "$HOME" >/dev/null 2>&1 || STATUS=$?
+env HOME="$FAKE_HOME" sh "$PERMS" --add "$FAKE_HOME" >/dev/null 2>&1 || STATUS=$?
 check "writing \$HOME is refused" "1" "$STATUS"
+
+ln -s "$FAKE_HOME" "$WORK/guard-home-link"
+STATUS=0
+env HOME="$FAKE_HOME" sh "$PERMS" --add "$WORK/guard-home-link" >/dev/null 2>&1 || STATUS=$?
+check "writing \$HOME through a symlink is refused" "1" "$STATUS"
+check "the guard wrote nothing" "0" "$(find "$FAKE_HOME" -name settings.json | wc -l | tr -d ' ')"
 
 printf '\nLegacy global cleanup (install.sh)\n'
 

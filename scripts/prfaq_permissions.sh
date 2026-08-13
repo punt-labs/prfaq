@@ -81,7 +81,10 @@ done
 
 [ -n "$PROJECT_ARG" ] || PROJECT_ARG=.
 [ -d "$PROJECT_ARG" ] || fail "Not a directory: $PROJECT_ARG"
-PROJECT_DIR=$(cd "$PROJECT_ARG" && pwd)
+# pwd -P, not pwd: the $HOME comparison below has to survive symlinked paths
+# (/tmp on macOS, /home symlinks on Linux) that spell the same directory two
+# different ways.
+PROJECT_DIR=$(cd "$PROJECT_ARG" && pwd -P)
 
 command -v jq >/dev/null 2>&1 || fail "jq is required. Install it: brew install jq (macOS) or apt install jq (Linux)"
 
@@ -89,8 +92,13 @@ SETTINGS_FILE="$PROJECT_DIR/.claude/settings.json"
 
 # prfaq's own invariant: this script writes project settings, never the global
 # file. A user running it from $HOME would otherwise recreate the exact problem
-# this script exists to undo.
-if [ "$PROJECT_DIR" = "$HOME" ]; then
+# this script exists to undo. Both sides are canonicalized so a symlinked home
+# directory cannot slip past the comparison.
+HOME_DIR=''
+if [ -n "${HOME:-}" ] && [ -d "${HOME:-}" ]; then
+  HOME_DIR=$(cd "$HOME" && pwd -P)
+fi
+if [ -n "$HOME_DIR" ] && [ "$PROJECT_DIR" = "$HOME_DIR" ]; then
   fail "Refusing to write $SETTINGS_FILE — that is the global settings file. Run this inside a project directory."
 fi
 
