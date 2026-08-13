@@ -247,9 +247,12 @@ Before every commit:
 ```bash
 bash scripts/compile_prfaq.sh prfaq.tex           # Dogfood compiles
 bash scripts/compile_prfaq.sh assets/prfaq-template.tex  # Template compiles
+sh tests/test_permissions.sh                      # Permission scripts behave
 ```
 
-Both must succeed. If a LaTeX change breaks compilation, fix it before committing.
+All three must succeed, or `make check`, which runs them together. If a LaTeX change breaks compilation, fix it before committing.
+
+The permission tests cover `scripts/prfaq_permissions.sh` and `install.sh` Step 5 — both edit a user's Claude Code settings file, so the cases that matter are the destructive ones: rules the user wrote must survive, a no-op must not rewrite the file, and a successful run must exit 0. Run them after touching either script. They need `jq` and take about five seconds.
 
 ### GitHub Operations
 

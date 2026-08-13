@@ -76,6 +76,7 @@
       "Skill(prfaq:import)",
       "Skill(prfaq:badge)",
       "Skill(prfaq:feedback-to-us)",
+      "Skill(prfaq:permissions)",
       "Skill(punt:init)",
       "Skill(punt:audit)",
       "Skill(punt:reconcile)",
