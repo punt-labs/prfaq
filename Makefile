@@ -1,4 +1,4 @@
-.PHONY: help prfaq test check clean-tex
+.PHONY: help prfaq test test-perms check clean-tex
 
 # LaTeX intermediate files to remove after compilation
 LATEX_ARTIFACTS = *.aux *.log *.out *.bbl *.bcf *.blg *.run.xml *.fls \
@@ -32,7 +32,10 @@ prfaq: ## Compile .tex to .pdf and clean artifacts
 
 test: prfaq ## Verify all documents compile
 
-check: test ## Run all quality gates
+test-perms: ## Verify the permission scripts (needs jq)
+	@sh tests/test_permissions.sh
+
+check: test test-perms ## Run all quality gates
 
 clean-tex: ## Remove LaTeX intermediate files
 	@rm -f $(LATEX_ARTIFACTS)

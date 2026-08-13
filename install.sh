@@ -63,7 +63,19 @@ cleanup_https_rewrite() {
     NEED_HTTPS_REWRITE=0
   fi
 }
-trap cleanup_https_rewrite EXIT INT TERM
+
+# Set while Step 5 has a half-written settings file on disk. An interrupt
+# between the write and the mv would otherwise leave it in ~/.claude/.
+SETTINGS_TMP=''
+cleanup() {
+  cleanup_https_rewrite
+  # Must be an if, not a && list: as the trap's last command, a failing test
+  # would make a successful install exit 1.
+  if [ -n "$SETTINGS_TMP" ]; then
+    rm -f "$SETTINGS_TMP"
+  fi
+}
+trap cleanup EXIT INT TERM
 
 if ! ssh -o StrictHostKeyChecking=accept-new -o BatchMode=yes -o ConnectTimeout=5 -T git@github.com 2>&1 | grep -q "successfully authenticated"; then
   warn "SSH auth to GitHub unavailable, using HTTPS fallback"
@@ -170,14 +182,15 @@ else
       (.permissions.allow? // [])[] | select(type == "string") | select(. as $r | $legacy | index($r)) | "      " + .
     ' "$SETTINGS_FILE") || fail "Could not read $SETTINGS_FILE (backup kept at $BACKUP)"
 
+    SETTINGS_TMP="${SETTINGS_FILE}.tmp"
     if jq --argjson legacy "$LEGACY_GLOBAL_RULES" '
       .permissions.allow = [(.permissions.allow? // [])[] | select((type == "string" and (. as $r | $legacy | index($r))) | not)]
-    ' "$SETTINGS_FILE" > "${SETTINGS_FILE}.tmp"; then
-      mv "${SETTINGS_FILE}.tmp" "$SETTINGS_FILE"
+    ' "$SETTINGS_FILE" > "$SETTINGS_TMP"; then
+      mv "$SETTINGS_TMP" "$SETTINGS_FILE" || fail "Could not replace $SETTINGS_FILE (backup kept at $BACKUP)"
     else
-      rm -f "${SETTINGS_FILE}.tmp"
       fail "Could not rewrite $SETTINGS_FILE (backup kept at $BACKUP)"
     fi
+    SETTINGS_TMP=''
 
     ok "$FOUND legacy rule(s) removed from $SETTINGS_FILE"
     ok "backup saved to $BACKUP"
