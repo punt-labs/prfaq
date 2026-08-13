@@ -10,7 +10,7 @@ All notable changes to the prfaq plugin are documented here. This project follow
 - `/prfaq:permissions` names the offending key instead of leaking a `jq` stack trace when `permissions`, `permissions.allow`, or `env` has the wrong type. A typo is reported, never silently read as an empty list.
 - `/prfaq:permissions` no longer reports "all rules already present" when `jq` produced no count. `set -e` does not see failures inside `$(...)` and `sh` has no `pipefail`, so an empty result read as zero — a silent no-op reported as success.
 - Installer warns when it cannot refresh the marketplace instead of discarding the error, which let an install resolve against a stale cached ref and still report success.
-- Installer matches the marketplace name on a word boundary. A plain substring test also matched an unrelated marketplace whose source repo contained `punt-labs`, so registration was skipped and the install failed later.
+- Installer reads the marketplace name field rather than grepping the whole listing, which also matched an unrelated marketplace whose source repo contained `punt-labs` — registration was then skipped and the install failed later with a resolver error. The listing format is not a stable contract, so a missed match is recoverable too: if registering fails because the marketplace is already there, the installer accepts it instead of giving up.
 
 ### Changed
 

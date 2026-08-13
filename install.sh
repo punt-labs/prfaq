@@ -44,10 +44,29 @@ fi
 
 info "Registering Punt Labs marketplace..."
 
-# Word-boundary match: a plain substring test also fires on an unrelated
-# marketplace whose source repo merely contains our name (a fork, a mirror),
-# and we would then skip registration and fail at install time.
-if claude plugin marketplace list 2>/dev/null | grep -qE "(^|[^a-zA-Z0-9._-])${MARKETPLACE_NAME}([^a-zA-Z0-9._-]|$)"; then
+# `claude plugin marketplace list` prints the name on its own line and the
+# source repo on the next one:
+#
+#     ❯ punt-labs
+#       Source: GitHub (punt-labs/claude-plugins)
+#
+# so a substring test for the name also matches any other marketplace whose
+# source repo happens to contain it. Match a line that holds nothing but the
+# name (any leading decoration allowed) to read the name field alone.
+marketplace_listed() {
+  claude plugin marketplace list 2>/dev/null \
+    | grep -qE "^[^A-Za-z0-9]*[[:space:]]*${MARKETPLACE_NAME}[[:space:]]*$"
+}
+
+# Neither match direction is trusted on its own: the format above is not a
+# stable contract, so a future change could make the check miss an entry that
+# is in fact registered. Registering again is then the recoverable path — if
+# add fails, look for the name anywhere in the listing before giving up.
+marketplace_mentioned() {
+  claude plugin marketplace list 2>/dev/null | grep -q "$MARKETPLACE_NAME"
+}
+
+if marketplace_listed; then
   ok "marketplace already registered"
   if ! claude plugin marketplace update "$MARKETPLACE_NAME" >/dev/null 2>&1; then
     # Not fatal — the cached marketplace still resolves. But say so, or the
@@ -55,9 +74,12 @@ if claude plugin marketplace list 2>/dev/null | grep -qE "(^|[^a-zA-Z0-9._-])${M
     warn "could not refresh the marketplace; installing from the cached copy"
     warn "if you end up on an old version, re-run this installer when back online"
   fi
-else
-  claude plugin marketplace add "$MARKETPLACE_REPO" || fail "Failed to register marketplace"
+elif claude plugin marketplace add "$MARKETPLACE_REPO"; then
   ok "marketplace registered"
+elif marketplace_mentioned; then
+  ok "marketplace already registered"
+else
+  fail "Failed to register marketplace"
 fi
 
 # --- Step 3: SSH fallback for plugin install ---

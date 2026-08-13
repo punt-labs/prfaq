@@ -34,18 +34,37 @@ mkdir -p "$WORK"
 
 # A stub `claude` so install.sh can run its plugin steps offline.
 mkdir -p "$WORK/bin"
+#
+# CLAUDE_STUB_MARKETPLACES picks what `marketplace list` prints, so the
+# registration branches can be exercised. The default mimics the real
+# formatting: name on its own line, source repo on the next.
 cat > "$WORK/bin/claude" <<'STUB'
 #!/bin/sh
 case "$*" in
-  "plugin marketplace list") echo "punt-labs" ;;
+  "plugin marketplace list")
+    case "${CLAUDE_STUB_MARKETPLACES:-registered}" in
+      registered)
+        printf 'Configured marketplaces:\n\n  \xe2\x9d\xaf punt-labs\n    Source: GitHub (punt-labs/claude-plugins)\n'
+        ;;
+      decoy)
+        # Someone else's marketplace whose source repo merely contains our
+        # name. Ours is not registered.
+        printf 'Configured marketplaces:\n\n  \xe2\x9d\xaf someone-else\n    Source: GitHub (mirrors/punt-labs-fork)\n'
+        ;;
+      none)
+        printf 'Configured marketplaces:\n\n'
+        ;;
+    esac
+    ;;
   "plugin list") echo "prfaq@punt-labs" ;;
   *) exit 0 ;;
 esac
 STUB
 chmod +x "$WORK/bin/claude"
 
-run_installer() { # run_installer <fake-home>
-  env HOME="$1" PATH="$WORK/bin:$PATH" sh "$REPO/install.sh" >"$WORK/installer.out" 2>&1
+run_installer() { # run_installer <fake-home> [marketplace-stub-mode]
+  env HOME="$1" PATH="$WORK/bin:$PATH" CLAUDE_STUB_MARKETPLACES="${2:-registered}" \
+    sh "$REPO/install.sh" >"$WORK/installer.out" 2>&1
 }
 
 printf '\nProject permissions (scripts/prfaq_permissions.sh)\n'
@@ -195,6 +214,31 @@ mkdir -p "$H"
 STATUS=0
 run_installer "$H" || STATUS=$?
 check "missing global settings file is fine" "0" "$STATUS"
+
+printf '\nMarketplace registration (install.sh)\n'
+
+H="$WORK/home-marketplace"
+mkdir -p "$H"
+
+run_installer "$H" registered
+if grep -q "marketplace already registered" "$WORK/installer.out"; then
+  pass "a registered marketplace is recognized by name"
+else
+  fail "a registered marketplace is recognized by name"
+fi
+
+# Another marketplace whose source repo contains our name must not be mistaken
+# for ours — that would skip registration and fail at install time.
+run_installer "$H" decoy
+if grep -q "marketplace registered" "$WORK/installer.out" && ! grep -q "already registered" "$WORK/installer.out"; then
+  pass "a decoy marketplace does not suppress registration"
+else
+  fail "a decoy marketplace does not suppress registration"
+fi
+
+STATUS=0
+run_installer "$H" none || STATUS=$?
+check "an empty marketplace list registers cleanly" "0" "$STATUS"
 
 printf '\n%s passed, %s failed\n\n' "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ]
