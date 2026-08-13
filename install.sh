@@ -148,12 +148,16 @@ elif ! command -v jq >/dev/null 2>&1; then
   info "Remove these rules by hand from $SETTINGS_FILE under permissions.allow:"
   printf '%s\n' "$LEGACY_GLOBAL_RULES"
   printf '\n'
-elif ! jq -e . "$SETTINGS_FILE" >/dev/null 2>&1; then
-  warn "$SETTINGS_FILE is not valid JSON — leaving it untouched"
+elif ! jq -e 'type == "object"' "$SETTINGS_FILE" >/dev/null 2>&1; then
+  # Not valid JSON, or valid JSON that is not an object. Either way the
+  # queries below would abort the installer, so stop short of them.
+  warn "$SETTINGS_FILE is not a JSON object — leaving it untouched"
   info "Remove any prfaq rules by hand, then re-run this installer."
 else
+  # Match only string entries: an allow list holding an object or a number
+  # would otherwise abort the installer inside jq.
   FOUND=$(jq -r --argjson legacy "$LEGACY_GLOBAL_RULES" '
-    [(.permissions.allow // [])[] | select(. as $r | $legacy | index($r))] | length
+    [(.permissions.allow? // [])[] | select(type == "string") | select(. as $r | $legacy | index($r))] | length
   ' "$SETTINGS_FILE")
 
   if [ "$FOUND" -eq 0 ]; then
@@ -162,12 +166,12 @@ else
     BACKUP="${SETTINGS_FILE}.prfaq-backup.$(date +%Y%m%d%H%M%S)"
     cp "$SETTINGS_FILE" "$BACKUP" || fail "Could not back up $SETTINGS_FILE"
 
-    jq -r --argjson legacy "$LEGACY_GLOBAL_RULES" '
-      (.permissions.allow // [])[] | select(. as $r | $legacy | index($r)) | "      " + .
-    ' "$SETTINGS_FILE" > "${SETTINGS_FILE}.prfaq-removed" || true
+    REMOVED=$(jq -r --argjson legacy "$LEGACY_GLOBAL_RULES" '
+      (.permissions.allow? // [])[] | select(type == "string") | select(. as $r | $legacy | index($r)) | "      " + .
+    ' "$SETTINGS_FILE") || fail "Could not read $SETTINGS_FILE (backup kept at $BACKUP)"
 
     if jq --argjson legacy "$LEGACY_GLOBAL_RULES" '
-      .permissions.allow = [(.permissions.allow // [])[] | select(. as $r | $legacy | index($r) | not)]
+      .permissions.allow = [(.permissions.allow? // [])[] | select((type == "string" and (. as $r | $legacy | index($r))) | not)]
     ' "$SETTINGS_FILE" > "${SETTINGS_FILE}.tmp"; then
       mv "${SETTINGS_FILE}.tmp" "$SETTINGS_FILE"
     else
@@ -179,8 +183,7 @@ else
     ok "backup saved to $BACKUP"
     printf '\n'
     info "Removed:"
-    cat "${SETTINGS_FILE}.prfaq-removed"
-    rm -f "${SETTINGS_FILE}.prfaq-removed"
+    printf '%s\n' "$REMOVED"
     printf '\n'
     warn "A few of those rules are generic (WebSearch, WebFetch, Bash(uuidgen),"
     warn "Edit/Write of README.md and .gitignore). If you had added any of them"

@@ -97,7 +97,7 @@ fi
 # --- Load current state ---
 
 if [ -f "$SETTINGS_FILE" ]; then
-  jq -e . "$SETTINGS_FILE" >/dev/null 2>&1 || fail "$SETTINGS_FILE is not valid JSON. Fix or move it, then re-run."
+  jq -e 'type == "object"' "$SETTINGS_FILE" >/dev/null 2>&1 || fail "$SETTINGS_FILE is not a JSON object. Fix or move it, then re-run."
 elif [ "$MODE" = "remove" ]; then
   fail "No $SETTINGS_FILE — nothing to remove."
 fi
@@ -111,7 +111,7 @@ read_settings() {
 }
 
 PRESENT=$(read_settings | jq -r --argjson rules "$PRFAQ_PROJECT_RULES" '
-  [(.permissions.allow // [])[] | select(. as $r | $rules | index($r))] | length
+  [(.permissions.allow? // [])[] | select(. as $r | $rules | index($r))] | length
 ')
 TOTAL=$(printf '%s' "$PRFAQ_PROJECT_RULES" | jq -r 'length')
 ADDED=$((TOTAL - PRESENT))
@@ -126,7 +126,7 @@ if [ "$MODE" = "check" ]; then
   else
     warn "$PRESENT of $TOTAL rule(s) present — missing:"
     read_settings | jq -r --argjson rules "$PRFAQ_PROJECT_RULES" '
-      (.permissions.allow // []) as $have
+      (.permissions.allow? // []) as $have
       | $rules[] | select(. as $r | $have | index($r) | not) | "      " + .
     '
   fi
@@ -170,11 +170,11 @@ trap cleanup_tmp EXIT INT TERM
 if [ "$MODE" = "add" ]; then
   # Order-preserving: existing rules keep their position, new ones append.
   read_settings | jq --argjson rules "$PRFAQ_PROJECT_RULES" '
-    (.permissions.allow // []) as $have
+    (.permissions.allow? // []) as $have
     | .permissions.allow = $have + [$rules[] | select(. as $r | $have | index($r) | not)]
     | .env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1"
   ' > "$TMP" || fail "Could not update $SETTINGS_FILE"
-  mv "$TMP" "$SETTINGS_FILE"
+  mv "$TMP" "$SETTINGS_FILE" || fail "Could not replace $SETTINGS_FILE"
 
   info "prfaq permissions for $PROJECT_DIR"
   if [ "$ADDED" -gt 0 ]; then
@@ -190,9 +190,9 @@ if [ "$MODE" = "add" ]; then
   printf '\n'
 else
   read_settings | jq --argjson rules "$PRFAQ_PROJECT_RULES" '
-    .permissions.allow = [(.permissions.allow // [])[] | select(. as $r | $rules | index($r) | not)]
+    .permissions.allow = [(.permissions.allow? // [])[] | select(. as $r | $rules | index($r) | not)]
   ' > "$TMP" || fail "Could not update $SETTINGS_FILE"
-  mv "$TMP" "$SETTINGS_FILE"
+  mv "$TMP" "$SETTINGS_FILE" || fail "Could not replace $SETTINGS_FILE"
 
   info "prfaq permissions for $PROJECT_DIR"
   ok "$PRESENT rule(s) removed from .claude/settings.json"
