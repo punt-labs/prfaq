@@ -19,7 +19,9 @@
 research/spike-voices/
 
 # Claude Code (settings.json is tracked; everything else is local/runtime)
-.claude/
+# Must be .claude/* — git cannot re-include a file inside an excluded directory,
+# so `.claude/` here would make the negation below dead and force `git add -f`.
+.claude/*
 !.claude/settings.json
 
 # Local-only files (machine-specific, per-user)
