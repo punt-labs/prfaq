@@ -4,6 +4,8 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+## [1.7.0] - 2026-08-13
+
 ### Added
 
 - `/prfaq:permissions` — grant prfaq's permission rules in the current project, check what is in place, or revoke them
@@ -319,7 +321,8 @@ First tagged release.
 - Plugin cache not clearing on reinstall (stale cache hid new agents)
 - FAQ paragraph indentation inconsistency in `faqpair` environment
 
-[Unreleased]: https://github.com/punt-labs/prfaq/compare/v1.6.1...HEAD
+[Unreleased]: https://github.com/punt-labs/prfaq/compare/v1.7.0...HEAD
+[1.7.0]: https://github.com/punt-labs/prfaq/compare/v1.6.1...v1.7.0
 [1.6.1]: https://github.com/punt-labs/prfaq/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/punt-labs/prfaq/compare/v1.5.2...v1.6.0
 [1.5.2]: https://github.com/punt-labs/prfaq/compare/v1.5.1...v1.5.2
