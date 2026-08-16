@@ -38,6 +38,12 @@ mkdir -p "$WORK/bin"
 # CLAUDE_STUB_MARKETPLACES picks what `marketplace list` prints, so the
 # registration branches can be exercised. The default mimics the real
 # formatting: name on its own line, source repo on the next.
+#
+# The `❯` bullet is written as octal (\342\235\257). POSIX printf defines
+# \NNN and not \xNN, so a hex escape survives verbatim under dash — the
+# listing then carries the alphanumerics of the literal "\xe2\x9d\xaf",
+# which the installer's name-field regex cannot match, and the
+# already-registered branch is never taken.
 cat > "$WORK/bin/claude" <<'STUB'
 #!/bin/sh
 [ -n "${CLAUDE_STUB_LOG:-}" ] && echo "$*" >> "$CLAUDE_STUB_LOG"
@@ -45,12 +51,12 @@ case "$*" in
   "plugin marketplace list")
     case "${CLAUDE_STUB_MARKETPLACES:-registered}" in
       registered)
-        printf 'Configured marketplaces:\n\n  \xe2\x9d\xaf punt-labs\n    Source: GitHub (punt-labs/claude-plugins)\n'
+        printf 'Configured marketplaces:\n\n  \342\235\257 punt-labs\n    Source: GitHub (punt-labs/claude-plugins)\n'
         ;;
       decoy)
         # Someone else's marketplace whose source repo merely contains our
         # name. Ours is not registered.
-        printf 'Configured marketplaces:\n\n  \xe2\x9d\xaf someone-else\n    Source: GitHub (mirrors/punt-labs-fork)\n'
+        printf 'Configured marketplaces:\n\n  \342\235\257 someone-else\n    Source: GitHub (mirrors/punt-labs-fork)\n'
         ;;
       unlisted)
         # Registered, but under formatting the name-field check cannot read —
