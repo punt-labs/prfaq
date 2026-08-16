@@ -31,8 +31,22 @@ research/spike-voices/
 # Vox cached audio
 .vox/*.mp3
 
-# Quarry session-transcript captures (pkit-kcps)
-.punt-labs/quarry/captures/
+# Punt Labs tooling state. Claude Code clones this repo onto every consumer's
+# machine when they install the plugin, so whatever is tracked here lands in a
+# stranger's ~/.claude/. `.punt-labs/` is where vox, lux, biff, quarry, beads,
+# and ethos each deposit per-repo state — internal relay URLs, agent rosters,
+# session captures — none of which should ship. It also held the `.punt-labs/
+# ethos` submodule, whose `git@github.com:` URL aborted `--recurse-submodules`
+# for anyone without a GitHub SSH key; ignoring the mount path keeps a stray
+# `git submodule add` from putting it back.
+#
+# Must be .punt-labs/* — git cannot re-include a file inside an excluded
+# directory, so `.punt-labs/` here would make the negation below dead.
+# ethos.yaml is the exception: two lines naming this repo's agent and team,
+# read by the ethos CLI, which resolves the roster itself from the global
+# ~/.punt-labs/ethos/ at runtime.
+.punt-labs/*
+!.punt-labs/ethos.yaml
 
 # The mandated sibling lock every punt CLI takes before mutating a shared
 # host file (tool-enable-disable.md 2.4). Per-machine runtime state, and it
