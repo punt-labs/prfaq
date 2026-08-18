@@ -1,6 +1,6 @@
 {
-  "name": "prfaq-dev",
-  "description": "Amazon Working Backwards PR/FAQ process — generate professional LaTeX documents for product discovery and decision-making",
+  "name": "prfaq",
+  "description": "Amazon Working Backwards PR/FAQ process \u2014 generate professional LaTeX documents for product discovery and decision-making",
   "version": "1.7.2",
   "author": {
     "name": "Punt Labs",
