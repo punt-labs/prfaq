@@ -4,6 +4,15 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+### Fixed
+
+- Installing the plugin no longer requires a GitHub SSH key. The repo carried a `.punt-labs/ethos` git submodule pointing at `git@github.com:punt-labs/team.git`, and Claude Code clones plugins with submodules — so the install aborted with `Failed to clone '.punt-labs/ethos' a second time, aborting` for anyone without a key configured. The submodule is removed; agents resolve identities from the global `~/.punt-labs/ethos/` at runtime.
+- The permission test suite passes on Linux. Its stub `claude` printed the marketplace-list bullet with `\xe2\x9d\xaf`, and POSIX `printf` defines `\NNN` rather than `\xNN`, so under `dash` the escape survived verbatim and its alphanumerics defeated the installer's name-field regex — two assertions failed on every Linux checkout.
+
+### Removed
+
+- 1.1 MB of internal org-identity data (245 files: identities, roles, personalities, writing styles) is no longer cloned onto a user's disk at install time. None of it was prfaq-specific.
+
 ## [1.7.1] - 2026-08-13
 
 ### Fixed
