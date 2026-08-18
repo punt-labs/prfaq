@@ -4,6 +4,8 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+## [1.7.2] - 2026-08-19
+
 ### Fixed
 
 - Installing the plugin no longer requires a GitHub SSH key. The repo carried a `.punt-labs/ethos` git submodule pointing at `git@github.com:punt-labs/team.git`, and Claude Code clones plugins with submodules — so the install aborted with `Failed to clone '.punt-labs/ethos' a second time, aborting` for anyone without a key configured. The submodule is removed; agents resolve identities from the global `~/.punt-labs/ethos/` at runtime.
@@ -344,7 +346,8 @@ First tagged release.
 - Plugin cache not clearing on reinstall (stale cache hid new agents)
 - FAQ paragraph indentation inconsistency in `faqpair` environment
 
-[Unreleased]: https://github.com/punt-labs/prfaq/compare/v1.7.1...HEAD
+[Unreleased]: https://github.com/punt-labs/prfaq/compare/v1.7.2...HEAD
+[1.7.2]: https://github.com/punt-labs/prfaq/compare/v1.7.1...v1.7.2
 [1.7.1]: https://github.com/punt-labs/prfaq/compare/v1.7.0...v1.7.1
 [1.7.0]: https://github.com/punt-labs/prfaq/compare/v1.6.1...v1.7.0
 [1.6.1]: https://github.com/punt-labs/prfaq/compare/v1.6.0...v1.6.1
