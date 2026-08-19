@@ -43,10 +43,10 @@ plugin provides domain expertise and workflow structure.
 \section{Project Structure}
 
 Everything the plugin ships lives under \texttt{plugin/}, which is the plugin
-root: the marketplace entry uses Claude Code's \texttt{git-subdir} source with
-\texttt{"path": "plugin"}, so an install fetches that subtree and nothing else.
-\texttt{\$\{CLAUDE\_PLUGIN\_ROOT\}} resolves to it, and the paths below are
-relative to it. Six component categories:
+root. The layout serves Claude Code's \texttt{git-subdir} marketplace source
+(\texttt{"path": "plugin"}): once the entry is repointed, an install fetches
+that subtree and nothing else. \texttt{\$\{CLAUDE\_PLUGIN\_ROOT\}} resolves to
+it, and the paths below are relative to it. Six component categories:
 
 \begin{description}[style=nextline, leftmargin=2em]
   \item[\texttt{.claude-plugin/plugin.json}]
@@ -297,9 +297,10 @@ The quality gate is compilation of every tracked LaTeX file:
 \end{enumerate}
 
 All must compile to valid PDFs before every commit. \texttt{make prfaq} runs
-the list; \texttt{compile\_prfaq.sh} compiles one file
-(\texttt{pdflatex} $\to$ \texttt{biber} $\to$ \texttt{pdflatex} $\times$ 2). The \texttt{.docx} export pipeline preprocesses custom
-LaTeX environments into standard LaTeX, then hands off to pandoc.
+the list; \texttt{compile\_prfaq.sh} compiles one file (\texttt{pdflatex}
+$\to$ \texttt{biber} $\to$ \texttt{pdflatex} $\times$ 2). The \texttt{.docx}
+export pipeline preprocesses custom LaTeX environments into standard LaTeX,
+then hands off to pandoc.
 
 \section{Key Design Decisions}
 

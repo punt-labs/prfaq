@@ -260,9 +260,11 @@ docs/ research/ meetings/ tests/   # development material
 prfaq.tex prfaq.bib           # the dogfood document
 ```
 
-The marketplace entry uses Claude Code's `git-subdir` source with
-`"path": "plugin"` — a blobless partial clone plus `sparse-checkout set --cone
-plugin`. Two consequences:
+The layout exists to serve Claude Code's `git-subdir` marketplace source
+(`"path": "plugin"`), which is a blobless partial clone plus `sparse-checkout
+set --cone plugin`. The `punt-labs/claude-plugins` entry is repointed at release
+time — until then an install still clones the whole repo, but the two
+consequences below apply to the layout either way:
 
 - **`${CLAUDE_PLUGIN_ROOT}` resolves to `plugin/`, not the repo root.** Anything
   a command, agent, or skill reads at runtime has to live under `plugin/`, or a
