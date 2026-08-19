@@ -5,8 +5,10 @@ set -euo pipefail
 # The tagged commit has only prod artifacts; the marketplace cache clones from it.
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-PLUGIN_JSON=".claude-plugin/plugin.json"
-COMMANDS_DIR="commands"
+# Repo-relative, because both are handed to git. The shippable surface lives
+# under plugin/ so a git-subdir marketplace install fetches only that subtree.
+PLUGIN_JSON="plugin/.claude-plugin/plugin.json"
+COMMANDS_DIR="plugin/commands"
 
 # Require a clean working tree so we don't accidentally stage local changes.
 if [ -n "$(git -C "$REPO_ROOT" status --porcelain)" ]; then

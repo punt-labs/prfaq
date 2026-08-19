@@ -1,13 +1,23 @@
 .PHONY: help prfaq test test-perms check clean-tex
 
-# LaTeX intermediate files to remove after compilation
-LATEX_ARTIFACTS = *.aux *.log *.out *.bbl *.bcf *.blg *.run.xml *.fls \
-                  *.fdb_latexmk *.synctex.gz *.toc \
-                  assets/*.aux assets/*.log assets/*.out assets/*.bbl \
-                  assets/*.bcf assets/*.blg assets/*.run.xml assets/*.fls \
-                  assets/*.fdb_latexmk assets/*.synctex.gz assets/*.toc
+# Directories holding a compiled .tex. Artifact globs and TEX_FILES both derive
+# from this list, so adding a document in a new directory needs one edit.
+TEX_DIRS = . plugin/assets docs
 
-TEX_FILES = prfaq.tex assets/prfaq-template.tex
+# LaTeX intermediate files to remove after compilation
+LATEX_ARTIFACTS = $(foreach d,$(TEX_DIRS),\
+                    $(addprefix $(d)/,*.aux *.log *.out *.bbl *.bcf *.blg \
+                                      *.run.xml *.fls *.fdb_latexmk \
+                                      *.synctex.gz *.toc))
+
+# Every tracked .tex compiles. The two templates under plugin/assets/ ship to
+# users, so a template that stopped compiling would be a shipped defect, and
+# each of these has a committed .pdf that only stays honest if it is rebuilt.
+TEX_FILES = prfaq.tex \
+            press-release-v1.0.0.tex \
+            plugin/assets/prfaq-template.tex \
+            plugin/assets/press-release-template.tex \
+            docs/prfaq-overview.tex
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-12s %s\n", $$1, $$2}'

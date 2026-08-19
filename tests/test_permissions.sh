@@ -1,6 +1,6 @@
 #!/bin/sh
-# Tests for the permission scripts: scripts/prfaq_permissions.sh (project
-# rules) and install.sh Step 5 (legacy global cleanup).
+# Tests for the permission scripts: plugin/scripts/prfaq_permissions.sh
+# (project rules) and install.sh Step 5 (legacy global cleanup).
 #
 # Both scripts edit a user's Claude Code settings file, so the cases that
 # matter are the destructive ones: rules the user wrote must survive, a
@@ -11,7 +11,7 @@ set -eu
 
 REPO=$(cd "$(dirname "$0")/.." && pwd)
 WORK="$REPO/.tmp/permission-tests"
-PERMS="$REPO/scripts/prfaq_permissions.sh"
+PERMS="$REPO/plugin/scripts/prfaq_permissions.sh"
 
 PASS=0
 FAIL=0
@@ -88,7 +88,7 @@ run_installer() { # run_installer <fake-home> [marketplace-stub-mode]
 
 refreshed() { grep -q "^plugin marketplace update punt-labs$" "$WORK/claude-calls.log"; }
 
-printf '\nProject permissions (scripts/prfaq_permissions.sh)\n'
+printf '\nProject permissions (plugin/scripts/prfaq_permissions.sh)\n'
 
 # --- Fresh project ---
 P="$WORK/fresh"
