@@ -155,8 +155,10 @@ cleanup_https_rewrite
 # installers gave themselves.
 #
 # LEGACY_GLOBAL_RULES is a frozen historical record: every rule string prfaq
-# ever wrote to the global settings file. Never add to it. Project rules live
-# in scripts/prfaq_permissions.sh.
+# ever wrote to the global settings file. Never add to it, and never rewrite
+# what is there — the `scripts/...` spellings below are the strings that landed
+# in users' files, and editing them to match the current layout would strand
+# the originals. Project rules live in plugin/scripts/prfaq_permissions.sh.
 
 info "Removing legacy global permission rules..."
 
