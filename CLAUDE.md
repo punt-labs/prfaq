@@ -10,7 +10,7 @@ There is no such thing as a "pre-existing" issue. If you see a problem — in co
 
 - **Templates compile.** Every change to `.tex` files must produce a valid PDF via `pdflatex`. Broken templates are broken features.
 - **Skill prompts are tested.** After modifying `SKILL.md` or reference guides, run `/prfaq` to verify the skill produces correct output.
-- **Reference guides are self-contained.** Each guide in `skills/prfaq/references/` stands alone — no forward references to guides that don't exist yet.
+- **Reference guides are self-contained.** Each guide in `plugin/skills/prfaq/references/` stands alone — no forward references to guides that don't exist yet.
 - **Duplication is a design failure.** The template defines environments once. The dogfood `prfaq.tex` should match the template's environment definitions.
 - **Version numbers are synchronized.** `plugin.json`, `install.sh`, and `README.md` must agree on the version.
 - **Backwards compatibility shims do not exist.** When code changes, callers change. No dead re-exports, no `# removed` tombstones.
@@ -153,7 +153,7 @@ Branch protection is active, so every step that touches main goes through a PR.
    git checkout -b release/vX.Y.Z main
    ```
 
-3. **Bump the version** in `.claude-plugin/plugin.json` (keep the `-dev` name).
+3. **Bump the version** in `plugin/.claude-plugin/plugin.json` (keep the `-dev` name).
 
 4. **Move CHANGELOG entries** from `[Unreleased]` to `[X.Y.Z] - YYYY-MM-DD`.
    Add reference links at the bottom (`[X.Y.Z]: ...compare...`).
@@ -167,7 +167,7 @@ Branch protection is active, so every step that touches main goes through a PR.
    # Swap plugin name: prfaq-dev → prfaq
    # (use scripts/release-plugin.sh if working tree is clean,
    #  or edit plugin.json manually if untracked files exist)
-   git add .claude-plugin/plugin.json
+   git add plugin/.claude-plugin/plugin.json
    git commit --no-verify -m "chore: prepare plugin for release [skip ci]"
    git tag vX.Y.Z
    ```
@@ -175,7 +175,7 @@ Branch protection is active, so every step that touches main goes through a PR.
 7. **Restore the dev name** immediately:
    ```bash
    # Swap plugin name back: prfaq → prfaq-dev
-   git add .claude-plugin/plugin.json
+   git add plugin/.claude-plugin/plugin.json
    git commit --no-verify -m "chore: restore dev plugin state"
    ```
 
@@ -198,7 +198,11 @@ Branch protection is active, so every step that touches main goes through a PR.
    A tag without a Release object does not appear on the Releases page.
 
 10. **Update the marketplace** — PR to `punt-labs/claude-plugins` updating
-    `source.ref` and `version` for prfaq in `marketplace.json`.
+    `source.ref` and `version` for prfaq in `marketplace.json`. The entry's
+    source must be `"git-subdir"` with `"path": "plugin"` — the plugin root is
+    the repo's `plugin/` directory, not the repo root, so a `"url"` source
+    would clone the whole repo and a `git-subdir` entry without the `path`
+    would find no `.claude-plugin/`.
 
 11. **Update downstream SHA pins** — check and update all of these:
     - `prfaq/README.md` — install.sh SHA pin
@@ -207,7 +211,7 @@ Branch protection is active, so every step that touches main goes through a PR.
 
 12. **Verify** the tag has the prod name:
     ```bash
-    git show vX.Y.Z:.claude-plugin/plugin.json  # must say "name": "prfaq"
+    git show vX.Y.Z:plugin/.claude-plugin/plugin.json  # must say "name": "prfaq"
     ```
 
 **Common mistakes:**
@@ -220,7 +224,7 @@ Branch protection is active, so every step that touches main goes through a PR.
 
 **No git submodules in this repo.** The org-wide rule "every project adds `punt-labs/team` as a submodule at `.punt-labs/ethos/`" does **not** apply here. Claude Code clones this repo onto a user's machine when they install the plugin, and it clones with submodules — the SSH URL `git@github.com:punt-labs/team.git` aborts the install outright for anyone without a GitHub SSH key, and an HTTPS URL would still push 1.1 MB of the internal org roster onto every consumer's disk. `.punt-labs/*` is gitignored except `ethos.yaml`; resolve identities from the global `~/.punt-labs/ethos/` instead. The same reasoning applies to anything else you are about to track: before adding a file, ask whether it should land in a stranger's `~/.claude/`.
 
-Identity: `agent: claude` per `.punt-labs/ethos.yaml`. The handles named in the table below (e.g. `adt`, `mcg`, `mdm`) refer to ethos identities and map to plugin-namespaced sub-agents at invocation time (`subagent_type: "prfaq:meeting-customer"` for the Priya / customer persona, `subagent_type: "prfaq:meeting-engineer"` for Wei, etc., per `.claude-plugin/plugin.json`). The ethos handle expresses *who reviews*; the plugin namespace expresses *how the agent is reached*.
+Identity: `agent: claude` per `.punt-labs/ethos.yaml`. The handles named in the table below (e.g. `adt`, `mcg`, `mdm`) refer to ethos identities and map to plugin-namespaced sub-agents at invocation time (`subagent_type: "prfaq:meeting-customer"` for the Priya / customer persona, `subagent_type: "prfaq:meeting-engineer"` for Wei, etc., per `plugin/.claude-plugin/plugin.json`). The ethos handle expresses *who reviews*; the plugin namespace expresses *how the agent is reached*.
 
 prfaq is a Claude Code plugin (skills + LaTeX templates) implementing Amazon's Working Backwards PR/FAQ process. Two distinct domains: (1) the *product methodology* — meeting personas, peer review, decision quality — owned by product/PM specialists; (2) the *publishing chain* — LaTeX environments, pdflatex compile gate, plugin packaging — owned by docs/infra specialists. Within each row, the worker and evaluator must be distinct handles. Claude is the leader, never the evaluator.
 
@@ -229,14 +233,45 @@ prfaq is a Claude Code plugin (skills + LaTeX templates) implementing Amazon's W
 | New PR/FAQ section / methodology guide | `adt` (Hopper) | `mcg` (Cagan) |
 | Meeting persona authoring (Alex, Wei, Priya, Dana) | `mcg` | `tdt` (Torres) |
 | Peer-reviewer / streamliner skill prompt | `adt` | `mcg` |
-| Reference guide (`skills/prfaq/references/*.md`) | `mcg` | `adt` |
+| Reference guide (`plugin/skills/prfaq/references/*.md`) | `mcg` | `adt` |
 | LaTeX template / environment / `\newpage` structure | `edt` (Tufte) | `mdm` (Pike) |
 | Compile-gate scripts / installer / pdflatex hygiene | `adb` (Lovelace) | `mdm` |
 | Plugin packaging, name swap, marketplace pin | `mdm` | `adb` |
 | Skill orchestration / agent wiring | `adt` | `mdm` |
 | Customer-evidence research integration | `tdt` | `mcg` |
 
-Use the `standard` pipeline for new commands or methodology changes. Use `quick` for compile fixes or single-section edits. Always re-run both compile gates (template + dogfood) after any LaTeX change — broken templates are broken features.
+Use the `standard` pipeline for new commands or methodology changes. Use `quick` for compile fixes or single-section edits. Always re-run `make prfaq` after any LaTeX change — it compiles every tracked `.tex`, and broken templates are broken features.
+
+## Repository Layout
+
+Everything the plugin ships lives under `plugin/`; everything else in the repo is
+development material that consumers never see.
+
+```text
+plugin/                       # the plugin root — a marketplace install fetches only this
+  .claude-plugin/plugin.json  # manifest
+  commands/                   # slash commands
+  agents/                     # subagent personas
+  skills/prfaq/               # SKILL.md + reference guides
+  assets/                     # LaTeX templates, Word reference doc
+  scripts/                    # compile, export, permissions — runtime helpers
+scripts/                      # release tooling for this repo (not shipped)
+docs/ research/ meetings/ tests/   # development material
+prfaq.tex prfaq.bib           # the dogfood document
+```
+
+The marketplace entry uses Claude Code's `git-subdir` source with
+`"path": "plugin"` — a blobless partial clone plus `sparse-checkout set --cone
+plugin`. Two consequences:
+
+- **`${CLAUDE_PLUGIN_ROOT}` resolves to `plugin/`, not the repo root.** Anything
+  a command, agent, or skill reads at runtime has to live under `plugin/`, or a
+  consumer's checkout will not contain it. Before adding a runtime dependency,
+  check that its path starts with `plugin/`.
+- **Cone mode still materializes repo-root *files*.** `prfaq.pdf`, `prfaq.tex`,
+  `README.md`, and `CHANGELOG.md` travel with every install even though nothing
+  reads them; root *directories* do not. Adding a large file at the repo root
+  adds it to every install.
 
 ## Scratch Files
 
@@ -247,14 +282,17 @@ Use `.tmp/` at the project root for scratch and temporary files — never `/tmp`
 Before every commit:
 
 ```bash
-bash scripts/compile_prfaq.sh prfaq.tex           # Dogfood compiles
-bash scripts/compile_prfaq.sh assets/prfaq-template.tex  # Template compiles
-sh tests/test_permissions.sh                      # Permission scripts behave
+make prfaq                    # Every tracked .tex compiles (see TEX_FILES)
+sh tests/test_permissions.sh  # Permission scripts behave
 ```
 
-All three must succeed, or `make check`, which runs them together. If a LaTeX change breaks compilation, fix it before committing.
+Both must succeed, or `make check`, which runs them together. `make prfaq` covers
+the dogfood document, the v1.0.0 press release, both shipped templates under
+`plugin/assets/`, and `docs/prfaq-overview.tex`. To compile one file on its own,
+`bash plugin/scripts/compile_prfaq.sh <file.tex>`. If a LaTeX change breaks
+compilation, fix it before committing.
 
-The permission tests cover `scripts/prfaq_permissions.sh` and `install.sh` Step 5 — both edit a user's Claude Code settings file, so the cases that matter are the destructive ones: rules the user wrote must survive, a no-op must not rewrite the file, and a successful run must exit 0. Run them after touching either script. They need `jq` and take about five seconds.
+The permission tests cover `plugin/scripts/prfaq_permissions.sh` and `install.sh` Step 5 — both edit a user's Claude Code settings file, so the cases that matter are the destructive ones: rules the user wrote must survive, a no-op must not rewrite the file, and a successful run must exit 0. Run them after touching either script. They need `jq` and take about five seconds.
 
 ### GitHub Operations
 

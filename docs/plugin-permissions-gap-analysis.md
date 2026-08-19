@@ -184,8 +184,8 @@ The plugin ships one script, invoked by one command, operating on one file:
 before changing anything, and exits without touching the file when there is
 nothing to do.
 
-prfaq's implementation is `scripts/prfaq_permissions.sh`, reachable from the
-command as `${CLAUDE_PLUGIN_ROOT}/scripts/prfaq_permissions.sh`. The merge is
+prfaq's implementation is `plugin/scripts/prfaq_permissions.sh`, reachable from
+the command as `${CLAUDE_PLUGIN_ROOT}/scripts/prfaq_permissions.sh`. The merge is
 the same order-preserving jq expression used before, pointed at the project
 file instead of the global one:
 
