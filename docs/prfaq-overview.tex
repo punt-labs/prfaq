@@ -23,14 +23,14 @@
 
 \title{\textbf{prfaq Plugin: Architecture Overview}}
 \author{Generated from codebase analysis}
-\date{March 2026}
+\date{August 2026}
 
 \begin{document}
 \maketitle
 
 \section{What It Is}
 
-\texttt{prfaq} is a Claude Code plugin (v1.5.2) that implements Amazon's Working
+\texttt{prfaq} is a Claude Code plugin (v1.7.2) that implements Amazon's Working
 Backwards PR/FAQ process. It generates, reviews, stress-tests, and iterates on
 product discovery documents inside the terminal. The output is a professionally
 typeset LaTeX PDF (or Word \texttt{.docx} via pandoc).
@@ -42,7 +42,11 @@ plugin provides domain expertise and workflow structure.
 
 \section{Project Structure}
 
-The codebase has six component categories:
+Everything the plugin ships lives under \texttt{plugin/}, which is the plugin
+root. The layout serves Claude Code's \texttt{git-subdir} marketplace source
+(\texttt{"path": "plugin"}): once the entry is repointed, an install fetches
+that subtree and nothing else. \texttt{\$\{CLAUDE\_PLUGIN\_ROOT\}} resolves to
+it, and the paths below are relative to it. Six component categories:
 
 \begin{description}[style=nextline, leftmargin=2em]
   \item[\texttt{.claude-plugin/plugin.json}]
@@ -57,7 +61,7 @@ The codebase has six component categories:
     guide dependencies.
 
   \item[\texttt{commands/}]
-    Thirteen slash commands for post-generation operations (review, meeting,
+    Fourteen slash commands for post-generation operations (review, meeting,
     feedback, export, vote, etc.).
 
   \item[\texttt{assets/}]
@@ -66,9 +70,15 @@ The codebase has six component categories:
     \texttt{.docx} export.
 
   \item[\texttt{scripts/}]
-    Four shell scripts handling PDF compilation, Word export, LaTeX
-    preprocessing for pandoc, and reference document generation.
+    Five shell scripts handling PDF compilation, Word export, LaTeX
+    preprocessing for pandoc, reference document generation, and project
+    permission grants.
 \end{description}
+
+The repo root holds development material a consumer never receives---the
+dogfood \texttt{prfaq.tex}, \texttt{docs/}, \texttt{research/},
+\texttt{meetings/}, \texttt{tests/}, and this repo's own release scripts in a
+second, unshipped \texttt{scripts/}.
 
 \section{The Skill}
 
@@ -274,17 +284,26 @@ levels of rigor without branching logic in the agent prompts.
 
 \section{Build System}
 
-The quality gate is compilation of two LaTeX files:
+The quality gate is compilation of every LaTeX file in the repo's compile
+directories (\texttt{.}, \texttt{plugin/assets}, \texttt{docs}), which the
+\texttt{Makefile} globs rather than lists, so a new document is gated the moment
+it exists. Today that is five files:
 
 \begin{enumerate}[nosep]
   \item \texttt{prfaq.tex} --- the plugin's own PR/FAQ (dogfood document)
-  \item \texttt{assets/prfaq-template.tex} --- the template used to generate new documents
+  \item \texttt{press-release-v1.0.0.tex} --- the externalized v1.0.0 release
+  \item \texttt{plugin/assets/prfaq-template.tex} --- the template used to
+    generate new documents
+  \item \texttt{plugin/assets/press-release-template.tex} --- the template
+    \texttt{/prfaq:externalize} builds from
+  \item \texttt{docs/prfaq-overview.tex} --- this document
 \end{enumerate}
 
-Both must compile to valid PDFs via \texttt{compile\_prfaq.sh} (which runs
-\texttt{pdflatex} $\to$ \texttt{biber} $\to$ \texttt{pdflatex} $\times$ 2)
-before every commit. The \texttt{.docx} export pipeline preprocesses custom
-LaTeX environments into standard LaTeX, then hands off to pandoc.
+All must compile to valid PDFs before every commit. \texttt{make prfaq} runs
+the list; \texttt{compile\_prfaq.sh} compiles one file (\texttt{pdflatex}
+$\to$ \texttt{biber} $\to$ \texttt{pdflatex} $\times$ 2). The \texttt{.docx}
+export pipeline preprocesses custom LaTeX environments into standard LaTeX,
+then hands off to pandoc.
 
 \section{Key Design Decisions}
 

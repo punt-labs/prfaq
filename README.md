@@ -443,12 +443,16 @@ Then register the plugin in `~/.claude/plugins/local-plugins/.claude-plugin/mark
 {
   "name": "prfaq",
   "description": "Amazon Working Backwards PR/FAQ process",
-  "version": "1.4.0",
+  "version": "1.7.2",
   "author": { "name": "Your Name", "email": "you@example.com", "organization": "Your Org" },
-  "source": "./plugins/prfaq",
+  "source": "./plugins/prfaq/plugin",
   "category": "development"
 }
 ```
+
+The `source` points one level below the clone: the plugin surface — manifest,
+commands, agents, skill, templates, and scripts — lives in the repo's `plugin/`
+directory, and a plugin root is the directory holding `.claude-plugin/`.
 
 ## License
 

@@ -1,6 +1,4 @@
 
 # Binary assets
-assets/reference.docx binary
+plugin/assets/reference.docx binary
 prfaq.docx binary
-
-# Use bd merge for beads JSONL files
