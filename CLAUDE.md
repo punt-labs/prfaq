@@ -240,7 +240,7 @@ prfaq is a Claude Code plugin (skills + LaTeX templates) implementing Amazon's W
 | Skill orchestration / agent wiring | `adt` | `mdm` |
 | Customer-evidence research integration | `tdt` | `mcg` |
 
-Use the `standard` pipeline for new commands or methodology changes. Use `quick` for compile fixes or single-section edits. Always re-run `make prfaq` after any LaTeX change — it compiles every tracked `.tex`, and broken templates are broken features.
+Use the `standard` pipeline for new commands or methodology changes. Use `quick` for compile fixes or single-section edits. Always re-run `make prfaq` after any LaTeX change — it compiles every `.tex` in `TEX_DIRS`, and broken templates are broken features.
 
 ## Repository Layout
 
@@ -284,15 +284,18 @@ Use `.tmp/` at the project root for scratch and temporary files — never `/tmp`
 Before every commit:
 
 ```bash
-make prfaq                    # Every tracked .tex compiles (see TEX_FILES)
+make prfaq                    # Every .tex in TEX_DIRS compiles
 sh tests/test_permissions.sh  # Permission scripts behave
 ```
 
-Both must succeed, or `make check`, which runs them together. `make prfaq` covers
-the dogfood document, the v1.0.0 press release, both shipped templates under
-`plugin/assets/`, and `docs/prfaq-overview.tex`. To compile one file on its own,
-`bash plugin/scripts/compile_prfaq.sh <file.tex>`. If a LaTeX change breaks
-compilation, fix it before committing.
+Both must succeed, or `make check`, which runs them together. `TEX_FILES` is a
+wildcard over `TEX_DIRS` (`.`, `plugin/assets`, `docs`), so a new document in one
+of those directories is gated the moment it exists — today that is the dogfood
+document, the v1.0.0 press release, both shipped templates, and
+`docs/prfaq-overview.tex`. It globs what is *present*, not what is tracked: keep
+scratch `.tex` in `.tmp/`, or the gate will compile it and fail on it. To compile
+one file on its own, `bash plugin/scripts/compile_prfaq.sh <file.tex>`. If a
+LaTeX change breaks compilation, fix it before committing.
 
 The permission tests cover `plugin/scripts/prfaq_permissions.sh` and `install.sh` Step 5 — both edit a user's Claude Code settings file, so the cases that matter are the destructive ones: rules the user wrote must survive, a no-op must not rewrite the file, and a successful run must exit 0. Run them after touching either script. They need `jq` and take about five seconds.
 

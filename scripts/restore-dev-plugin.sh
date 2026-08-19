@@ -28,17 +28,29 @@ if ! git -C "$REPO_ROOT" rev-parse "$RESTORE_REF" >/dev/null 2>&1; then
   exit 1
 fi
 
-# A ref from before the plugin/ move carries the surface at the repo root, so
-# both pathspecs below match nothing and git aborts with a bare "did not match
-# any file(s) known to git". Say which ref and why instead.
-if ! git -C "$REPO_ROOT" ls-tree --name-only "$RESTORE_REF" -- "$PLUGIN_JSON" | grep -q .; then
-  echo "Error: $RESTORE_REF has no $PLUGIN_JSON — it predates the move of the" >&2
-  echo "       plugin surface into plugin/. Restore from a later ref, or check out" >&2
+COMMANDS_DIR="plugin/commands"
+
+# git checkout aborts if *any* pathspec matches nothing, so probe every one it
+# will be given — not just the first. A ref from before the plugin/ move
+# carries the surface at the repo root and matches neither, and an odd
+# intermediate ref could carry one without the other; either way git says only
+# "did not match any file(s) known to git". Name the ref and the paths instead.
+missing=()
+for path in "$PLUGIN_JSON" "$COMMANDS_DIR"; do
+  if ! git -C "$REPO_ROOT" ls-tree --name-only "$RESTORE_REF" -- "$path" | grep -q .; then
+    missing+=("$path")
+  fi
+done
+
+if [[ ${#missing[@]} -gt 0 ]]; then
+  echo "Error: $RESTORE_REF does not contain: ${missing[*]}" >&2
+  echo "       A ref from before the plugin/ move has the surface at the repo" >&2
+  echo "       root instead. Restore from a later ref, or check out" >&2
   echo "       .claude-plugin/plugin.json and commands/ from it by hand." >&2
   exit 1
 fi
 
 # Restore plugin.json and commands from the specified commit
-git -C "$REPO_ROOT" checkout "$RESTORE_REF" -- "$PLUGIN_JSON" plugin/commands/
-git -C "$REPO_ROOT" add "$PLUGIN_JSON" plugin/commands/
+git -C "$REPO_ROOT" checkout "$RESTORE_REF" -- "$PLUGIN_JSON" "$COMMANDS_DIR"
+git -C "$REPO_ROOT" add "$PLUGIN_JSON" "$COMMANDS_DIR"
 git -C "$REPO_ROOT" commit --no-verify -m "chore: restore dev plugin state"

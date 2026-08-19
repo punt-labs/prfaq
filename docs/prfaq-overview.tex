@@ -284,7 +284,10 @@ levels of rigor without branching logic in the agent prompts.
 
 \section{Build System}
 
-The quality gate is compilation of every tracked LaTeX file:
+The quality gate is compilation of every LaTeX file in the repo's compile
+directories (\texttt{.}, \texttt{plugin/assets}, \texttt{docs}), which the
+\texttt{Makefile} globs rather than lists, so a new document is gated the moment
+it exists. Today that is five files:
 
 \begin{enumerate}[nosep]
   \item \texttt{prfaq.tex} --- the plugin's own PR/FAQ (dogfood document)
