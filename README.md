@@ -47,7 +47,7 @@ Fifteen commands form a complete product-thinking workflow:
 ## Installation
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/5d3bffa/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/27def5c/install.sh | sh
 ```
 
 <details>
@@ -64,7 +64,7 @@ claude plugin install prfaq@punt-labs
 <summary>Verify before running</summary>
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/5d3bffa/install.sh -o install.sh
+curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/27def5c/install.sh -o install.sh
 shasum -a 256 install.sh
 cat install.sh
 sh install.sh
