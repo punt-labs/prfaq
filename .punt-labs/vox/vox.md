@@ -1,0 +1,4 @@
+---
+notify: "y"
+provider: "elevenlabs"
+---

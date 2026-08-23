@@ -115,7 +115,8 @@
       "Skill(z-spec:cleanup)",
       "Read",
       "Edit",
-      "Write"
+      "Write",
+      "Bash(vox:*)"
     ],
     "deny": [
       "Bash(curl:*)",

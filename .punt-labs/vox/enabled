@@ -1,0 +1,5 @@
+vox is enabled in this repository.
+
+Managed by `vox enable` / `vox disable` (and the `/vox enable` / `/vox disable`
+slash commands). Presence turns vox's per-repo guidance and hooks on;
+remove it with `vox disable`, not by hand.
