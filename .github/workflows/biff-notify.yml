@@ -1,0 +1,33 @@
+name: Biff CI Notifications
+on:
+  workflow_run:
+    # workflow_run matches a workflow's `name:` field, not the job id or the
+    # filename. `biff enable` renders this list from the target repo's own
+    # .github/workflows/*.yml and *.yaml name: fields, so a fixed list can't
+    # watch the wrong workflows in a repo whose names differ from biff's.
+    workflows: ["Docs"]
+    types: [completed]
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    if: >-
+      github.event.workflow_run.conclusion == 'failure'
+      && github.event.workflow_run.event == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          sparse-checkout: .punt-labs/biff
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+      - env:
+          WORKFLOW_NAME: ${{ github.event.workflow_run.name }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+        run: >-
+          uvx --from punt-biff biff --user github-actions wall
+          "CI failed: ${WORKFLOW_NAME} on ${BRANCH} — ${RUN_URL}"
+          --duration 2h
