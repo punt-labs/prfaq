@@ -13,6 +13,18 @@ permissions:
 
 jobs:
   notify:
+    # conclusion == 'failure' only: cancelled/timed_out/action_required are
+    # excluded deliberately, to avoid noise on manual cancels.
+    # event == 'push' only: workflow_run also fires for PR-triggered runs;
+    # PR-branch CI failures are visible in the PR's own checks tab already,
+    # so this is scoped to failures on pushed branches (main and direct
+    # pushes) to avoid duplicate/noisy notifications during PR review.
+    #
+    # Known limitation: if this job itself fails (network error, PyPI down,
+    # biff relay auth failure, or the timeout below), nothing re-notifies —
+    # a notifier can't reliably report its own failure without infinite
+    # regress. GitHub's own workflow-failure email to the run's actor is the
+    # fallback channel in that case.
     if: >-
       github.event.workflow_run.conclusion == 'failure'
       && github.event.workflow_run.event == 'push'
