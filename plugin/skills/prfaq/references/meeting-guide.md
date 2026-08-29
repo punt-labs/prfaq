@@ -25,14 +25,22 @@ The key tension: Wei + Alex pull toward caution. Dana pulls toward ambition. Pri
 
 Identify **hot spots** — sections where the document is weakest. These are judgment calls with real tradeoffs, not formatting issues.
 
-How to find hot spots:
-1. Read the full `.tex` document
-2. Check for `[CITATION NEEDED]` markers — each is a hot spot
-3. Look for claims without `\cite{}` references
-4. Check risk ratings — any risk rated Low with weak supporting evidence
-5. Look for vague language: "significant", "many", "rapidly growing"
-6. Check FAQ answers that are thin (1-2 sentences) on questions that deserve depth
-7. Look for the gap between press release confidence and FAQ hedging
+**Hot spots must be substance, not prose quality.** A hot spot exists because a real business or product judgment is shaky — not because a sentence is unsourced or a word is vague. Ask the four risk-lens questions directly against the document's actual claims:
+
+- **Feasibility (Wei's lens):** Does the architecture or build plan actually hold up at the scale or timeline implied? Is there an operational or maintenance risk the document waves off as solved? Does a claimed technical result (e.g., "no infrastructure to build") hide a real ongoing cost?
+- **Value / customer reality (Priya's lens):** Does the target customer segment actually cohere, or is the document serving two audiences with incompatible needs? Would a real person in that segment behave the way the document assumes? Is customer demand asserted where it should be evidenced?
+- **Strategic fit / viability (Alex's lens):** Is the business model or monetization stance defensible given the document's own data? Is the claimed competitive moat actually differentiated, or just asserted? Does the document duck an opportunity-cost question — why this, and not something else?
+- **Ambition (Dana's lens):** Is the scope too conservative or too narrow given the opportunity the document itself describes? Is the document defending a comfortable middle position instead of picking a side?
+
+Documentation and evidence issues are still valid hot spots, but they are the minority, not the default:
+1. `[CITATION NEEDED]` markers
+2. Claims without `\cite{}` references
+3. Risk ratings marked Low with weak supporting evidence
+4. Vague language: "significant", "many", "rapidly growing"
+5. FAQ answers that are thin (1-2 sentences) on questions that deserve depth
+6. The gap between press release confidence and FAQ hedging
+
+**Guardrail:** at least half of the 5-8 hot spots identified must come from the four risk-lens questions above, not the documentation-quality list. If a scan turns up mostly citation gaps, hedging mismatches, or wording fixes, that is a sign the scan defaulted to copy-editing — stop and re-ask the four risk-lens questions directly against the document's claims about customers, competitors, business model, and scope before finalizing the agenda.
 
 Rank each hot spot:
 - **Critical** — undermines the core argument (must address)
@@ -193,6 +201,16 @@ The debate should have genuine moments of insight. Look for:
 3. **The concession** — a persona admits the other has a point (rare and powerful)
 4. **The escalation** — a concern gets worse when you look deeper
 
+### Ground Every Line in Specifics
+
+Every sentence of the debate narrative — and any later spoken reconstruction of it — must reference an actual specific from the document: a quoted phrase, a real number, a named competitor, a named customer segment. An abstract metaphor standing in for the reasoning ("same disease, different organ") tells the reader nothing on its own; the concrete version ("the Viability row omits the five-month gap the cost-structure FAQ already admits to") tells them everything. If a line would still make sense with the specific nouns swapped out for a different hot spot, it is too abstract — rewrite it.
+
+**Test:** could someone who has read only this hot spot's narrative, with no other context, explain in their own words what specific thing is wrong and what the fix is? If not, it is not grounded enough yet.
+
+### Never Reference the Meeting's Own Structure
+
+Do not have a persona comment on the meeting's own sequence or shape — "third hot spot in a row," "unlike the previous item," "this is the Nth time tonight," "this isn't a duplicate of hot spot 3." Each hot spot's narrative must stand alone; a reader or listener should never need to remember an earlier hot spot to follow this one. Cross-hot-spot patterns (the same failure mode recurring across multiple hot spots, say) are real findings worth recording — put them in the summary's **Notes** section, in prose, written for a reader. Never have a persona say it aloud mid-debate as if commenting on the meeting itself.
+
 ### What NOT to Do
 
 - Don't have personas agree too easily ("I agree with Wei that...")
@@ -201,6 +219,8 @@ The debate should have genuine moments of insight. Look for:
 - Don't summarize what each persona said — dramatize the conflict
 - Don't invent disagreements that don't exist — if they genuinely agree, say so briefly and move on
 - Don't make Dana a cheerleader — she has standards too
+- Don't let a persona narrate the meeting's own structure instead of the document's content (see above)
+- Don't reach for an abstract turn of phrase in place of the actual concrete reasoning (see above)
 
 ## Early Exit
 
@@ -285,7 +305,7 @@ The door type changes how votes are weighted — not equally, but by relevance:
 
 ### Synthesis in Hive Mode
 
-The debate narrative is shorter than in regular meetings (3-5 sentences per hot spot, not a full dramatic scene). The goal is to communicate the key tension and the resolution, not to dramatize the conflict. Save the user's reading time — they'll read N summaries, not participate in N debates.
+The debate narrative is shorter than in regular meetings (3-5 sentences per hot spot, not a full dramatic scene). The goal is to communicate the key tension and the resolution, not to dramatize the conflict. Save the user's reading time — they'll read N summaries, not participate in N debates. The same grounding rules apply at this shorter length: every sentence still needs to name a specific from the document, and no sentence references another hot spot's position in the sequence.
 
 For split decisions, present both sides' strongest single argument and ask the user to decide.
 

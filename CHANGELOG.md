@@ -4,6 +4,13 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+### Changed
+- **`/prfaq:meeting` and `/prfaq:meeting-hive`'s hot-spot scan now defaults to product substance, not prose quality.** The pre-meeting scan's criteria were entirely a documentation-quality checklist (citation gaps, vague words, thin FAQs, hedging mismatches) — running a real meeting against them produced an agenda of copy-editing issues with no bearing on competition, customers, the business model, or scope. The four risk-lens questions (feasibility, value/customer reality, strategic fit/viability, ambition) now come first, with a guardrail requiring at least half the agenda to be substance rather than documentation issues.
+- **Meeting debate narratives and `/prfaq:meeting-listen` dialogue must ground every line in a document specific** (a quoted phrase, a real number, a named competitor or customer segment) instead of abstract metaphor standing in for the reasoning, and must never have a persona reference the meeting's own sequence ("third hot spot in a row," "unlike the previous item"). Cross-hot-spot patterns belong in the summary's Notes section, not spoken in a persona's voice.
+
+### Fixed
+- **`/prfaq:meeting-listen` called a retired vox tool.** `mcp__plugin_vox_mic__who` no longer exists; voice-roster detection now uses the no-arg `mcp__plugin_vox_mic__voice` call, which returns the same shape (`all` renamed to `available`).
+
 ## [1.7.3] - 2026-08-20
 
 ### Changed
