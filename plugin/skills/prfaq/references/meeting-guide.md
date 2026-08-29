@@ -157,6 +157,9 @@ Revision queue (for /prfaq:feedback):
 Deferred items:
   - [Item] — [what needs to happen before deciding]
 
+Not discussed (early exit only):
+  - [Item] — identified as a hot spot, never reached before the meeting ended
+
 To apply all revisions automatically, run: /prfaq:feedback
 ```
 
@@ -199,6 +202,10 @@ After presenting the summary to the user, write it to a markdown file in the `./
 
 ## Deferred Items
 - [Item] — [what needs to happen before deciding]
+
+## Not Discussed
+[Only present on early exit — see Early Exit below]
+- [Item] — identified as a hot spot, never reached before the meeting ended
 
 ## Research Completed
 [If any researcher agents were invoked during the meeting, summarize findings here]
@@ -287,7 +294,7 @@ Extract `\prfaqstage{value}` from the document before the pre-meeting scan. Stag
 
 The opening assessment (Phase 0b) applies unchanged in hive mode: a single standalone Alex spawn before the agenda, not part of the `prfaq-hive` team.
 
-The closing assessment (Phase 2b) needs one hive-specific ordering rule: the debate loop's own decision mapping leaves `ESCALATED` items unresolved by design (see Decision Mapping below) — those are user calls, not hive consensus. Resolve every escalated item with the user (`AskUserQuestion`: REVISE / KEEP / DEFER) *before* launching the closing assessment, so Alex always sees a fully-decided list, never a placeholder for a pending item. Like the opening spawn, the closing spawn is a single standalone Alex agent, not part of the team.
+The closing assessment (Phase 2b) needs one hive-specific ordering rule: the debate loop's own decision mapping leaves `ESCALATED` items unresolved by design (see Decision Mapping below) — those are user calls, not hive consensus. Resolve every escalated item with the user (`AskUserQuestion`: REVISE / KEEP / DEFER) *before* launching the closing assessment. A REVISE or KEEP resolution becomes that hot spot's final decision and is included in what Alex sees; a DEFER resolution stays unresolved and is excluded from Alex's decision list — tell Alex how many items were deferred instead, so the closing read can acknowledge them honestly rather than assume every hot spot is settled. Like the opening spawn, the closing spawn is a single standalone Alex agent, not part of the team.
 
 ### Decision Philosophy: Arguments Win, Not Averages
 
@@ -324,7 +331,7 @@ The door type changes how votes are weighted — not equally, but by relevance:
 
 **Post-Round 2 resolution:**
 - Clear majority → that side wins. Minority disagrees and commits.
-- Persistent split on a one-way door → **escalate to user** with both sides' strongest argument.
+- Persistent split on a one-way door → mark `ESCALATED` and record both sides' strongest argument. Do not ask the user yet — the hive keeps running; escalations resolve in one batch once the full debate loop finishes (see Hive Mode above).
 - Persistent split on a two-way door → **bias for action**. Action side wins. Dissent noted.
 
 ### Decision Mapping
@@ -335,21 +342,23 @@ The door type changes how votes are weighted — not equally, but by relevance:
 | Either | 3-1 or 4-0 ITERATE/REJECT | REVISE |
 | Two-way | 2-2 split (Round 1) | BIAS-FOR-ACTION — action side wins unless caution raises a falsifiable concern → Round 2 |
 | Two-way | 2-2 split (after Round 2) | BIAS-FOR-ACTION — action side wins, dissent noted |
-| One-way | 2-2 split (after Round 2) | ESCALATED — user decides, both sides' strongest argument presented |
+| One-way | 2-2 split (after Round 2) | ESCALATED — recorded, not asked yet; resolved after the debate loop via REVISE / KEEP / DEFER (both sides' strongest argument presented then) |
 
 ### Synthesis in Hive Mode
 
-The debate narrative is shorter than in regular meetings (3-5 sentences per hot spot, not a full dramatic scene). The goal is to communicate the key tension and the resolution, not to dramatize the conflict. Save the user's reading time — they'll read N summaries, not participate in N debates. The same grounding rules apply at this shorter length: every sentence still needs to name a specific from the document, and no sentence references another hot spot's position in the sequence.
+The debate narrative is shorter than in regular meetings (3-5 sentences per hot spot, not a full dramatic scene). The goal is to communicate the key tension and the resolution, not to dramatize the conflict. Save the user's reading time — they'll read N summaries, not participate in N debates. The same grounding rules apply at this shorter length: every sentence still needs to name a specific from the document, and no sentence references another hot spot's position in the sequence. For a hot spot marked `ESCALATED` at synthesis time, there is no winner yet — write both sides' strongest argument and note the call is the user's; do not fabricate a winner.
 
-For split decisions, present both sides' strongest single argument and ask the user to decide — do this before the closing assessment, per the ordering rule above.
+After the debate loop finishes (not during it — see Hive Mode above), present each escalated item's both sides' strongest single argument and ask the user to decide: REVISE / KEEP / DEFER.
 
 ### Hive Summary Format
 
-Same structure as the regular meeting summary (Phase 3b) — including the `## Overall Assessment` section with the opening and closing reads — with `**Mode:** Hive (autonomous consensus, Agent Teams)` in the header and this decisions table schema:
+Same structure as the regular meeting summary (Phase 3b) — including the `## Overall Assessment` and `## Deferred Items` sections — with `**Mode:** Hive (autonomous consensus, Agent Teams)` in the header and this decisions table schema:
 
 | # | Hot Spot | Door | Decision | Resolution | Winning Argument | Dissent |
 |---|----------|------|----------|------------|------------------|---------|
 
 - **Door**: `one-way` or `two-way`
-- **Resolution**: `CONSENSUS`, `BIAS-FOR-ACTION`, or `ESCALATED` (escalated rows still record the user's final call in the Decision column — by persist time, every escalation has already been resolved per the ordering rule above)
-- Items that were escalated get an `Escalated Decisions (Resolved)` section near the top of the summary, recording each item's competing arguments and the user's resolution — a historical record, not a live prompt, since the resolution already happened before the closing assessment ran
+- **Decision**: `REVISE`, `KEEP`, or `DEFER` — a `DEFER` row was never given to the closing assessment (see the ordering rule in Hive Mode above)
+- **Resolution**: `CONSENSUS`, `BIAS-FOR-ACTION`, or `ESCALATED` (an escalated row resolved REVISE or KEEP is recorded in `Escalated Decisions (Resolved)`; an escalated row resolved DEFER is recorded in `## Deferred Items` instead — see Phase 3b)
+- Items that were escalated and resolved REVISE/KEEP get an `Escalated Decisions (Resolved)` section near the top of the summary, recording each item's competing arguments and the user's resolution — a historical record, not a live prompt, since the resolution already happened before the closing assessment ran
+- Items that were escalated and resolved DEFER go in `## Deferred Items` (same format as the regular meeting's Phase 3b template), not in `Escalated Decisions (Resolved)`
