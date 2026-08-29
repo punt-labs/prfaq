@@ -128,11 +128,13 @@ Then restart Claude Code. Do not proceed without it — use `/prfaq:meeting` for
     | # | Hot Spot | Door | Decision | Resolution | Winning Argument | Dissent |
     |---|----------|------|----------|------------|------------------|---------|
     | 1 | Example  | Two-way | REVISE | CONSENSUS | Wei: scalability concern | Dana: disagreed, committed |
+    | 2 | Example  | One-way | DEFER | ESCALATED | — (escalated, no winner) | — (escalated, no winner) |
 
     - **Door**: `one-way` or `two-way`
     - **Decision**: `REVISE`, `KEEP`, or `DEFER` (a deferred row has no closing-assessment input — see step 12)
-    - **Resolution**: `CONSENSUS`, `BIAS-FOR-ACTION`, or `ESCALATED` (escalated rows resolved REVISE or KEEP in step 11, before this file was written; an escalated row resolved DEFER instead lists in `## Deferred Items` below, not just this table)
-    - Items that were escalated and resolved get an `Escalated Decisions (Resolved)` section near the top of the summary, recording each item's competing arguments and the user's resolution from step 11
-    - Items that were escalated and deferred get a `## Deferred Items` section (same format as the interactive meeting's Phase 3b template: hot spot, both sides' strongest argument, what needs to happen before deciding)
+    - **Resolution**: `CONSENSUS`, `BIAS-FOR-ACTION`, or `ESCALATED` (escalated rows resolved REVISE or KEEP in step 11, before this file was written; an escalated row resolved DEFER instead is still `ESCALATED` here, but lists in `## Deferred Items` below too, not just this table)
+    - A `DEFER` row's **Winning Argument** and **Dissent** cells are always `— (escalated, no winner)` — an escalated hot spot never produced a winner (see step 9), so there is nothing to name in either column
+    - Items that were escalated and resolved REVISE/KEEP get an `Escalated Decisions (Resolved)` section near the top of the summary, recording each item's competing arguments and the user's resolution from step 11
+    - Items that were escalated and deferred get a `## Deferred Items` entry, in the same format as the meeting guide's Phase 3b template (see Phase 3b) — do not re-derive the field list here
 
 15. **Offer to apply revisions.** If the revision queue is non-empty, tell the user to run `/prfaq:feedback` (no arguments) to automatically discover this meeting summary and apply all directives.

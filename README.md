@@ -169,7 +169,7 @@ Simulates an Amazon-style PR/FAQ review meeting with four agentic personas who d
 - **Alex** (Skeptical Executive) — strategic fit, devil's advocate, "Compared to what?"
 - **Dana** (Builder-Visionary) — ambition risk, cost of inaction, "You're thinking too small."
 
-You are the PM and final decision-maker. At each hot spot, the personas debate and you make the call: KEEP, REVISE, or DEFER. The output is a decisions log with specific revision directives that feed into `/prfaq:feedback`.
+Alex opens the meeting with a framing read before the agenda, and closes it with a verdict plus a concrete next-step/reconvene proposal after every hot spot is decided — matching typical review-meeting structure. Both reads are organized around the three questions product development lives or dies on: is this a problem worth solving, do we have a strong and differentiated solution, and should we build this now given competing priorities. You are the PM and final decision-maker in between. At each hot spot, the personas debate and you make the call: KEEP, REVISE, or DEFER. The output is a decisions log — including Alex's opening and closing assessment — with specific revision directives that feed into `/prfaq:feedback`.
 
 ### Autonomous Stress-Test: `/prfaq:meeting-hive`
 
@@ -181,15 +181,18 @@ Same four personas, but they debate and reach consensus autonomously using Claud
 
 **How it works:**
 
-1. Pre-meeting scan identifies 5-8 hot spots in your document
-2. Each hot spot is classified as a **one-way door** (irreversible: architecture, APIs, data models) or **two-way door** (reversible: scope, positioning, framing)
-3. All four personas evaluate each hot spot independently in parallel (Round 1), each with an isolated context window
-4. Door-weighted resolution: on two-way doors, ties bias toward action (ship and learn); on one-way doors, Wei and Alex's caution carries extra weight
-5. Splits trigger a rebuttal round (Round 2) where personas see each other's Round 1 positions and respond to the strongest counterargument
-6. Arguments win or lose — no compromise blending (Amazon LP: Disagree and Commit)
-7. Only persistent splits on one-way doors escalate to you for a decision
+1. Alex gives a standalone opening read framing the stakes before the agenda
+2. Pre-meeting scan identifies 5-8 hot spots in your document
+3. Each hot spot is classified as a **one-way door** (irreversible: architecture, APIs, data models) or **two-way door** (reversible: scope, positioning, framing)
+4. All four personas evaluate each hot spot independently in parallel (Round 1), each with an isolated context window
+5. Door-weighted resolution: on two-way doors, ties bias toward action (ship and learn); on one-way doors, Wei and Alex's caution carries extra weight
+6. Splits trigger a rebuttal round (Round 2) where personas see each other's Round 1 positions and respond to the strongest counterargument
+7. Arguments win or lose — no compromise blending (Amazon LP: Disagree and Commit)
+8. Persistent splits on one-way doors are recorded, not asked about mid-run — the hive keeps debating autonomously
+9. Once every hot spot has a verdict, any recorded splits are presented to you in one batch (REVISE / KEEP / DEFER)
+10. Alex gives a standalone closing read — a verdict plus a concrete next step, acknowledging anything you deferred
 
-The output is a consensus summary with a revision queue that feeds into `/prfaq:feedback`.
+The output is a consensus summary — including Alex's opening and closing assessment — with a revision queue that feeds into `/prfaq:feedback`.
 
 **Requires** `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`. Run `/prfaq:permissions` to set it in the project's `.claude/settings.json`, then restart Claude Code.
 
@@ -199,7 +202,7 @@ The output is a consensus summary with a revision queue that feeds into `/prfaq:
 /prfaq:meeting-listen [path/to/meeting-summary.md]
 ```
 
-Post-production voiced playback of a completed meeting summary. The four personas speak in distinct voices, transforming the structured decisions table into a natural debate you can listen to. Works with both interactive and hive meeting summaries.
+Post-production voiced playback of a completed meeting summary. The four personas speak in distinct voices, transforming the structured decisions table into a natural debate you can listen to. Alex's opening and closing assessment are voiced too, and the close recaps concrete follow-up items and — when the closing read names one — the agreement to reconvene. Works with both interactive and hive meeting summaries.
 
 **Multi-provider voice support:** Each persona has voice profiles for ElevenLabs (custom community voices with expressive tags), OpenAI, and a fallback for other providers. The command auto-detects the active TTS provider and selects the appropriate voice.
 

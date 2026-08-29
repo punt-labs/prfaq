@@ -53,7 +53,13 @@ Aim for 5-8 hot spots total. More than 8 makes the meeting too long. Fewer than 
 
 Real review meetings open with someone framing the stakes before diving into an itemized list — not a cold jump into agenda item one. Give this meeting the same opening.
 
-Launch a single `prfaq:meeting-executive` (Alex) agent — not all four personas, just Alex, since this is the person calling the meeting to order. Tell Alex explicitly: **this is a meeting-opening assessment, not a section evaluation — reply in 3-5 sentences of continuous prose, not the structured BIGGEST ASSUMPTION/OPPORTUNITY COST/POSITION/EVIDENCE format** (see the Exception in `meeting-executive.md`). Give Alex: the document's stage, the full Risk Assessment table, and the list of hot spots about to be debated (titles and severities, not the full debate). Ask for a holistic opening read, 3-5 sentences: what's the state of play walking in, what's the single biggest thing this meeting needs to resolve, what would leave Alex satisfied versus still worried. Ground it in real specifics — the actual risk ratings, the actual TAM figures, the actual stage — the same grounding rule as the rest of the meeting applies here too.
+Launch a single `prfaq:meeting-executive` (Alex) agent — not all four personas, just Alex, since this is the person calling the meeting to order. Tell Alex explicitly: **this is a meeting-opening assessment, not a section evaluation — reply in 3-5 sentences of continuous prose, not the structured BIGGEST ASSUMPTION/OPPORTUNITY COST/POSITION/EVIDENCE format** (see the Exception in `meeting-executive.md`). Give Alex: the document's stage, the full Risk Assessment table, and the list of hot spots about to be debated (titles and severities, not the full debate). Ask for a holistic opening read, 3-5 sentences, organized around the three questions product development lives or dies on:
+
+1. **Is this a problem worth solving?** — does the document's own evidence support that the problem is real and significant, walking in?
+2. **Do we have a strong, differentiated solution?** — does the competitive-landscape evidence suggest this actually beats the alternatives, or does it just exist alongside them?
+3. **Should we build this now?** — given the stage and the hot spots about to be debated, is the timing and opportunity cost defensible, or is this competing against something more urgent?
+
+Alex doesn't need a final answer to all three before the debate — a live worry ("problem looks real, but I'm not sold on #2 yet") is a legitimate opening read. Ground it in real specifics — the actual risk ratings, the actual TAM figures, the actual stage — the same grounding rule as the rest of the meeting applies here too.
 
 Present this opening assessment to the user before the agenda list. It sets context; it does not replace the agenda.
 
@@ -130,9 +136,17 @@ The narrative should feel like eavesdropping on a real meeting — not reading f
 
 Real review meetings don't just stop after the last agenda item — someone closes the meeting out. Give this meeting the same close, after every hot spot has a **final** decision (including any escalated items a hive meeting resolved — see Hive Mode below) and before the mechanical decisions summary.
 
+A **Defer** decision is not final in either mode — it means "needs more thinking," not "decided." Exclude deferred items from Alex's decision list and tell Alex how many were deferred, so the closing read can acknowledge them honestly instead of assuming every hot spot is settled. This applies the same way in `/prfaq:meeting` (where the user can choose Defer per item) and `/prfaq:meeting-hive` (where an escalated item can resolve to Defer — see Hive Mode below).
+
 **On early exit** (see Early Exit below): still run the closing assessment, but tell Alex explicitly the meeting was cut short and pass only the decisions actually made — never pass "Not discussed" items to Alex as if they were decided.
 
-Launch a single `prfaq:meeting-executive` (Alex) agent again — standalone, not the full cast. Tell Alex explicitly: **this is a meeting-closing assessment, not a section evaluation — reply in 3-5 sentences of continuous prose, not the structured format** (see the Exception in `meeting-executive.md`). Give Alex: the opening assessment (for continuity), and the full list of final decisions made across every hot spot (title, decision, one-line rationale each) — or, on early exit, the decisions made before exiting plus a note that the meeting ended early. Ask for a closing read, 3-5 sentences: has the picture changed since the opening? What's the residual risk once these revisions land? Is the document on track, and what would change that read? This is a narrative judgment call in Alex's voice, not a repeat of `/prfaq:vote`'s structured three-gate go/no-go — point the user at `/prfaq:vote` separately if they want that level of rigor.
+Launch a single `prfaq:meeting-executive` (Alex) agent again — standalone, not the full cast. Tell Alex explicitly: **this is a meeting-closing assessment, not a section evaluation — reply in 3-5 sentences of continuous prose, not the structured format** (see the Exception in `meeting-executive.md`). Give Alex: the opening assessment (for continuity), and the full list of final decisions made across every hot spot (title, decision, one-line rationale each) — or, on early exit, the decisions made before exiting plus a note that the meeting ended early. Ask for a closing read, 3-5 sentences, that revisits the opening's three questions in light of what the meeting decided:
+
+1. **Is this a problem worth solving?** — did any hot spot change the read on the problem's reality or significance?
+2. **Do we have a strong, differentiated solution?** — did the decisions strengthen or weaken the competitive case?
+3. **Should we build this now?** — once these revisions land, is the timing call still the same as the opening, or did the meeting surface a reason to reconsider?
+
+Alex doesn't need all three to have moved — naming which ones didn't change is as useful as naming which did. This is a narrative judgment call in Alex's voice, not a repeat of `/prfaq:vote`'s structured three-gate go/no-go — point the user at `/prfaq:vote` separately if they want that level of rigor.
 
 End the closing assessment with a concrete proposal for what happens next and when to reconvene — grounded in the actual revision queue ("let's revisit once the TAM and Viability revisions land"), never a generic "let's touch base soon."
 
@@ -155,7 +169,7 @@ Revision queue (for /prfaq:feedback):
   ...
 
 Deferred items:
-  - [Item] — [what needs to happen before deciding]
+  - [Item] — [both sides' strongest argument, if this was an escalated hive decision] — [what needs to happen before deciding]
 
 Not discussed (early exit only):
   - [Item] — identified as a hot spot, never reached before the meeting ended
@@ -201,7 +215,7 @@ After presenting the summary to the user, write it to a markdown file in the `./
 [Full feedback directive text]
 
 ## Deferred Items
-- [Item] — [what needs to happen before deciding]
+- [Item] — [both sides' strongest argument, if this was an escalated hive decision] — [what needs to happen before deciding]
 
 ## Not Discussed
 [Only present on early exit — see Early Exit below]
@@ -360,5 +374,6 @@ Same structure as the regular meeting summary (Phase 3b) — including the `## O
 - **Door**: `one-way` or `two-way`
 - **Decision**: `REVISE`, `KEEP`, or `DEFER` — a `DEFER` row was never given to the closing assessment (see the ordering rule in Hive Mode above)
 - **Resolution**: `CONSENSUS`, `BIAS-FOR-ACTION`, or `ESCALATED` (an escalated row resolved REVISE or KEEP is recorded in `Escalated Decisions (Resolved)`; an escalated row resolved DEFER is recorded in `## Deferred Items` instead — see Phase 3b)
+- A `DEFER` row's **Winning Argument** and **Dissent** cells are always `— (escalated, no winner)` — an escalated hot spot produced no winner (see Synthesis in Hive Mode above), so neither column has anything to name
 - Items that were escalated and resolved REVISE/KEEP get an `Escalated Decisions (Resolved)` section near the top of the summary, recording each item's competing arguments and the user's resolution — a historical record, not a live prompt, since the resolution already happened before the closing assessment ran
-- Items that were escalated and resolved DEFER go in `## Deferred Items` (same format as the regular meeting's Phase 3b template), not in `Escalated Decisions (Resolved)`
+- Items that were escalated and resolved DEFER go in `## Deferred Items` (same field format as the Phase 3b template), not in `Escalated Decisions (Resolved)`
