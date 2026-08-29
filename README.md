@@ -50,7 +50,7 @@ The plugin reads your research, searches the web for additional evidence, walks 
 
 ## Features
 
-- **Evidence-first generation** — three sources in priority order: local `./research/` files, indexed documents via [punt-quarry](https://github.com/punt-labs/quarry) if installed, then web search to fill gaps
+- **Evidence-first generation** — three sources in priority order: local `./research/` files, indexed documents via [punt-quarry](https://github.com/punt-labs/quarry) if installed (30+ supported formats — PDFs, spreadsheets, presentations, source code, images, HTML, DOCX, and more), then web search to fill gaps
 - **Every factual claim includes a citation** — traced back to a source, not asserted
 - **Stage-aware calibration** — hypothesis, validated, and growth stages set different evidence expectations across every agent
 - **Four Risks assessment** — value, usability, feasibility, viability, each rated with evidence (Cagan's framework)
@@ -453,8 +453,7 @@ Each step produces a compiled PDF. The document improves with each cycle.
 
 ## Documentation
 
-[Changelog](CHANGELOG.md) |
-[Design decisions](DESIGN.md)
+[Changelog](CHANGELOG.md) | [Design decisions](DESIGN.md)
 
 ## Development
 
