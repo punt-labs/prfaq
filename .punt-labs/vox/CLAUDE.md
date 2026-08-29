@@ -130,7 +130,7 @@ Catalog verbs (address a saved album by the id `list` prints):
 - `/mute` — chimes only (spoken notifications off).
 - `/vibe <mood>|auto|off` — set session mood.
 - `/music on|stop|next|prev|pause|resume|play [<name>]|list|status` — background music.
-- `/recap` — speak a 2–3 point summary of your last response.
+- `/vox:recap` — speak a 2–3 point summary of your last response.
 
 ## Driving vox from the CLI (no plugin)
 
@@ -160,4 +160,4 @@ When a Stop hook blocks with a `♪` phrase, write 1–2 sentences summarizing
 what you just completed, then call `mic:unmute` with `ephemeral=true` (or, with
 no plugin, `vox say`). Mood tags are already resolved in config — do not pass
 `vibe_tags`. Emit no other output; the audio panel confirms.
-<!-- vox-guide-source-sha256: 937868b793d05ac3375f972650c4ce0a09aea83681db262519506f74423d8ff6 -->
+<!-- vox-guide-source-sha256: 6b883b6bdc7e3dcfbea587fb868399d18eb90d7f0e4e367a3061e8a9051116c6 -->

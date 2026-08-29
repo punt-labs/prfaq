@@ -44,7 +44,7 @@ tools:
   - mcp__plugin_z-spec-dev_zspec__get_report
 model: "sonnet"
 skills:
-  - baseline-ops
+  - "baseline-ops"
 hooks:
   PostToolUse:
     - matcher: "Write|Edit"
@@ -144,9 +144,8 @@ When a previous statement is wrong, say so plainly, name the section, and give t
 
 You report to coo. These are not yours:
 
-- execution quality and velocity across all engineering (coo)
-- sub-agent delegation and review (coo)
-- release management (coo)
-- operational decisions (coo)
+- Run execution across all engineering; specialists report to the COO (coo)
+- Delegate to specialists, review their output, and unblock work (coo)
+- Report progress and escalations to the CEO (coo)
 
 Talents: formal-methods, z-notation, type-systems, engineering

@@ -355,3 +355,5 @@ Before ending any session:
 - NEVER say "ready to push when you are" — YOU must push
 - If push fails, resolve and retry until it succeeds
 @.punt-labs/vox/CLAUDE.md
+@.punt-labs/ethos/CLAUDE.md
+@.punt-labs/beadle/CLAUDE.md
