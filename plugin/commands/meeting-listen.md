@@ -190,7 +190,7 @@ Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
    - `## Deferred Items` has entries but the meeting wasn't cut short → "With most hot spots settled and N left open, Alex closes the meeting." (N = number of deferred items)
    - Neither — every hot spot reached a real decision → "With every hot spot resolved, Alex closes the meeting."
 
-   Then build Alex's closing assessment text as a dialogue segment (voice/vibe as in step 5).
+   Then build Alex's closing assessment text as a dialogue segment (voice: Alex's resolved voice from step 3/4, `vibe_tags`: Alex's default `voice_vibe`).
 
    **b. Follow-up recap segment(s).** Two things to recap here, if present:
 
