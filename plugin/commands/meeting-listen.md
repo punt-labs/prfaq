@@ -75,7 +75,13 @@ Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
      ```
    - Use the fallback voice for affected personas for the rest of the playback.
 
-5. **Transform and voice each hot spot.** Process the decisions table row by row. For each hot spot:
+5. **Voice the opening assessment, if present.** Check the summary for an `## Overall Assessment` section with an **Opening** line (summaries written before this section existed won't have one — skip this step entirely if so, don't fabricate one).
+
+   If present:
+   - **In voiced mode:** make an `mcp__plugin_vox_mic__unmute` call before the first hot spot with `ephemeral: true` and two segments: a narrator line ("Before the agenda, Alex opens the meeting."), then Alex's opening assessment text as a dialogue segment (voice: Alex's resolved voice from step 3/4, `vibe_tags`: Alex's default `voice_vibe`).
+   - **In text-only mode:** print `--- Opening Assessment ---` then `**Alex:** [opening assessment text]`.
+
+6. **Transform and voice each hot spot.** Process the decisions table row by row. For each hot spot:
 
    **a. Normalize the decision and print the hot spot header.** The raw `Decision` cell may contain markdown formatting (`**REVISE**`) or compound values (`RESEARCH + REVISE`). Before display:
 
@@ -167,7 +173,24 @@ Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
 
    **In text-only mode**, just print the labeled lines. No TTS calls.
 
-6. **Close the playback.** After all hot spots, print:
+7. **Close the playback.** After all hot spots, give the meeting a real close — a recap and an agreement to reconvene, not just a mechanical footer.
+
+   **a. Voice the closing assessment, if present.** Check the summary for an `## Overall Assessment` section with a **Closing** line (older summaries won't have one — skip straight to 7b if so, don't fabricate one).
+
+   - **In voiced mode:** make an `mcp__plugin_vox_mic__unmute` call with `ephemeral: true` and two segments: a narrator line ("With every hot spot resolved, Alex closes the meeting."), then Alex's closing assessment text as a dialogue segment (voice/vibe as in step 5).
+   - **In text-only mode:** print `--- Closing Assessment ---` then `**Alex:** [closing assessment text]`.
+
+   **b. Recap the follow-up items.** Pull 2-3 concrete directives from the Revision Queue section — name what each one actually says (e.g., "fix the TAM stacking," "add the tripwire to the Value risk mitigation"), never a generic "a few things to fix." If the queue has more than 3, pick the ones tied to Critical hot spots; if it's empty, skip this sub-step.
+
+   - **In voiced mode:** append to the same closing `unmute` call (or make one more `ephemeral: true` call if 7a was skipped): one segment, spoken by Alex (or, for a hive summary, whichever persona owns the most directives), naming the concrete follow-ups in one or two sentences. Example: `"Three things before we reconvene: fix the TAM stacking, add the tripwire to the Value risk mitigation, and hedge the competitive claim."`
+   - **In text-only mode:** print `**[Persona]:** [recap line]`.
+
+   **c. Agreement to meet again.** Only if the closing assessment (7a) included a concrete next-step/reconvene proposal — never invent one for a summary that predates it. Voice it as a natural agreement moment: one more persona affirms the proposed reconvene point, grounded in the actual proposal text (e.g., "Works for me — ping when the TAM and Viability revisions land."), not a generic "let's touch base soon."
+
+   - **In voiced mode:** one more dialogue segment in the same call, spoken by a persona other than Alex.
+   - **In text-only mode:** print `**[Persona]:** [agreement line]`.
+
+   **d. Print the footer:**
 
    ```
    --- End of meeting playback ---

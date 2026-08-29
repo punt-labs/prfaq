@@ -4,6 +4,9 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+### Added
+- **`/prfaq:meeting` and `/prfaq:meeting-hive` open and close with an exec assessment.** A standalone Alex (Skeptical Executive) read frames the stakes before the agenda and delivers a closing verdict — plus a concrete next-step/reconvene proposal — after every hot spot is decided, matching typical review-meeting structure instead of jumping straight into itemized debate and stopping cold after the last item. Persisted in the summary's new `## Overall Assessment` section. `/prfaq:meeting-listen` voices both, and its closing now recaps concrete follow-up items from the revision queue and voices the agreement to reconvene (grounded in the actual proposal — never a generic "let's touch base").
+
 ### Changed
 - **`/prfaq:meeting` and `/prfaq:meeting-hive`'s hot-spot scan now defaults to product substance, not prose quality.** The pre-meeting scan's criteria were entirely a documentation-quality checklist (citation gaps, vague words, thin FAQs, hedging mismatches) — running a real meeting against them produced an agenda of copy-editing issues with no bearing on competition, customers, the business model, or scope. The four risk-lens questions (feasibility, value/customer reality, strategic fit/viability, ambition) now come first, with a guardrail requiring at least half the agenda to be substance rather than documentation issues.
 - **Meeting debate narratives and `/prfaq:meeting-listen` dialogue must ground every line in a document specific** (a quoted phrase, a real number, a named competitor or customer segment) instead of abstract metaphor standing in for the reasoning, and must never have a persona reference the meeting's own sequence ("third hot spot in a row," "unlike the previous item"). Cross-hot-spot patterns belong in the summary's Notes section, not spoken in a persona's voice.

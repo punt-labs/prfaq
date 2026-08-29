@@ -49,6 +49,14 @@ Rank each hot spot:
 
 Aim for 5-8 hot spots total. More than 8 makes the meeting too long. Fewer than 3 means the document might not need a meeting.
 
+### Phase 0b: Opening Assessment
+
+Real review meetings open with someone framing the stakes before diving into an itemized list — not a cold jump into agenda item one. Give this meeting the same opening.
+
+Launch a single `prfaq:meeting-executive` (Alex) agent — not all four personas, just Alex, since this is the person calling the meeting to order. Give Alex: the document's stage, the full Risk Assessment table, and the list of hot spots about to be debated (titles and severities, not the full debate). Ask for a holistic opening read, 3-5 sentences: what's the state of play walking in, what's the single biggest thing this meeting needs to resolve, what would leave Alex satisfied versus still worried. Ground it in real specifics — the actual risk ratings, the actual TAM figures, the actual stage — the same grounding rule as the rest of the meeting applies here too.
+
+Present this opening assessment to the user before the agenda list. It sets context; it does not replace the agenda.
+
 ### Phase 1: Agenda & Scope Selection
 
 Present the agenda and let the user choose scope:
@@ -116,6 +124,14 @@ The narrative should feel like eavesdropping on a real meeting — not reading f
 
 **Step 5: Show cascade consequences.** After the decision, identify what other sections are affected using the dependency graph from the feedback agent's Section Dependency Graph. Show: "This decision affects N other sections: [list]. These will be included in the revision queue."
 
+### Phase 2b: Closing Assessment
+
+Real review meetings don't just stop after the last agenda item — someone closes the meeting out. Give this meeting the same close, after every hot spot has a decision and before the mechanical decisions summary.
+
+Launch a single `prfaq:meeting-executive` (Alex) agent again — standalone, not the full cast. Give Alex: the opening assessment (for continuity), and the full list of decisions made across every hot spot (title, decision, one-line rationale each). Ask for a closing read, 3-5 sentences: has the picture changed since the opening? What's the residual risk once these revisions land? Is the document on track, and what would change that read? This is a narrative judgment call in Alex's voice, not a repeat of `/prfaq:vote`'s structured three-gate go/no-go — point the user at `/prfaq:vote` separately if they want that level of rigor.
+
+End the closing assessment with a concrete proposal for what happens next and when to reconvene — grounded in the actual revision queue ("let's revisit once the TAM and Viability revisions land"), never a generic "let's touch base soon."
+
 ### Phase 3: Post-Meeting Summary
 
 After all agenda items are resolved (or the user exits early), present the summary:
@@ -153,6 +169,12 @@ After presenting the summary to the user, write it to a markdown file in the `./
 **Date:** YYYY-MM-DD
 **Document:** [filename]
 **Scope:** [Full meeting / Critical only / Selected items]
+
+## Overall Assessment
+
+**Opening (Alex):** [The 3-5 sentence opening read from Phase 0b]
+
+**Closing (Alex):** [The 3-5 sentence closing read from Phase 2b, ending with the concrete next-step/reconvene proposal]
 
 ## Decisions
 
@@ -253,7 +275,9 @@ Extract `\prfaqstage{value}` from the document before the pre-meeting scan. Stag
 
 ## Hive Mode
 
-`/prfaq:meeting-hive` is the autonomous variant — the "team meeting without the boss." Same cast, same hot spot ranking, same stage calibration. The difference is the decision mechanism: personas reach consensus through multi-round debate instead of the user deciding at each point.
+`/prfaq:meeting-hive` is the autonomous variant — the "team meeting without the boss." Same cast, same hot spot ranking, same stage calibration, same opening and closing assessment. The difference is the decision mechanism: personas reach consensus through multi-round debate instead of the user deciding at each point.
+
+The opening assessment (Phase 0b) and closing assessment (Phase 2b) both apply unchanged in hive mode: a single standalone Alex spawn before the agenda, and a single standalone Alex spawn after the debate loop resolves every hot spot — neither is part of the `prfaq-hive` team, since there's no back-and-forth to coordinate.
 
 ### Decision Philosophy: Arguments Win, Not Averages
 
@@ -311,7 +335,7 @@ For split decisions, present both sides' strongest single argument and ask the u
 
 ### Hive Summary Format
 
-Same structure as the regular meeting summary (Phase 3b), with `**Mode:** Hive (autonomous consensus, Agent Teams)` in the header and this decisions table schema:
+Same structure as the regular meeting summary (Phase 3b) — including the `## Overall Assessment` section with the opening and closing reads — with `**Mode:** Hive (autonomous consensus, Agent Teams)` in the header and this decisions table schema:
 
 | # | Hot Spot | Door | Decision | Resolution | Winning Argument | Dissent |
 |---|----------|------|----------|------------|------------------|---------|

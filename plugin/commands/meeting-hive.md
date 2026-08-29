@@ -43,11 +43,13 @@ Then restart Claude Code. Do not proceed without it — use `/prfaq:meeting` for
 
 4. **Classify each hot spot as a one-way or two-way door.** For each hot spot, determine whether the decision it implies is reversible (two-way door: positioning, scope, framing) or irreversible (one-way door: architecture, data model, public commitments). Mark each in the agenda.
 
-5. **Show the agenda.** Present the hot spots ranked by severity with door classification. All items will be debated — the user does not select scope. Tell the user: "The hive will debate these autonomously. I'll present the consensus when they're done."
+5. **Get the opening assessment.** Launch a single `prfaq:meeting-executive` (Alex) agent, standalone (not part of the `prfaq-hive` team — there's no back-and-forth to coordinate for a solo read), with the document's stage, the Risk Assessment table, and the hot spot titles/severities/door classifications from steps 3-4. Ask for a 3-5 sentence holistic opening read (see Phase 0b in the meeting guide). Present it to the user before the agenda.
 
-6. **Create the team and task list.** Create a team named `prfaq-hive`. Create one task per hot spot using TaskCreate, named `Debate: [hot spot title]` with the hot spot description and door classification. This gives the user visible progress during the autonomous run.
+6. **Show the agenda.** Present the hot spots ranked by severity with door classification. All items will be debated — the user does not select scope. Tell the user: "The hive will debate these autonomously. I'll present the consensus when they're done."
 
-7. **Run the debate loop.** For each hot spot (processing sequentially, one at a time):
+7. **Create the team and task list.** Create a team named `prfaq-hive`. Create one task per hot spot using TaskCreate, named `Debate: [hot spot title]` with the hot spot description and door classification. This gives the user visible progress during the autonomous run.
+
+8. **Run the debate loop.** For each hot spot (processing sequentially, one at a time):
 
    Mark the hot spot task in-progress via TaskUpdate.
 
@@ -99,16 +101,19 @@ Then restart Claude Code. Do not proceed without it — use `/prfaq:meeting` for
 
    Mark the hot spot task complete via TaskUpdate after resolution.
 
-8. **Synthesize the debate.** For each hot spot, write a brief narrative (3-5 sentences) that shows which argument won and why. Name the winner and the loser. Do not soften — "Wei's scalability concern overruled Dana's push to ship" is better than "the group balanced speed and caution." Ground every sentence in a specific from the document (a quoted phrase, a real number, a named competitor or customer segment) — never in an abstract metaphor standing in for the reasoning, and never in a reference to another hot spot's position in this meeting ("third hot spot in a row," "unlike the previous item"). A cross-hot-spot pattern, if one emerges, belongs in the summary's Notes section, not spoken in a persona's voice. Follow the synthesis voice guidelines from the meeting guide.
+9. **Synthesize the debate.** For each hot spot, write a brief narrative (3-5 sentences) that shows which argument won and why. Name the winner and the loser. Do not soften — "Wei's scalability concern overruled Dana's push to ship" is better than "the group balanced speed and caution." Ground every sentence in a specific from the document (a quoted phrase, a real number, a named competitor or customer segment) — never in an abstract metaphor standing in for the reasoning, and never in a reference to another hot spot's position in this meeting ("third hot spot in a row," "unlike the previous item"). A cross-hot-spot pattern, if one emerges, belongs in the summary's Notes section, not spoken in a persona's voice. Follow the synthesis voice guidelines from the meeting guide.
 
-9. **Shut down the team.** Send a shutdown request to each teammate using SendMessage with `type: "shutdown_request"`. Wait for acknowledgment, then clean up the team.
+10. **Get the closing assessment.** Launch a single `prfaq:meeting-executive` (Alex) agent, standalone, with the opening assessment and the full list of decisions made across every hot spot (title, decision, one-line rationale each). Ask for a 3-5 sentence closing read ending in a concrete next-step/reconvene proposal (see Phase 2b in the meeting guide).
 
-10. **Present the consensus summary.** Show:
+11. **Shut down the team.** Send a shutdown request to each teammate using SendMessage with `type: "shutdown_request"`. Wait for acknowledgment, then clean up the team.
+
+12. **Present the consensus summary.** Show:
+    - **Overall assessment:** The opening and closing reads from steps 5 and 10.
     - **Consensus decisions:** Items where the hive reached resolution. Show the decision (REVISE/KEEP), the door type, the winning argument, and the noted dissent (if any).
     - **Escalated decisions:** One-way door splits that require user input. Show both sides' strongest argument. Ask the user to decide via AskUserQuestion: REVISE / KEEP / DEFER.
     - **Revision queue:** Specific feedback directives for each REVISE decision, written to work as `/prfaq:feedback` input.
 
-11. **Persist the summary.** Write to `./meetings/meeting-hive-summary-YYYY-MM-DD.md`. If that filename exists, append a counter (`-2`, `-3`, etc.). Use the same format as regular meeting summaries (see Phase 3b in the meeting guide), with `**Mode:** Hive (autonomous consensus, Agent Teams)` in the header and this decisions table schema:
+13. **Persist the summary.** Write to `./meetings/meeting-hive-summary-YYYY-MM-DD.md`. If that filename exists, append a counter (`-2`, `-3`, etc.). Use the same format as regular meeting summaries (see Phase 3b in the meeting guide), including the `## Overall Assessment` section, with `**Mode:** Hive (autonomous consensus, Agent Teams)` in the header and this decisions table schema:
 
     **Migration:** Before writing, use Glob to check for `meeting-summary-*.md` and `meeting-hive-summary-*.md` in the project root (same directory as the `.tex` file). If any are found, move them to `./meetings/` using the Read and Write tools (read content, write to new path, delete old file via Bash `rm`). Tell the user: "Moved N meeting summary file(s) to ./meetings/ for organization."
 
@@ -120,4 +125,4 @@ Then restart Claude Code. Do not proceed without it — use `/prfaq:meeting` for
     - **Resolution**: `CONSENSUS`, `BIAS-FOR-ACTION`, or `ESCALATED`
     - Escalated decisions get a `User Action Required` section at the top of the summary listing each escalated item, the competing arguments, and a prompt for the user to choose REVISE / KEEP / DEFER
 
-12. **Offer to apply revisions.** If the revision queue is non-empty, tell the user to run `/prfaq:feedback` (no arguments) to automatically discover this meeting summary and apply all directives.
+14. **Offer to apply revisions.** If the revision queue is non-empty, tell the user to run `/prfaq:feedback` (no arguments) to automatically discover this meeting summary and apply all directives.
