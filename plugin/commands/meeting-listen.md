@@ -87,7 +87,7 @@ Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
 
    - Strip markdown formatting (`**`, backticks, leading/trailing whitespace) to get a clean decision label.
    - Derive a canonical decision tone for dialogue guidelines:
-     - Values equal to `DEFER` → **DEFERRED** tone — see the carve-out below, skip 6b's dialogue construction entirely
+     - Values containing "defer" (case-insensitive, e.g. `Defer`, `DEFER (pending research)`) → **DEFERRED** tone — see the carve-out below, skip 6b's dialogue construction entirely
      - Values containing "keep" (and not "revise" or "research") → **KEEP** tone
      - Values containing "revise", "research", "iterate", or "change" → **REVISE** tone
      - When ambiguous, default to **REVISE** if the value implies further work
@@ -108,6 +108,7 @@ Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
    **b. Write the dialogue** (KEEP/REVISE tone only — a DEFERRED-tone row skips this entirely, per the carve-out above). Transform the structured summary into 4-6 lines of natural conversation between personas. The personas speak to each other — no narrator, no stage directions.
 
    **For hive summaries** (persona-attributed):
+   - **Guard:** if the `Winning Argument` cell is `—` or `— (escalated, no winner)`, treat this row as DEFERRED tone regardless of what 6a derived from the `Decision` cell, and go back to the carve-out above — there is no winner to open with.
    - The persona named in "Winning Argument" opens with their core point, expanded into natural speech using that persona's verbal style from their agent file
    - One or two other personas react — agree, push back, or build on the point
    - If there is dissent, the dissenting persona speaks their counterargument
@@ -205,7 +206,7 @@ Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
 
    **d. Make the call and print the footer.**
 
-   - **In voiced mode:** assemble every segment built in 7a-7c, in the order built, into a single `mcp__plugin_vox_mic__unmute` call with `ephemeral: true`. If 7a and 7c were both skipped and 7b built a segment, the call is just that one segment. If 7b was also skipped (empty queue), skip the call entirely.
+   - **In voiced mode:** assemble every segment built in 7a-7c, in the order built, into a single `mcp__plugin_vox_mic__unmute` call with `ephemeral: true`. If 7a and 7c were both skipped and 7b built a segment, the call is just that one segment. If 7b was also skipped (nothing to recap — empty revision queue and no deferred items), skip the call entirely.
    - **In text-only mode:** print each sub-step's labeled line as it's built — no batching needed for text.
 
    Then print the footer:
