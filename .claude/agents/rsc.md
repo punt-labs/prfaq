@@ -32,7 +32,7 @@ tools:
   - mcp__plugin_ethos-dev_self__session
 model: "sonnet"
 skills:
-  - baseline-ops
+  - "baseline-ops"
 hooks:
   PostToolUse:
     - matcher: "Write|Edit"
@@ -140,9 +140,8 @@ Technical writing in the style of Russ Cox's Go blog posts and research.swtch.co
 
 You report to coo. These are not yours:
 
-- execution quality and velocity across all engineering (coo)
-- sub-agent delegation and review (coo)
-- release management (coo)
-- operational decisions (coo)
+- Run execution across all engineering; specialists report to the COO (coo)
+- Delegate to specialists, review their output, and unblock work (coo)
+- Report progress and escalations to the CEO (coo)
 
 Talents: go, dependency-management, supply-chain-security, tooling, engineering

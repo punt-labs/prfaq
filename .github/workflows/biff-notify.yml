@@ -13,33 +13,47 @@ permissions:
 
 jobs:
   notify:
-    # conclusion == 'failure' only: cancelled/timed_out/action_required are
-    # excluded deliberately, to avoid noise on manual cancels.
-    # event == 'push' only: workflow_run also fires for PR-triggered runs;
-    # PR-branch CI failures are visible in the PR's own checks tab already,
-    # so this is scoped to failures on pushed branches (main and direct
-    # pushes) to avoid duplicate/noisy notifications during PR review.
-    #
-    # Known limitation: if this job itself fails (network error, PyPI down,
-    # biff relay auth failure, or the timeout below), nothing re-notifies —
-    # a notifier can't reliably report its own failure without infinite
-    # regress. GitHub's own workflow-failure email to the run's actor is the
-    # fallback channel in that case.
+    # event == 'push' is a secret-safety boundary, not just a notification
+    # filter: this step's env: block carries secrets.BIFF_RELAY_TOKEN.
+    # Widening this to include pull_request-sourced workflow_run completions
+    # (e.g. to notify on fork-PR CI failures) reopens fork access to that
+    # token unless paired with an explicit
+    # `github.event.workflow_run.head_repository.full_name ==
+    # github.repository` check, per GitHub's workflow_run-with-secrets
+    # guidance. Do not relax this filter without adding that check.
     if: >-
       github.event.workflow_run.conclusion == 'failure'
       && github.event.workflow_run.event == 'push'
     runs-on: ubuntu-latest
-    timeout-minutes: 2
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          # Deliberately NOT github.event.workflow_run.head_sha: this job only
+          # reads .punt-labs/biff (the .punt-labs/biff/enabled marker, and
+          # .punt-labs/biff/config.yaml if this repo has one) to decide where
+          # the notification goes. Checking out the failing commit -- which
+          # can be any branch that made a watched workflow fail, not just
+          # main -- would let that branch introduce or rewrite
+          # .punt-labs/biff/config.yaml and redirect the notification (and
+          # the github-actions identity) to an attacker-controlled relay.
+          ref: ${{ github.event.repository.default_branch }}
           sparse-checkout: .punt-labs/biff
+          persist-credentials: false
       - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          enable-cache: true
       - env:
           WORKFLOW_NAME: ${{ github.event.workflow_run.name }}
-          BRANCH: ${{ github.event.workflow_run.head_branch }}
+          # head_branch is null for tag-triggered push events (e.g. a Release
+          # workflow on a tag push) -- fall back to the head SHA so the
+          # notification never carries a blank branch name.
+          BRANCH: ${{ github.event.workflow_run.head_branch || github.event.workflow_run.head_sha }}
           RUN_URL: ${{ github.event.workflow_run.html_url }}
+          BIFF_RELAY_URL: ${{ vars.BIFF_RELAY_URL }}
+          BIFF_RELAY_TOKEN: ${{ secrets.BIFF_RELAY_TOKEN }}
+          BIFF_RELAY_TLS_HANDSHAKE_FIRST: ${{ vars.BIFF_RELAY_TLS_HANDSHAKE_FIRST }}
         run: >-
-          uvx --from punt-biff biff --user github-actions wall
+          uvx --from punt-biff==1.16.0 biff --user github-actions wall
           "CI failed: ${WORKFLOW_NAME} on ${BRANCH} — ${RUN_URL}"
           --duration 2h
