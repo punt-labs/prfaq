@@ -53,9 +53,11 @@ Aim for 5-8 hot spots total. More than 8 makes the meeting too long. Fewer than 
 
 Real review meetings open with someone framing the stakes before diving into an itemized list — not a cold jump into agenda item one. Give this meeting the same opening.
 
-Launch a single `prfaq:meeting-executive` (Alex) agent — not all four personas, just Alex, since this is the person calling the meeting to order. Give Alex: the document's stage, the full Risk Assessment table, and the list of hot spots about to be debated (titles and severities, not the full debate). Ask for a holistic opening read, 3-5 sentences: what's the state of play walking in, what's the single biggest thing this meeting needs to resolve, what would leave Alex satisfied versus still worried. Ground it in real specifics — the actual risk ratings, the actual TAM figures, the actual stage — the same grounding rule as the rest of the meeting applies here too.
+Launch a single `prfaq:meeting-executive` (Alex) agent — not all four personas, just Alex, since this is the person calling the meeting to order. Tell Alex explicitly: **this is a meeting-opening assessment, not a section evaluation — reply in 3-5 sentences of continuous prose, not the structured BIGGEST ASSUMPTION/OPPORTUNITY COST/POSITION/EVIDENCE format** (see the Exception in `meeting-executive.md`). Give Alex: the document's stage, the full Risk Assessment table, and the list of hot spots about to be debated (titles and severities, not the full debate). Ask for a holistic opening read, 3-5 sentences: what's the state of play walking in, what's the single biggest thing this meeting needs to resolve, what would leave Alex satisfied versus still worried. Ground it in real specifics — the actual risk ratings, the actual TAM figures, the actual stage — the same grounding rule as the rest of the meeting applies here too.
 
 Present this opening assessment to the user before the agenda list. It sets context; it does not replace the agenda.
+
+**If the agent call fails, times out, or returns content that isn't grounded in the specific risk ratings or hot spots provided:** tell the user the opening assessment could not be generated and proceed straight to the agenda. Never substitute a generic read ("the document looks broadly promising") to fill the gap — an ungrounded assessment is worse than no assessment.
 
 ### Phase 1: Agenda & Scope Selection
 
@@ -126,11 +128,15 @@ The narrative should feel like eavesdropping on a real meeting — not reading f
 
 ### Phase 2b: Closing Assessment
 
-Real review meetings don't just stop after the last agenda item — someone closes the meeting out. Give this meeting the same close, after every hot spot has a decision and before the mechanical decisions summary.
+Real review meetings don't just stop after the last agenda item — someone closes the meeting out. Give this meeting the same close, after every hot spot has a **final** decision (including any escalated items a hive meeting resolved — see Hive Mode below) and before the mechanical decisions summary.
 
-Launch a single `prfaq:meeting-executive` (Alex) agent again — standalone, not the full cast. Give Alex: the opening assessment (for continuity), and the full list of decisions made across every hot spot (title, decision, one-line rationale each). Ask for a closing read, 3-5 sentences: has the picture changed since the opening? What's the residual risk once these revisions land? Is the document on track, and what would change that read? This is a narrative judgment call in Alex's voice, not a repeat of `/prfaq:vote`'s structured three-gate go/no-go — point the user at `/prfaq:vote` separately if they want that level of rigor.
+**On early exit** (see Early Exit below): still run the closing assessment, but tell Alex explicitly the meeting was cut short and pass only the decisions actually made — never pass "Not discussed" items to Alex as if they were decided.
+
+Launch a single `prfaq:meeting-executive` (Alex) agent again — standalone, not the full cast. Tell Alex explicitly: **this is a meeting-closing assessment, not a section evaluation — reply in 3-5 sentences of continuous prose, not the structured format** (see the Exception in `meeting-executive.md`). Give Alex: the opening assessment (for continuity), and the full list of final decisions made across every hot spot (title, decision, one-line rationale each) — or, on early exit, the decisions made before exiting plus a note that the meeting ended early. Ask for a closing read, 3-5 sentences: has the picture changed since the opening? What's the residual risk once these revisions land? Is the document on track, and what would change that read? This is a narrative judgment call in Alex's voice, not a repeat of `/prfaq:vote`'s structured three-gate go/no-go — point the user at `/prfaq:vote` separately if they want that level of rigor.
 
 End the closing assessment with a concrete proposal for what happens next and when to reconvene — grounded in the actual revision queue ("let's revisit once the TAM and Viability revisions land"), never a generic "let's touch base soon."
+
+**If the agent call fails, times out, or returns content that isn't grounded in the specific decisions provided:** tell the user the closing assessment could not be generated and proceed straight to the mechanical summary. Never substitute a generic read to fill the gap.
 
 ### Phase 3: Post-Meeting Summary
 
@@ -248,6 +254,8 @@ Do not have a persona comment on the meeting's own sequence or shape — "third 
 
 If the user wants to leave the meeting early (AskUserQuestion option or explicit request), immediately produce the post-meeting summary with whatever decisions have been made. Mark unaddressed items as "Not discussed" — not "Deferred" (which implies a decision to defer).
 
+The closing assessment (Phase 2b) still runs on early exit — a real meeting that ends early still gets a closing remark. Pass Alex only the decisions actually made; list "Not discussed" items separately and tell Alex the meeting was cut short, so the closing read can note that explicitly rather than assume full coverage.
+
 ## Stage Calibration
 
 Extract `\prfaqstage{value}` from the document before the pre-meeting scan. Stage calibrates both the hot spot ranking and persona behavior:
@@ -277,7 +285,9 @@ Extract `\prfaqstage{value}` from the document before the pre-meeting scan. Stag
 
 `/prfaq:meeting-hive` is the autonomous variant — the "team meeting without the boss." Same cast, same hot spot ranking, same stage calibration, same opening and closing assessment. The difference is the decision mechanism: personas reach consensus through multi-round debate instead of the user deciding at each point.
 
-The opening assessment (Phase 0b) and closing assessment (Phase 2b) both apply unchanged in hive mode: a single standalone Alex spawn before the agenda, and a single standalone Alex spawn after the debate loop resolves every hot spot — neither is part of the `prfaq-hive` team, since there's no back-and-forth to coordinate.
+The opening assessment (Phase 0b) applies unchanged in hive mode: a single standalone Alex spawn before the agenda, not part of the `prfaq-hive` team.
+
+The closing assessment (Phase 2b) needs one hive-specific ordering rule: the debate loop's own decision mapping leaves `ESCALATED` items unresolved by design (see Decision Mapping below) — those are user calls, not hive consensus. Resolve every escalated item with the user (`AskUserQuestion`: REVISE / KEEP / DEFER) *before* launching the closing assessment, so Alex always sees a fully-decided list, never a placeholder for a pending item. Like the opening spawn, the closing spawn is a single standalone Alex agent, not part of the team.
 
 ### Decision Philosophy: Arguments Win, Not Averages
 
@@ -331,7 +341,7 @@ The door type changes how votes are weighted — not equally, but by relevance:
 
 The debate narrative is shorter than in regular meetings (3-5 sentences per hot spot, not a full dramatic scene). The goal is to communicate the key tension and the resolution, not to dramatize the conflict. Save the user's reading time — they'll read N summaries, not participate in N debates. The same grounding rules apply at this shorter length: every sentence still needs to name a specific from the document, and no sentence references another hot spot's position in the sequence.
 
-For split decisions, present both sides' strongest single argument and ask the user to decide.
+For split decisions, present both sides' strongest single argument and ask the user to decide — do this before the closing assessment, per the ordering rule above.
 
 ### Hive Summary Format
 
@@ -341,5 +351,5 @@ Same structure as the regular meeting summary (Phase 3b) — including the `## O
 |---|----------|------|----------|------------|------------------|---------|
 
 - **Door**: `one-way` or `two-way`
-- **Resolution**: `CONSENSUS`, `BIAS-FOR-ACTION`, or `ESCALATED`
-- Escalated decisions get a `User Action Required` section at the top of the summary
+- **Resolution**: `CONSENSUS`, `BIAS-FOR-ACTION`, or `ESCALATED` (escalated rows still record the user's final call in the Decision column — by persist time, every escalation has already been resolved per the ordering rule above)
+- Items that were escalated get an `Escalated Decisions (Resolved)` section near the top of the summary, recording each item's competing arguments and the user's resolution — a historical record, not a live prompt, since the resolution already happened before the closing assessment ran

@@ -75,7 +75,7 @@ Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
      ```
    - Use the fallback voice for affected personas for the rest of the playback.
 
-5. **Voice the opening assessment, if present.** Check the summary for an `## Overall Assessment` section with an **Opening** line (summaries written before this section existed won't have one — skip this step entirely if so, don't fabricate one).
+5. **Voice the opening assessment, if present.** Check the summary for an `## Overall Assessment` section with a `**Opening (Alex):**` line (summaries written before this section existed won't have one — skip this step entirely if so, don't fabricate one).
 
    If present:
    - **In voiced mode:** make an `mcp__plugin_vox_mic__unmute` call before the first hot spot with `ephemeral: true` and two segments: a narrator line ("Before the agenda, Alex opens the meeting."), then Alex's opening assessment text as a dialogue segment (voice: Alex's resolved voice from step 3/4, `vibe_tags`: Alex's default `voice_vibe`).
@@ -173,24 +173,25 @@ Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
 
    **In text-only mode**, just print the labeled lines. No TTS calls.
 
-7. **Close the playback.** After all hot spots, give the meeting a real close — a recap and an agreement to reconvene, not just a mechanical footer.
+7. **Close the playback.** After all hot spots, give the meeting a real close — a recap and an agreement to reconvene, not just a mechanical footer. Build the segments in 7a-7c first, then make one call in 7d — do not call `unmute` until all of the closing scene's segments are assembled.
 
-   **a. Voice the closing assessment, if present.** Check the summary for an `## Overall Assessment` section with a **Closing** line (older summaries won't have one — skip straight to 7b if so, don't fabricate one).
+   **a. Closing assessment segment(s), if present.** Check the summary for an `## Overall Assessment` section with a `**Closing (Alex):**` line (older summaries won't have one — skip this sub-step if so, don't fabricate one). If present, build two segments: a narrator line ("With every hot spot resolved, Alex closes the meeting."), then Alex's closing assessment text as a dialogue segment (voice/vibe as in step 5).
 
-   - **In voiced mode:** make an `mcp__plugin_vox_mic__unmute` call with `ephemeral: true` and two segments: a narrator line ("With every hot spot resolved, Alex closes the meeting."), then Alex's closing assessment text as a dialogue segment (voice/vibe as in step 5).
-   - **In text-only mode:** print `--- Closing Assessment ---` then `**Alex:** [closing assessment text]`.
+   **b. Follow-up recap segment.** Pull 2-3 concrete directives from the Revision Queue section — name what each one actually says (e.g., "fix the TAM stacking," "add the tripwire to the Value risk mitigation"), never a generic "a few things to fix." If the queue is empty, skip this sub-step. If it has more than 3 directives, pick which ones to name:
 
-   **b. Recap the follow-up items.** Pull 2-3 concrete directives from the Revision Queue section — name what each one actually says (e.g., "fix the TAM stacking," "add the tripwire to the Value risk mitigation"), never a generic "a few things to fix." If the queue has more than 3, pick the ones tied to Critical hot spots; if it's empty, skip this sub-step.
+   - **Interactive summaries:** prefer directives tied to Critical-severity hot spots (match each directive back to its hot spot in the Decisions table by title, then check that row's Severity column).
+   - **Hive summaries:** the decisions table has no Severity column — prefer directives tied to one-way-door REVISE rows instead, then fall back to queue order (Directive 1, 2, 3...).
 
-   - **In voiced mode:** append to the same closing `unmute` call (or make one more `ephemeral: true` call if 7a was skipped): one segment, spoken by Alex (or, for a hive summary, whichever persona owns the most directives), naming the concrete follow-ups in one or two sentences. Example: `"Three things before we reconvene: fix the TAM stacking, add the tripwire to the Value risk mitigation, and hedge the competitive claim."`
-   - **In text-only mode:** print `**[Persona]:** [recap line]`.
+   Attribute the recap to a speaker: for hive summaries, use the Winning Argument persona from the hot spot the majority of the picked directives trace back to; if that's not clearly one persona, Alex speaks it. For interactive summaries (no persona attribution on decisions), Alex always speaks it. Build one segment, one or two sentences: `"Three things before we reconvene: fix the TAM stacking, add the tripwire to the Value risk mitigation, and hedge the competitive claim."`
 
-   **c. Agreement to meet again.** Only if the closing assessment (7a) included a concrete next-step/reconvene proposal — never invent one for a summary that predates it. Voice it as a natural agreement moment: one more persona affirms the proposed reconvene point, grounded in the actual proposal text (e.g., "Works for me — ping when the TAM and Viability revisions land."), not a generic "let's touch base soon."
+   **c. Agreement-to-reconvene segment.** Build this only if 7a fired (Phase 2b requires every closing assessment to end with a concrete next-step/reconvene proposal, so its presence is exactly 7a's presence — never invent this beat for a summary that predates the Overall Assessment section). Build one more dialogue segment, spoken by a persona who did not speak 7a or 7b, affirming the proposed reconvene point in Alex's closing text — grounded in its actual words (e.g., "Works for me — ping when the TAM and Viability revisions land."), never a generic "let's touch base soon."
 
-   - **In voiced mode:** one more dialogue segment in the same call, spoken by a persona other than Alex.
-   - **In text-only mode:** print `**[Persona]:** [agreement line]`.
+   **d. Make the call and print the footer.**
 
-   **d. Print the footer:**
+   - **In voiced mode:** assemble every segment built in 7a-7c, in the order built, into a single `mcp__plugin_vox_mic__unmute` call with `ephemeral: true`. If 7a and 7c were both skipped and 7b built a segment, the call is just that one segment. If 7b was also skipped (empty queue), skip the call entirely.
+   - **In text-only mode:** print each sub-step's labeled line as it's built — no batching needed for text.
+
+   Then print the footer:
 
    ```
    --- End of meeting playback ---

@@ -63,9 +63,13 @@ Load these reference guides to inform your analysis:
 
 Then read the document section provided in the prompt.
 
+## Exception: Meeting Opening/Closing Assessment
+
+If your spawn prompt identifies this as a meeting's **opening** or **closing** assessment (not a section evaluation), ignore the structured format below entirely. Reply with 3-5 sentences of continuous prose in Alex's voice — no headers, no `POSITION:` line, no section labels. This is a holistic framing or verdict read, not a debate position.
+
 ## Your Mandatory Response Format
 
-You MUST structure your response exactly as follows. This format forces you to challenge assumptions, not just critique writing:
+For a section-evaluation spawn (the normal case — everything except the exception above), you MUST structure your response exactly as follows. This format forces you to challenge assumptions, not just critique writing:
 
 ```
 BIGGEST ASSUMPTION
