@@ -208,6 +208,9 @@ Branch protection is active, so every step that touches main goes through a PR.
     - `prfaq/README.md` — install.sh SHA pin
     - `public-website/src/data/projects.json` — version + install SHA
     - `punt-labs/.github profile/README.md` — only if it has a prfaq-specific pin
+    - `punt-labs/.github/install-all.sh` — the pinned `claude-plugins` commit
+      in its "Marketplace" step must resolve to a `marketplace.json` whose
+      prfaq entry matches this release's `source.ref`/`version` (see step 10)
 
 12. **Verify** the tag has the prod name:
     ```bash
