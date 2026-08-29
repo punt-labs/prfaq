@@ -39,7 +39,7 @@ Then restart Claude Code. Do not proceed without it — use `/prfaq:meeting` for
 
 2. **Read the meeting guide.** Load `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/meeting-guide.md` for persona details and stage calibration. The hive meeting uses the same cast, reference guides, and hot spot ranking as the regular meeting.
 
-3. **Run the pre-meeting scan.** Read the full `.tex` document. Extract `\prfaqstage{value}` to calibrate expectations. Identify 5-8 hot spots using the same criteria as the regular meeting (unsupported claims, vague language, thin evidence, risk rating mismatches, confidence/hedging gaps). Rank each as Critical, Warning, or Suggestion — calibrated to the document's stage.
+3. **Run the pre-meeting scan.** Read the full `.tex` document. Extract `\prfaqstage{value}` to calibrate expectations. Identify 5-8 hot spots using the same criteria as the regular meeting — the four risk-lens questions (feasibility, value/customer reality, strategic fit/viability, ambition) come first; documentation and evidence issues (unsupported claims, vague language, thin evidence, hedging gaps) are valid but must be at most half the agenda. See the meeting guide's Phase 0 guardrail. Rank each as Critical, Warning, or Suggestion — calibrated to the document's stage.
 
 4. **Classify each hot spot as a one-way or two-way door.** For each hot spot, determine whether the decision it implies is reversible (two-way door: positioning, scope, framing) or irreversible (one-way door: architecture, data model, public commitments). Mark each in the agenda.
 
@@ -99,7 +99,7 @@ Then restart Claude Code. Do not proceed without it — use `/prfaq:meeting` for
 
    Mark the hot spot task complete via TaskUpdate after resolution.
 
-8. **Synthesize the debate.** For each hot spot, write a brief narrative (3-5 sentences) that shows which argument won and why. Name the winner and the loser. Do not soften — "Wei's scalability concern overruled Dana's push to ship" is better than "the group balanced speed and caution." Follow the synthesis voice guidelines from the meeting guide.
+8. **Synthesize the debate.** For each hot spot, write a brief narrative (3-5 sentences) that shows which argument won and why. Name the winner and the loser. Do not soften — "Wei's scalability concern overruled Dana's push to ship" is better than "the group balanced speed and caution." Ground every sentence in a specific from the document (a quoted phrase, a real number, a named competitor or customer segment) — never in an abstract metaphor standing in for the reasoning, and never in a reference to another hot spot's position in this meeting ("third hot spot in a row," "unlike the previous item"). A cross-hot-spot pattern, if one emerges, belongs in the summary's Notes section, not spoken in a persona's voice. Follow the synthesis voice guidelines from the meeting guide.
 
 9. **Shut down the team.** Send a shutdown request to each teammate using SendMessage with `type: "shutdown_request"`. Wait for acknowledgment, then clean up the team.
 

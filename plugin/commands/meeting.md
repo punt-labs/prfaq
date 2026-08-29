@@ -14,7 +14,7 @@ Run an interactive review meeting where four personas — a principal engineer, 
 
 2. **Read the meeting guide.** Load `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/meeting-guide.md` for the full meeting flow, synthesis guidelines, and persona details.
 
-3. **Run the pre-meeting scan.** Read the full `.tex` document. Extract `\prfaqstage{value}` to calibrate expectations (see Stage Calibration in the meeting guide). Identify 5-8 hot spots: sections with unsupported claims, vague language, thin evidence, risk rating mismatches, or gaps between press release confidence and FAQ hedging. Rank each as Critical, Warning, or Suggestion — calibrated to the document's stage.
+3. **Run the pre-meeting scan.** Read the full `.tex` document. Extract `\prfaqstage{value}` to calibrate expectations (see Stage Calibration in the meeting guide). Identify 5-8 hot spots using the four risk-lens questions first (feasibility, value/customer reality, strategic fit/viability, ambition — see Phase 0 in the meeting guide) — documentation issues (unsupported claims, vague language, thin evidence, hedging gaps) are valid but must be at most half the agenda. Rank each as Critical, Warning, or Suggestion — calibrated to the document's stage.
 
 4. **Present the agenda.** Show the user the hot spots ranked by severity and offer scope options via AskUserQuestion:
    - Full meeting (all items)
@@ -29,7 +29,7 @@ Run an interactive review meeting where four personas — a principal engineer, 
       - `subagent_type: "prfaq:meeting-customer"` (Priya)
       - `subagent_type: "prfaq:meeting-executive"` (Alex)
       - `subagent_type: "prfaq:meeting-builder"` (Dana)
-   c. Synthesize their responses into a dramatic debate narrative (not concatenation)
+   c. Synthesize their responses into a dramatic debate narrative (not concatenation). Ground every sentence in a specific from the document — a quoted phrase, a real number, a named competitor or customer segment — never an abstract metaphor, and never a reference to another hot spot's position in this meeting. See "Ground Every Line in Specifics" and "Never Reference the Meeting's Own Structure" in the meeting guide.
    d. Present the decision via AskUserQuestion: Revise / Keep as-is / Research / Defer
    e. Show cascade consequences (which other sections are affected)
 

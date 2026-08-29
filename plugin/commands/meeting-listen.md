@@ -40,7 +40,7 @@ Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
    - `voice_fallback` — value `default` means use the provider's default voice
    - `voice_vibe` — expressive tags (ElevenLabs only)
 
-   **In voiced mode**, detect the active provider. Call `mcp__plugin_vox_mic__who` and read the `provider` field from the response. Select the voice field for each persona:
+   **In voiced mode**, detect the active provider. Call `mcp__plugin_vox_mic__voice` with no argument and read the `provider` field from the response (`mcp__plugin_vox_mic__who` is retired; the no-arg `voice` call returns the same shape). Select the voice field for each persona:
 
    | Provider | Voice Field | Vibe Tags |
    |----------|-------------|-----------|
@@ -54,7 +54,7 @@ Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
 
 4. **Validate ElevenLabs voices (voiced mode, ElevenLabs provider only).** The `voice_elevenlabs` values may be community voices that require the user to add them to their ElevenLabs voice library. Before voicing any hot spots:
 
-   - Read the `all` array from the `mcp__plugin_vox_mic__who` response (this lists all voices in the user's library)
+   - Read the `available` array from the `mcp__plugin_vox_mic__voice` (no-arg) response (this lists all voices in the user's library)
    - Check whether each persona's `voice_elevenlabs` value appears in the list
    - For any missing voices, build a fallback map using built-in ElevenLabs voices:
 
@@ -114,6 +114,8 @@ Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
    - Keep each line 1-3 sentences. Spoken dialogue is shorter than written analysis.
    - The conversation should feel like overhearing a real debate, not a script reading
    - For KEEP-tone decisions, the defending persona should sound confident; for REVISE-tone, the challenger should sound vindicated
+   - **Ground every line in a specific from the document** — a quoted phrase, a real number, a named competitor or customer segment — never an abstract turn of phrase standing in for the reasoning ("same disease, different organ" tells a listener nothing; naming the actual number or claim does). A listener hearing only this hot spot's segment, with no other context, must be able to say what specific thing is wrong and what the fix is.
+   - **Never have a persona reference this meeting's own sequence** — no "third hot spot in a row," "unlike the previous item," "this isn't a duplicate of hot spot N." Each hot spot must stand alone. If the summary's Notes section records a cross-hot-spot pattern, leave it there — do not voice it as something a persona says mid-debate.
 
    **c. Output each line.** Always print each dialogue line with a speaker label prefix for the transcript, regardless of mode:
 
@@ -129,11 +131,12 @@ Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
      **Narrator segment** (first in array):
      - `text`: A scene-setter that orients the listener. Synthesize from the summary row:
        - Name the hot spot and which part of the document it concerns
+       - **State the actual claim, number, or quoted text under debate** — not just the section name. "The team debated whether per-seat pricing alienates small teams" tells a listener nothing about what the document actually says; "the document prices at $12 per seat with no volume discount, and the team debated whether that alienates 5-person teams" does. If the summary row doesn't spell out the specific text, pull it from the source `.tex` document.
        - For hive summaries: mention the door and the core tension from the resolution
        - For interactive summaries: mention the severity and the gist of the rationale
        - End with the decision outcome so the listener knows the frame
-       - Example: "Hot spot 3: Pricing model, in the customer FAQ section. The team debated whether per-seat pricing alienates small teams. They decided to revise."
-     - Keep it to 2-3 sentences — enough context to follow the debate, not a full recap
+       - Example: "Hot spot 3 concerns the Getting Started FAQ, which prices the product at \$12 per seat with no volume discount. The team debated whether that alienates 5-person teams who'd pay \$60/month for a tool they use twice a week. They decided to revise."
+     - Keep it to 2-4 sentences — enough to state the actual claim and the tension, not a full recap. Prioritize naming the specific over staying at the low end of the sentence count.
      - Omit `voice` — uses the session default, naturally distinguishing the narrator from persona voices
      - Omit `vibe_tags`
 
