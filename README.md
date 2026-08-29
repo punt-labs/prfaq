@@ -1,28 +1,63 @@
 # prfaq
 
+> Amazon's Working Backwards PR/FAQ process, grounded in your data.
+
 [![License](https://img.shields.io/github/license/punt-labs/prfaq)](LICENSE)
 [![CI](https://img.shields.io/github/actions/workflow/status/punt-labs/prfaq/docs.yml?label=CI)](https://github.com/punt-labs/prfaq/actions/workflows/docs.yml)
 [![Working Backwards](https://img.shields.io/badge/Working_Backwards-hypothesis-lightgrey)](./prfaq.pdf)
 
+A product discovery document without evidence is fiction. `prfaq` starts from your data — customer interviews, survey results, market reports, competitive analysis, usage metrics — and builds a PR/FAQ document grounded in that evidence, walking you through Amazon's [Working Backwards](#what-is-working-backwards) process inside the terminal.
+
 **Platforms:** macOS, Linux
 
-Amazon's [Working Backwards](#what-is-working-backwards) PR/FAQ process, grounded in your data — generate, review, stress-test, and iterate on product discovery documents inside the terminal.
+## Quick Start
 
-## What It Does
+1. **Install** the plugin:
 
-A product discovery document without evidence is fiction. `prfaq` starts from your data — customer interviews, survey results, market reports, competitive analysis, usage metrics — and builds a PR/FAQ document grounded in that evidence.
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/27def5c/install.sh | sh
+   ```
 
-**Your research comes first.** Drop files into a `./research/` directory before running `/prfaq`. The plugin reads `.md`, `.txt`, and `.pdf` files and treats them as primary sources. Every claim in the generated document is traced back to these sources or to web research the plugin performs itself. With [punt-quarry](https://github.com/punt-labs/quarry) installed, the plugin can also search across your indexed knowledge base — any of Quarry's 30+ supported formats (PDFs, spreadsheets, presentations, source code, images, HTML, DOCX, and more).
+   <details>
+   <summary>Manual install</summary>
 
-**Three evidence sources, in priority order:**
+   ```bash
+   claude plugin marketplace add punt-labs/claude-plugins
+   claude plugin install prfaq@punt-labs
+   ```
 
-1. **Local research files** — your `./research/` directory (highest priority)
-2. **Indexed documents** — semantic search via [punt-quarry](https://github.com/punt-labs/quarry) if installed
-3. **Web search** — the plugin searches the web to fill gaps and corroborate claims
+   </details>
 
-From that evidence base, `/prfaq` walks you through a structured conversation — who is the customer, what is their problem, what are the risks — and produces a complete PR/FAQ document: a mock press release, detailed FAQs, a four-risks assessment, and a feature appendix, compiled to PDF. Every factual claim includes a citation.
+   <details>
+   <summary>Verify before running</summary>
 
-The output is a decision-making artifact, not a brainstorm. It is designed to be read, debated, and revised before committing to building anything.
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/27def5c/install.sh -o install.sh
+   shasum -a 256 install.sh
+   cat install.sh
+   sh install.sh
+   ```
+
+   </details>
+
+   The installer registers the Punt Labs marketplace, installs the plugin, and checks for pandoc and TeX (see [Setup](#setup) for what each is for). Restart Claude Code after installing. The installer does not grant the plugin any permissions — run `/prfaq:permissions` inside a project to do that (see [Permissions](#permissions)).
+
+2. **Add your research** — drop customer interviews, survey data, market reports, and competitive analysis into a `./research/` directory in your project. The plugin reads `.md`, `.txt`, and `.pdf` files and treats them as primary sources. No research? It still works — it will search the web — but the document is only as good as the evidence behind it.
+
+3. **Run `/prfaq`** in Claude Code.
+
+The plugin reads your research, searches the web for additional evidence, walks you through a structured conversation, and produces a compiled PDF. From there: `/prfaq:review` for peer review, `/prfaq:meeting` to stress-test, `/prfaq:feedback` to iterate, `/prfaq:streamline` to tighten.
+
+## Features
+
+- **Evidence-first generation** — three sources in priority order: local `./research/` files, indexed documents via [punt-quarry](https://github.com/punt-labs/quarry) if installed, then web search to fill gaps
+- **Every factual claim includes a citation** — traced back to a source, not asserted
+- **Stage-aware calibration** — hypothesis, validated, and growth stages set different evidence expectations across every agent
+- **Four Risks assessment** — value, usability, feasibility, viability, each rated with evidence (Cagan's framework)
+- **Cross-referenceable FAQs and feature appendix** — numbered entries (`Q1`, `Q2`, ...) linkable with `\faqref{}` and `\featureref{}`
+- **Automatic version tracking** — `/prfaq:feedback` bumps minor or major versions based on the size of the change
+- **Adversarial review and stress-testing** — a peer reviewer using the Kahneman decision quality framework, plus four agentic personas who debate weak spots in a simulated review meeting
+- **PDF or Word output** — compiles via `pdflatex`, or exports to `.docx` via pandoc with no TeX installation required
 
 Fifteen commands form a complete product-thinking workflow:
 
@@ -44,105 +79,7 @@ Fifteen commands form a complete product-thinking workflow:
 | `/prfaq:feedback-to-us` | Tell us how the plugin is working for you (anonymous 1-5 feedback) |
 | `/prfaq:permissions` | Grant prfaq's permissions in the current project — or check and revoke them |
 
-## Installation
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/27def5c/install.sh | sh
-```
-
-<details>
-<summary>Manual install</summary>
-
-```bash
-claude plugin marketplace add punt-labs/claude-plugins
-claude plugin install prfaq@punt-labs
-```
-
-</details>
-
-<details>
-<summary>Verify before running</summary>
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/27def5c/install.sh -o install.sh
-shasum -a 256 install.sh
-cat install.sh
-sh install.sh
-```
-
-</details>
-
-The installer registers the Punt Labs marketplace and installs the plugin. It checks for pandoc (needed for `.docx` export) and TeX dependencies (needed for PDF output). Restart Claude Code after installing.
-
-The installer does not grant the plugin any permissions. Run `/prfaq:permissions` inside a project to do that — see [Permissions](#permissions) below.
-
-### Output Dependencies
-
-You need **at least one** of TeX or pandoc to produce output. Without either, the plugin generates `.tex` source but cannot render it.
-
-| Dependency | What it's for | Size |
-|-----------|---------------|------|
-| **TeX distribution** | `.pdf` output — the recommended, highest-fidelity output | ~4 GB |
-| **[pandoc](https://pandoc.org/)** | `.docx` export via `/prfaq:export` — lightweight alternative when TeX isn't practical | ~50 MB |
-
-We recommend **TeX** — the PDF is the artifact you circulate and debate. Use pandoc if TeX isn't practical for your setup.
-
-### Other Optional Dependencies
-
-| Dependency | What it's for | Size | Required? |
-|-----------|---------------|------|-----------|
-| **[Agent Teams](https://code.claude.com/docs/en/agent-teams)** | Parallel persona execution for `/prfaq:meeting-hive` — set in your project by `/prfaq:permissions` | None (env var) | Only for autonomous meetings (use `/prfaq:meeting` without it) |
-| **[punt-vox](https://github.com/punt-labs/vox)** | Voiced playback for `/prfaq:meeting-listen` — four personas speak in distinct voices | ~5 MB | No — without it, meeting-listen runs in text-only mode |
-| **[punt-quarry](https://github.com/punt-labs/quarry)** | Semantic search across your indexed documents during research | ~20 MB | No — enhances `/prfaq:research` but not required |
-
-<details>
-<summary>Setting up Quarry for research</summary>
-
-If you have [punt-quarry](https://github.com/punt-labs/quarry) installed, you can give the researcher agent semantic search over your research files. This is more powerful than keyword matching — quarry finds conceptually related evidence even when the exact words differ.
-
-```bash
-# Register your research directory with a project-scoped database
-quarry register ./research/ --db prfaq
-
-# Ingest all registered files
-quarry sync --db prfaq
-
-# (Optional) Ingest a URL or additional directory
-quarry ingest-url https://example.com/market-report --db prfaq
-quarry register ~/Documents/customer-interviews/ --db prfaq
-quarry sync --db prfaq
-```
-
-Once ingested, the `/prfaq:research` agent and Phase 0 research discovery will automatically use quarry's `search_documents` tool to find relevant evidence. Re-run `quarry sync --db prfaq` after adding new files — registered directories sync incrementally.
-
-</details>
-
-### Permissions
-
-prfaq's commands compile documents, edit `.tex` files, and search the web. Left alone, Claude Code asks for approval each time. To stop the prompting, run this inside the project you're writing the PR/FAQ in:
-
-```
-/prfaq:permissions
-```
-
-That writes prfaq's rules into the project's `.claude/settings.json` and nothing else. Two consequences worth knowing:
-
-- **The rules are scoped to that project.** prfaq never writes to your global `~/.claude/settings.json` — rules there would apply in every project you open, including projects that have nothing to do with prfaq. Versions 1.5.0 through 1.6.1 did write global rules; installing 1.7.0 or later removes them and leaves a backup next to the file.
-- **`.claude/settings.json` is normally committed**, so the permissions are shared with everyone working in the repo. To keep them to yourself, move the block into `.claude/settings.local.json`, which is gitignored.
-
-`/prfaq:permissions check` reports what's in place; `/prfaq:permissions remove` takes it back out. The rules cover the plugin's own compile and export scripts, edits to `*prfaq*.tex`, `*prfaq*.bib`, `press-release-*.tex`, `meetings/**`, `research/**`, `README.md`, and `.gitignore`, plus `WebSearch` and `WebFetch` for the researcher agent. `Bash(curl *)` and every `Bash(rm *)` form are deliberately left out — those keep prompting.
-
-Requires `jq`. Without it, the command reads out the rule list so you can paste it in by hand.
-
-## Quick Start
-
-1. **Install** the plugin (see [Installation](#installation) above)
-2. **Add your research** — drop customer interviews, survey data, market reports, and competitive analysis into a `./research/` directory in your project. The plugin reads `.md`, `.txt`, and `.pdf` files and treats them as primary sources. No research? It still works — it will search the web — but the document is only as good as the evidence behind it.
-3. **Run `/prfaq`** in Claude Code
-
-The plugin reads your research, searches the web for additional evidence, walks you through a structured conversation, and produces a compiled PDF. From there: `/prfaq:review` for peer review, `/prfaq:meeting` to stress-test, `/prfaq:feedback` to iterate, `/prfaq:streamline` to tighten.
-
-## Command Reference
+## Commands
 
 ### Generate: `/prfaq`
 
@@ -318,7 +255,90 @@ The vote also checks for prior deliberation — meeting summaries in `./meetings
 /prfaq:permissions [check|remove]
 ```
 
-Grant prfaq's permission rules in the current project, report which are in place, or revoke them. Writes only the project's own `.claude/settings.json` — see [Permissions](#permissions) above for what the rules cover and why they are never global.
+Grant prfaq's permission rules in the current project, report which are in place, or revoke them. Writes only the project's own `.claude/settings.json` — see [Permissions](#permissions) below for what the rules cover and why they are never global.
+
+## Setup
+
+### Output Dependencies
+
+You need **at least one** of TeX or pandoc to produce output. Without either, the plugin generates `.tex` source but cannot render it.
+
+| Dependency | What it's for | Size |
+|-----------|---------------|------|
+| **TeX distribution** | `.pdf` output — the recommended, highest-fidelity output | ~4 GB |
+| **[pandoc](https://pandoc.org/)** | `.docx` export via `/prfaq:export` — lightweight alternative when TeX isn't practical | ~50 MB |
+
+We recommend **TeX** — the PDF is the artifact you circulate and debate. Use pandoc if TeX isn't practical for your setup.
+
+### Other Optional Dependencies
+
+| Dependency | What it's for | Size | Required? |
+|-----------|---------------|------|-----------|
+| **[Agent Teams](https://code.claude.com/docs/en/agent-teams)** | Parallel persona execution for `/prfaq:meeting-hive` — set in your project by `/prfaq:permissions` | None (env var) | Only for autonomous meetings (use `/prfaq:meeting` without it) |
+| **[punt-vox](https://github.com/punt-labs/vox)** | Voiced playback for `/prfaq:meeting-listen` — four personas speak in distinct voices | ~5 MB | No — without it, meeting-listen runs in text-only mode |
+| **[punt-quarry](https://github.com/punt-labs/quarry)** | Semantic search across your indexed documents during research | ~20 MB | No — enhances `/prfaq:research` but not required |
+
+<details>
+<summary>Setting up Quarry for research</summary>
+
+If you have [punt-quarry](https://github.com/punt-labs/quarry) installed, you can give the researcher agent semantic search over your research files. This is more powerful than keyword matching — quarry finds conceptually related evidence even when the exact words differ.
+
+```bash
+# Register your research directory with a project-scoped database
+quarry register ./research/ --db prfaq
+
+# Ingest all registered files
+quarry sync --db prfaq
+
+# (Optional) Ingest a URL or additional directory
+quarry ingest-url https://example.com/market-report --db prfaq
+quarry register ~/Documents/customer-interviews/ --db prfaq
+quarry sync --db prfaq
+```
+
+Once ingested, the `/prfaq:research` agent and Phase 0 research discovery will automatically use quarry's `search_documents` tool to find relevant evidence. Re-run `quarry sync --db prfaq` after adding new files — registered directories sync incrementally.
+
+</details>
+
+### Permissions
+
+prfaq's commands compile documents, edit `.tex` files, and search the web. Left alone, Claude Code asks for approval each time. To stop the prompting, run this inside the project you're writing the PR/FAQ in:
+
+```
+/prfaq:permissions
+```
+
+That writes prfaq's rules into the project's `.claude/settings.json` and nothing else. Two consequences worth knowing:
+
+- **The rules are scoped to that project.** prfaq never writes to your global `~/.claude/settings.json` — rules there would apply in every project you open, including projects that have nothing to do with prfaq. Versions 1.5.0 through 1.6.1 did write global rules; installing 1.7.0 or later removes them and leaves a backup next to the file.
+- **`.claude/settings.json` is normally committed**, so the permissions are shared with everyone working in the repo. To keep them to yourself, move the block into `.claude/settings.local.json`, which is gitignored.
+
+`/prfaq:permissions check` reports what's in place; `/prfaq:permissions remove` takes it back out. The rules cover the plugin's own compile and export scripts, edits to `*prfaq*.tex`, `*prfaq*.bib`, `press-release-*.tex`, `meetings/**`, `research/**`, `README.md`, and `.gitignore`, plus `WebSearch` and `WebFetch` for the researcher agent. `Bash(curl *)` and every `Bash(rm *)` form are deliberately left out — those keep prompting.
+
+Requires `jq`. Without it, the command reads out the rule list so you can paste it in by hand.
+
+<details>
+<summary>Offline install (no marketplace access)</summary>
+
+```bash
+git clone https://github.com/punt-labs/prfaq.git ~/.claude/plugins/local-plugins/plugins/prfaq
+```
+
+Then register the plugin in `~/.claude/plugins/local-plugins/.claude-plugin/marketplace.json` by adding an entry to the `plugins` array:
+
+```json
+{
+  "name": "prfaq",
+  "description": "Amazon Working Backwards PR/FAQ process",
+  "author": { "name": "Your Name", "email": "you@example.com", "organization": "Your Org" },
+  "source": "./plugins/prfaq/plugin",
+  "category": "development"
+}
+```
+
+The `source` points one level below the clone: the plugin surface — manifest, commands, agents, skill, templates, and scripts — lives in the repo's `plugin/` directory, and a plugin root is the directory holding `.claude-plugin/`.
+
+</details>
 
 ## Document Features
 
@@ -431,28 +451,25 @@ The typical workflow is: **generate** (or **import**) → **badge** → **review
 
 Each step produces a compiled PDF. The document improves with each cycle.
 
-## Manual Installation
+## Documentation
+
+[Changelog](CHANGELOG.md) |
+[Design decisions](DESIGN.md)
+
+## Development
+
+Quality gates — both must pass before every commit:
 
 ```bash
-git clone https://github.com/punt-labs/prfaq.git ~/.claude/plugins/local-plugins/plugins/prfaq
+make prfaq                    # Every .tex in TEX_DIRS compiles to a valid PDF
+sh tests/test_permissions.sh  # Permission scripts behave correctly
 ```
 
-Then register the plugin in `~/.claude/plugins/local-plugins/.claude-plugin/marketplace.json` by adding an entry to the `plugins` array:
+Or run both together:
 
-```json
-{
-  "name": "prfaq",
-  "description": "Amazon Working Backwards PR/FAQ process",
-  "version": "1.7.2",
-  "author": { "name": "Your Name", "email": "you@example.com", "organization": "Your Org" },
-  "source": "./plugins/prfaq/plugin",
-  "category": "development"
-}
+```bash
+make check
 ```
-
-The `source` points one level below the clone: the plugin surface — manifest,
-commands, agents, skill, templates, and scripts — lives in the repo's `plugin/`
-directory, and a plugin root is the directory holding `.claude-plugin/`.
 
 ## License
 
