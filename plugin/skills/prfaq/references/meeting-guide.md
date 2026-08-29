@@ -35,7 +35,7 @@ Identify **hot spots** — sections where the document is weakest. These are jud
 Documentation and evidence issues are still valid hot spots, but they are the minority, not the default:
 1. `[CITATION NEEDED]` markers
 2. Claims without `\cite{}` references
-3. Risk ratings rated Low with weak supporting evidence
+3. Risk ratings marked Low with weak supporting evidence
 4. Vague language: "significant", "many", "rapidly growing"
 5. FAQ answers that are thin (1-2 sentences) on questions that deserve depth
 6. The gap between press release confidence and FAQ hedging

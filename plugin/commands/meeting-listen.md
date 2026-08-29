@@ -136,7 +136,7 @@ Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
        - For interactive summaries: mention the severity and the gist of the rationale
        - End with the decision outcome so the listener knows the frame
        - Example: "Hot spot 3 concerns the Getting Started FAQ, which prices the product at \$12 per seat with no volume discount. The team debated whether that alienates 5-person teams who'd pay \$60/month for a tool they use twice a week. They decided to revise."
-     - Keep it to 2-4 sentences — enough to state the actual claim and the tension, not a full recap. Prioritize naming the specific over staying at the low end of the sentence count.
+     - Keep it to 2-4 sentences — enough to state the actual claim and the tension, not a full recap. Prioritize naming the specific over staying at the low end of the sentence count. (This narrator segment is the one exception to the 1-3 sentence dialogue-line guideline above, which applies to the persona lines that follow, not this scene-setter.)
      - Omit `voice` — uses the session default, naturally distinguishing the narrator from persona voices
      - Omit `vibe_tags`
 
