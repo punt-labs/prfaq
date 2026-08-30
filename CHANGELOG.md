@@ -4,6 +4,8 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+## [1.8.0] - 2026-08-29
+
 ### Added
 - **`/prfaq:meeting` and `/prfaq:meeting-hive` open and close with an exec assessment.** A standalone Alex (Skeptical Executive) read frames the stakes before the agenda and delivers a closing verdict — plus a concrete next-step/reconvene proposal — after every hot spot is decided, matching typical review-meeting structure instead of jumping straight into itemized debate and stopping cold after the last item. Both reads are organized around the three questions product development lives or dies on: is this a problem worth solving, do we have a strong and differentiated solution, and should we build this now given competing priorities. Persisted in the summary's new `## Overall Assessment` section. `/prfaq:meeting-listen` voices both, and its closing now recaps concrete follow-up items from the revision queue and any deferred decisions, plus the agreement to reconvene when the closing read names one (grounded in the actual proposal — never a generic "let's touch base").
 
@@ -367,7 +369,9 @@ First tagged release.
 - Plugin cache not clearing on reinstall (stale cache hid new agents)
 - FAQ paragraph indentation inconsistency in `faqpair` environment
 
-[Unreleased]: https://github.com/punt-labs/prfaq/compare/v1.7.2...HEAD
+[Unreleased]: https://github.com/punt-labs/prfaq/compare/v1.8.0...HEAD
+[1.8.0]: https://github.com/punt-labs/prfaq/compare/v1.7.3...v1.8.0
+[1.7.3]: https://github.com/punt-labs/prfaq/compare/v1.7.2...v1.7.3
 [1.7.2]: https://github.com/punt-labs/prfaq/compare/v1.7.1...v1.7.2
 [1.7.1]: https://github.com/punt-labs/prfaq/compare/v1.7.0...v1.7.1
 [1.7.0]: https://github.com/punt-labs/prfaq/compare/v1.6.1...v1.7.0
