@@ -393,7 +393,7 @@ Each agent has a distinct role, loads specific reference guides, and produces st
 | **meeting-builder** (Dana) | Ambition risk, cost of inaction, simplest viable version | `/prfaq:meeting`, `/prfaq:meeting-hive` |
 | **streamliner** | Scalpel editor — removes redundancy, weasel words, inflated phrases | `/prfaq:streamline` |
 
-### Ten Reference Guides
+### Eleven Reference Guides
 
 Domain knowledge is encoded in standalone reference guides that agents load as needed:
 
@@ -409,8 +409,13 @@ Domain knowledge is encoded in standalone reference guides that agents load as n
 | `unit-economics.md` | Viability risk lens: CAC, LTV, payback period, margins |
 | `ux-bar-raiser.md` | Usability risk lens: customer journey, cognitive load, error recovery |
 | `precise-writing.md` | Precise writing rules: redundancy, weasel words, "so what" test |
+| `plain-style.md` | Generative writing rules every agent applies while drafting: no em dash, no negative parallelism, no corporate-register vocabulary, no explaining the document to the reader |
 
 Each guide includes stage calibration — the same guide produces different expectations for a hypothesis-stage document vs. a growth-stage document.
+
+### Prose Quality Enforcement
+
+A deterministic scanner (`plugin/scripts/prose_lint.py`, stdlib Python) runs automatically on every `Write`/`Edit` to a generated PR/FAQ or meeting summary. It blocks the write on a banned pattern: an em dash, a negative-parallelism construction, or a sentence that explains the document's own conventions instead of stating product content. It never touches a file outside that scope. `plugin/banlist.conf` is the single term list the scanner reads. Every writing agent also loads the same rules before drafting, since narrated meeting dialogue never reaches a file for the scanner to check.
 
 ## Output
 
