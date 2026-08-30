@@ -52,9 +52,11 @@ cat > "$WORK/bin/claude" <<'STUB'
 # reading its own remaining script text from. A CLI that reads even one byte
 # of stdin during startup (a first-run prompt, an update check) steals bytes
 # meant for sh's parser and corrupts everything after it. Consuming a chunk
-# here unconditionally makes every test using this stub exercise that
-# property, not just the piped-execution test below.
-dd bs=200 count=1 of=/dev/null 2>/dev/null || true
+# here makes every test using this stub exercise that property, not just
+# the piped-execution test below. Gated on stdin not being a terminal: on
+# an interactive run (stdin is a TTY, nothing is piped in) an unconditional
+# read here would block waiting for keyboard input and hang the suite.
+[ -t 0 ] || dd bs=200 count=1 of=/dev/null 2>/dev/null || true
 [ -n "${CLAUDE_STUB_LOG:-}" ] && echo "$*" >> "$CLAUDE_STUB_LOG"
 case "$*" in
   "plugin marketplace list")
