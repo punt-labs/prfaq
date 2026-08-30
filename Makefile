@@ -42,7 +42,14 @@ prfaq: ## Compile .tex to .pdf and clean artifacts
 	  if [ -f "$$dir/$$base.pdf" ]; then \
 	    echo "  $$dir/$$base.pdf"; \
 	  else \
-	    echo "Error: $$f failed to compile" >&2; exit 1; \
+	    echo "Error: $$f failed to compile" >&2; \
+	    if [ -f "$$dir/$$base.log" ]; then \
+	      echo "--- first errors from $$dir/$$base.log ---" >&2; \
+	      grep -A3 '^!' "$$dir/$$base.log" | head -40 >&2; \
+	      echo "--- tail of $$dir/$$base.log ---" >&2; \
+	      tail -25 "$$dir/$$base.log" >&2; \
+	    fi; \
+	    exit 1; \
 	  fi; \
 	done
 	@rm -f $(LATEX_ARTIFACTS)
