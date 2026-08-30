@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Tests for prose_lint and its PostToolUse hook. Standard library unittest,
+Tests for prose_lint and its PreToolUse hook. Standard library unittest,
 no dependencies.
 
 Run:  python3 tests/test_prose_lint.py
@@ -611,8 +611,10 @@ class TestHookScopeGuard(unittest.TestCase):
 
     def test_tex_with_no_reconstructed_content_out_of_scope(self):
         """resolve_proposed_content() returned None -- an unsupported tool
-        shape or a failed on-disk read. Fails closed, not open, since a
-        marker can't be confirmed either way."""
+        shape or a failed on-disk read. This fails OPEN, not closed: with no
+        text to check for a marker, the file is treated as out of scope and
+        the write passes through unlinted, matching the hook's overall
+        never-block-on-infra-failure policy."""
         self.assertFalse(hook.in_scope(Path("draft.tex"), None))
 
     def test_meeting_summary_md_in_scope_regardless_of_content(self):
