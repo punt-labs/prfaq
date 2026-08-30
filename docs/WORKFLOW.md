@@ -16,9 +16,15 @@ except through a merged PR.** See `prfaq-6wz`.
 
 *What to work on, and in what order.*
 
-1. `bd ready --limit=99` — see everything unblocked.
-2. Pick a bead, or create one (`bd create "<title>" --description "..."`) if
-   the work isn't tracked yet. Skip this only for genuinely trivial,
+1. `bd ready --label-any repo:prfaq` — see everything unblocked. Beads is a
+   single shared central DB across all punt-labs repos; `bd ready` does not
+   auto-scope to this repo in bd 1.0.4 the way `bd list` does (see
+   `.beads/config.yaml` and `.beads/README.md`), so the bare form can surface
+   other repos' work. `bd list` alone is auto-scoped and fine for a quick
+   look; use the `--label-any` form for anything you're about to act on.
+2. Pick a bead, or create one (`bd create "<title>"`, optionally with
+   `--description "..."` for extra context) if the work isn't tracked yet.
+   Skip this only for genuinely trivial,
    single-file, single-session fixes (see Workflow Tiers, T4 below) — even
    those still go through Loop 2.
 3. `bd update <id> --status=in_progress` to claim it.
@@ -88,6 +94,15 @@ seconds. Pick agents by what changed:
 | Skill prompts, agent personas, reference guides | `prfaq:peer-reviewer` (content/methodology review, not code review) |
 | LaTeX templates or the dogfood document's structure | `prfaq:peer-reviewer`, then confirm `make check` still compiles cleanly |
 | Meeting summaries, or any prose subject to the banlist | the prose-lint hook already gates this live; additionally re-run `python3 plugin/scripts/prose_lint.py --config plugin/banlist.conf --profile business <file>` by hand for anything edited outside the `Write`/`Edit` tools (a direct Bash file write bypasses the hook — see `plugin/hooks/prose_lint_hook.py` for why bulk cleanups sometimes need this path) |
+
+The `feature-dev:*` and `pr-review-toolkit:*` names are Claude Code
+sub-agents shipped by the `feature-dev` and `pr-review-toolkit` plugins —
+not something defined inside this repo, so they're only invokable in a
+session where those plugins are installed. `prfaq:peer-reviewer` ships with
+*this* repo's own plugin and is always available. If the `feature-dev`/
+`pr-review-toolkit` plugins aren't installed in your session, substitute a
+manual read-through of the diff against `CLAUDE.md`'s Standards and this
+doc's Loop 2, rather than skipping the step.
 
 Fix every finding or document why it doesn't apply (no "pre-existing," no
 "outside scope" — see `CLAUDE.md` § No "Pre-existing" Excuse). Re-run until
