@@ -289,9 +289,11 @@ Before every commit:
 ```bash
 make prfaq                    # Every .tex in TEX_DIRS compiles
 sh tests/test_permissions.sh  # Permission scripts behave
+python3 tests/test_prose_lint.py  # prose_lint.py and its PreToolUse hook
 ```
 
-Both must succeed, or `make check`, which runs them together. `TEX_FILES` is a
+All three must succeed, or `make check`, which runs them together (`test`,
+`test-perms`, `test-prose`). `TEX_FILES` is a
 wildcard over `TEX_DIRS` (`.`, `plugin/assets`, `docs`), so a new document in one
 of those directories is gated the moment it exists — today that is the dogfood
 document, the v1.0.0 press release, both shipped templates, and
@@ -312,7 +314,7 @@ Git operations (commit, push, branch, checkout, tag) remain via the Bash tool.
 
 Before creating a PR, verify:
 
-- [ ] **Quality gates pass** — both `.tex` files compile to valid PDFs
+- [ ] **Quality gates pass** — both `.tex` files compile to valid PDFs, permission scripts behave, and `python3 tests/test_prose_lint.py` passes
 - [ ] **Template and dogfood in sync** — environment definitions, packages, and `\newpage` structure match
 - [ ] **Version numbers synchronized** — `plugin.json`, `README.md`, and `CHANGELOG.md` agree
 - [ ] **README updated** if user-facing behavior changed (new commands, new install steps, new dependencies)

@@ -43,6 +43,7 @@ Load the evaluation frameworks. Read these reference guides:
 6. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/unit-economics.md` — Unit economics evaluation for viability risk: CAC, LTV, payback period, margin analysis.
 7. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/principal-engineer.md` — Principal engineer lens for feasibility risk: architecture trade-offs, irreversible decisions, operational complexity.
 8. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/ux-bar-raiser.md` — UX bar raiser lens for usability risk: customer journey, cognitive load, mental model alignment, error recovery.
+9. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/plain-style.md` — Generative prose rules: no em dash, no negative parallelism, no corporate-register vocabulary, no value-claim filler, no explaining the document to the reader. Your own findings and recommendations are held to this guide too, not just the document under review.
 
 Then read the .tex file to review. If no specific file is provided, search for `prfaq.tex` in the project root using Glob.
 
@@ -126,6 +127,9 @@ Check against common-mistakes.md:
 - Vague customer definition ("developers" instead of "senior backend engineers at Series B startups")
 - Great product, wrong problem (elegant solution to a problem nobody has)
 - False precision in timeline estimates (per-phase hours, calendar targets at hypothesis stage)
+- Explaining the document to the reader (a sentence explaining a PR/FAQ convention, or narrating the document's own drafting/review history, instead of stating product content)
+
+This last one applies to your own findings, not just the document: never recommend a fix that adds a sentence explaining the document's own conventions or process to the reader. If a section reads confusingly because of a convention (e.g., a future dateline), the fix is to trust the genre, not to add an explanatory aside.
 
 ## Output Format
 

@@ -143,6 +143,8 @@ After writing, share each section with the user for review. Ask for corrections 
 
 Read `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/common-mistakes.md` and check the draft against known anti-patterns. Flag any issues.
 
+Read `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/plain-style.md` before drafting any prose in this phase and every phase after it — generative rules for no em dash, no negative parallelism, no corporate-register vocabulary, no value-claim filler, no explaining the document to the reader. This applies to every section you write, not only the press release drafted in this phase.
+
 ### Phase 3: Draft the FAQ
 
 Read the FAQ section guide from `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/faq-structure.md`. Read the four risks framework from `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/four-risks.md`.

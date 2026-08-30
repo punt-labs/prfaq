@@ -12,7 +12,7 @@ Run an interactive review meeting where four personas — a principal engineer, 
 
 1. **Find the document.** If `$ARGUMENTS` specifies a path, use it. Otherwise, search for `prfaq.tex` in the project root using Glob. If no document exists, tell the user to run `/prfaq` first — the meeting validates an existing document, it doesn't generate one.
 
-2. **Read the meeting guide.** Load `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/meeting-guide.md` for the full meeting flow, synthesis guidelines, and persona details.
+2. **Read the meeting guide.** Load `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/meeting-guide.md` for the full meeting flow, synthesis guidelines, and persona details. Also load `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/plain-style.md` — generative prose rules (no em dash, no negative parallelism, no corporate-register vocabulary, no value-claim filler, no explaining the document to the reader). The four persona agents load this guide themselves for their own structured responses, but the debate narrative you synthesize in step 6c is authored directly by you, never written to a file before the user sees it, and never reaches `prose_lint.py`'s hook — this guide is the only check on it.
 
 3. **Run the pre-meeting scan.** Read the full `.tex` document. Extract `\prfaqstage{value}` to calibrate expectations (see Stage Calibration in the meeting guide). Identify 5-8 hot spots using the four risk-lens questions first (feasibility, value/customer reality, strategic fit/viability, ambition — see Phase 0 in the meeting guide) — documentation issues (unsupported claims, vague language, thin evidence, hedging gaps) are valid but must be at most half the agenda. Rank each as Critical, Warning, or Suggestion — calibrated to the document's stage.
 
@@ -31,7 +31,7 @@ Run an interactive review meeting where four personas — a principal engineer, 
       - `subagent_type: "prfaq:meeting-customer"` (Priya)
       - `subagent_type: "prfaq:meeting-executive"` (Alex)
       - `subagent_type: "prfaq:meeting-builder"` (Dana)
-   c. Synthesize their responses into a dramatic debate narrative (not concatenation). Ground every sentence in a specific from the document — a quoted phrase, a real number, a named competitor or customer segment — never an abstract metaphor, and never a reference to another hot spot's position in this meeting. See "Ground Every Line in Specifics" and "Never Reference the Meeting's Own Structure" in the meeting guide.
+   c. Synthesize their responses into a dramatic debate narrative (not concatenation). Ground every sentence in a specific from the document — a quoted phrase, a real number, a named competitor or customer segment — never an abstract metaphor, and never a reference to another hot spot's position in this meeting. See "Ground Every Line in Specifics" and "Never Reference the Meeting's Own Structure" in the meeting guide. Apply every rule in `plain-style.md` to this narrative before presenting it — no em dash, no negative parallelism, no corporate-register vocabulary, no value-claim filler, no explaining the meeting's own format to the user. This text is spoken and read live; there is no linter downstream to catch a slip.
    d. Present the decision via AskUserQuestion: Revise / Keep as-is / Research / Defer
    e. Show cascade consequences (which other sections are affected)
 

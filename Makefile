@@ -1,4 +1,4 @@
-.PHONY: help prfaq test test-perms check clean-tex
+.PHONY: help prfaq test test-perms test-prose lint-prose check clean-tex
 
 # Directories holding a compiled .tex. Both TEX_FILES and the artifact globs
 # derive from this list, so a new document in one of these directories is
@@ -51,7 +51,20 @@ test: prfaq ## Verify all documents compile
 test-perms: ## Verify the permission scripts (needs jq)
 	@sh tests/test_permissions.sh
 
-check: test test-perms ## Run all quality gates
+test-prose: ## Run the prose_lint unit and hook-scope tests
+	@python3 tests/test_prose_lint.py
+
+check: test test-perms test-prose ## Run all quality gates
+
+# Informational only, deliberately not a `check` prerequisite: the shipped
+# hook only ever sees .tex files carrying \prfaqversion/\prfaqstage and
+# meetings/meeting-*summary-*.md (see plugin/hooks/prose_lint_hook.py). This
+# target dogfoods prose_lint.py against the dogfood doc and reference guides
+# too, on the same terms an author would want, without making an existing
+# prose finding a build break.
+lint-prose: ## Dogfood prose_lint.py against prfaq.tex and the reference guides (non-blocking)
+	@python3 plugin/scripts/prose_lint.py --config plugin/banlist.conf \
+	  prfaq.tex plugin/skills/prfaq/references/*.md || true
 
 clean-tex: ## Remove LaTeX intermediate files
 	@rm -f $(LATEX_ARTIFACTS)

@@ -160,7 +160,7 @@ After all agenda items are resolved (or the user exits early), present the summa
 MEETING SUMMARY
 
 Decisions made: N
-  1. [Hot spot] — [REVISE/KEEP/RESEARCH/DEFER] (rationale)
+  1. [Hot spot]: [REVISE/KEEP/RESEARCH/DEFER] (rationale)
   2. ...
 
 Revision queue (for /prfaq:feedback):
@@ -169,10 +169,10 @@ Revision queue (for /prfaq:feedback):
   ...
 
 Deferred items:
-  - [Item] — [both sides' strongest argument, if this was an escalated hive decision] — [what needs to happen before deciding]
+  - [Item]: [both sides' strongest argument, if this was an escalated hive decision]. [What needs to happen before deciding]
 
 Not discussed (early exit only):
-  - [Item] — identified as a hot spot, never reached before the meeting ended
+  - [Item]: identified as a hot spot, never reached before the meeting ended
 
 To apply all revisions automatically, run: /prfaq:feedback
 ```
@@ -215,11 +215,11 @@ After presenting the summary to the user, write it to a markdown file in the `./
 [Full feedback directive text]
 
 ## Deferred Items
-- [Item] — [both sides' strongest argument, if this was an escalated hive decision] — [what needs to happen before deciding]
+- [Item]: [both sides' strongest argument, if this was an escalated hive decision]. [What needs to happen before deciding]
 
 ## Not Discussed
-[Only present on early exit — see Early Exit below]
-- [Item] — identified as a hot spot, never reached before the meeting ended
+[Only present on early exit; see Early Exit below]
+- [Item]: identified as a hot spot, never reached before the meeting ended
 
 ## Research Completed
 [If any researcher agents were invoked during the meeting, summarize findings here]
@@ -374,13 +374,13 @@ Same structure as the regular meeting summary (Phase 3b) — including the `## O
 - **Door**: `one-way` or `two-way`
 - **Decision**: `REVISE`, `KEEP`, or `DEFER` — a `DEFER` row was never given to the closing assessment (see the ordering rule in Hive Mode above)
 - **Resolution**: `CONSENSUS`, `BIAS-FOR-ACTION`, or `ESCALATED` (an escalated row resolved REVISE or KEEP is recorded in `Escalated Decisions (Resolved)`; an escalated row resolved DEFER is recorded in `## Deferred Items` instead — see Phase 3b)
-- An `ESCALATED` row resolved **REVISE or KEEP**: **Winning Argument** is `User decision (escalated) — see Escalated Decisions (Resolved)`, **Dissent** is `—`. This is the user's tie-break, not a hive consensus — never reuse the DEFER row's placeholder here, since this row *is* decided and `/prfaq:meeting-listen` reads the Winning Argument text to tell the two cases apart.
-- An `ESCALATED` row resolved **DEFER**: **Winning Argument** and **Dissent** are both `— (escalated, no winner)` — this hot spot produced no winner and remains unresolved (see Synthesis in Hive Mode above), so neither column has anything to name
+- An `ESCALATED` row resolved **REVISE or KEEP**: **Winning Argument** is `User decision (escalated); see Escalated Decisions (Resolved)`, **Dissent** is `None`. This is the user's tie-break, not a hive consensus — never reuse the DEFER row's placeholder here, since this row *is* decided and `/prfaq:meeting-listen` reads the Winning Argument text to tell the two cases apart.
+- An `ESCALATED` row resolved **DEFER**: **Winning Argument** and **Dissent** are both `(escalated, no winner)` — this hot spot produced no winner and remains unresolved (see Synthesis in Hive Mode above), so neither column has anything to name
 - Items that were escalated and resolved REVISE/KEEP get an entry in a `## Escalated Decisions (Resolved)` section near the top of the summary — a historical record, not a live prompt, since the resolution already happened before the closing assessment ran. Field format, one bullet per item:
 
   ```markdown
   ## Escalated Decisions (Resolved)
-  - **[Hot Spot title]** — [Persona A]: [their strongest argument]. [Persona B]: [their strongest argument]. **Resolved:** [REVISE/KEEP] — [one-line rationale for the user's call, if given]
+  - **[Hot Spot title]:** [Persona A]: [their strongest argument]. [Persona B]: [their strongest argument]. **Resolved:** [REVISE/KEEP]. [One-line rationale for the user's call, if given]
   ```
 
   `/prfaq:meeting-listen` reads this section by hot spot title to voice both sides for a user-resolved escalation (see its DEFERRED/user-resolved carve-outs) — if an item's `Winning Argument` cell says `User decision (escalated)` but this section has no matching entry, `meeting-listen` skips the dramatization rather than inventing one (see its own guard).

@@ -5,7 +5,8 @@ description: >
   and strategic fit through devil's advocate lens. Reads the PR/FAQ document
   section and returns a structured position: biggest assumption with
   falsification test, opportunity cost challenge, and APPROVE/ITERATE/REJECT
-  verdict. Loads decision-quality.md and common-mistakes.md reference guides.
+  verdict. Loads decision-quality.md, common-mistakes.md, and plain-style.md
+  reference guides.
 
   Examples:
 
@@ -60,6 +61,7 @@ Load these reference guides to inform your analysis:
 
 1. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/decision-quality.md` — Kahneman decision quality checklist, cognitive biases in PR/FAQs
 2. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/common-mistakes.md` — Anti-patterns: selling vs truth-seeking, discounting competition, affect heuristic
+3. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/plain-style.md` — Generative prose rules: no em dash, no negative parallelism, no corporate-register vocabulary, no value-claim filler, no explaining the document to the reader. Applies to this structured response, and to the opening/closing prose read below, spoken word for word in a meeting.
 
 Then read the document section provided in the prompt.
 
