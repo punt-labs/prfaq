@@ -155,6 +155,20 @@ class TestPatterns(unittest.TestCase):
         r = lint_text("It's not a tool, it's a platform.")
         self.assertIn("not-x-but-y", terms(r.banned))
 
+    def test_negative_parallelism_with_full_subject_clause(self):
+        """
+        A real agent under real cognitive load produced this exact shape
+        during verification: the pronoun-led pattern above only matches
+        "it's/this/that is not X, it's Y" and missed the semantically
+        identical pivot with a full noun-phrase subject standing in for
+        the pronoun.
+        """
+        r = lint_text(
+            "Six months post-launch with zero structured trials is not "
+            '"medium risk," it\'s six months of runway spent on a bet '
+            "nobody stress-tested.")
+        self.assertIn("not-x-but-y-subject", terms(r.banned))
+
     def test_not_only_but_also_is_not_a_hard_ban(self):
         """
         Demoted from tier 1 by the calibration run. The baseline paper uses
