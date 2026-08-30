@@ -15,7 +15,7 @@ A product discovery document without evidence is fiction. `prfaq` starts from yo
 1. **Install** the plugin:
 
    ```bash
-   curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/27def5c/install.sh | sh
+   curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/ba3a949/install.sh | sh
    ```
 
    <details>
@@ -32,7 +32,7 @@ A product discovery document without evidence is fiction. `prfaq` starts from yo
    <summary>Verify before running</summary>
 
    ```bash
-   curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/27def5c/install.sh -o install.sh
+   curl -fsSL https://raw.githubusercontent.com/punt-labs/prfaq/ba3a949/install.sh -o install.sh
    shasum -a 256 install.sh
    cat install.sh
    sh install.sh
