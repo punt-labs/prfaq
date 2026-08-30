@@ -801,6 +801,30 @@ class TestHookEndToEnd(unittest.TestCase):
         self.assertEqual(output["permissionDecision"], "deny")
         self.assertIn("load-bearing", output["permissionDecisionReason"])
 
+    def test_meeting_summary_with_unreconstructable_edit_does_not_crash(self):
+        """
+        Regression: in_scope()'s meetings/ branch matches on path alone,
+        with no content check -- so a meeting-summary path whose Edit
+        can't be reconstructed (old_string/new_string missing or not
+        strings) used to reach lint_proposed_text() with proposed=None,
+        which crashed on fh.write(None) instead of failing open. main()
+        now checks for None before in_scope() ever runs, for both file
+        classes uniformly.
+        """
+        with tempfile.TemporaryDirectory() as d:
+            meetings_dir = Path(d) / "meetings"
+            meetings_dir.mkdir()
+            f = meetings_dir / "meeting-summary-2026-01-01.md"
+            f.write_text("Existing summary.\n", encoding="utf-8")
+            result, stderr = self.run_hook("Edit", {
+                "file_path": str(f),
+                # old_string missing entirely -- resolve_proposed_content()
+                # returns None for this shape.
+                "new_string": "New text.",
+            })
+        self.assertEqual(result, {})
+        self.assertNotIn("Traceback", stderr)
+
     def test_unrelated_md_with_no_prfaq_markers_is_untouched(self):
         with tempfile.TemporaryDirectory() as d:
             f = Path(d) / "notes.md"

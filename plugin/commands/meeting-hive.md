@@ -107,8 +107,8 @@ Then restart Claude Code. Do not proceed without it — use `/prfaq:meeting` for
 
 11. **Resolve any escalated decisions.** If any hot spot's resolution is `ESCALATED` (a persistent one-way-door split after Round 2), present both sides' strongest argument to the user now, one at a time or batched, via AskUserQuestion: REVISE / KEEP / DEFER.
 
-    - **REVISE or KEEP:** record it as that hot spot's final decision. This was the user's tie-break, not a hive consensus — no persona "won." In the persisted Decisions table (step 14), set **Winning Argument** to `User decision (escalated) — see Escalated Decisions (Resolved)` and **Dissent** to `—`. Do not reuse the `— (escalated, no winner)` placeholder here — that's reserved for rows that are still unresolved (`DEFER`), and reusing it on a resolved row would make `/prfaq:meeting-listen` treat a decided hot spot as still open.
-    - **DEFER:** this hot spot stays unresolved — it is *not* a final decision. Track it separately as a deferred item; do not pass it to step 12 as if decided. In the persisted Decisions table, both **Winning Argument** and **Dissent** are `— (escalated, no winner)`.
+    - **REVISE or KEEP:** record it as that hot spot's final decision. This was the user's tie-break, not a hive consensus — no persona "won." In the persisted Decisions table (step 14), set **Winning Argument** to `User decision (escalated); see Escalated Decisions (Resolved)` and **Dissent** to `None`. Do not reuse the `(escalated, no winner)` placeholder here — that's reserved for rows that are still unresolved (`DEFER`), and reusing it on a resolved row would make `/prfaq:meeting-listen` treat a decided hot spot as still open.
+    - **DEFER:** this hot spot stays unresolved — it is *not* a final decision. Track it separately as a deferred item; do not pass it to step 12 as if decided. In the persisted Decisions table, both **Winning Argument** and **Dissent** are `(escalated, no winner)`.
 
     **This must happen before step 12** — the closing assessment needs the complete, final set of REVISE/KEEP decisions (deferred items are handled separately, not folded into that set). If nothing escalated, skip this step.
 
@@ -128,14 +128,14 @@ Then restart Claude Code. Do not proceed without it — use `/prfaq:meeting` for
     | # | Hot Spot | Door | Decision | Resolution | Winning Argument | Dissent |
     |---|----------|------|----------|------------|------------------|---------|
     | 1 | Example  | Two-way | REVISE | CONSENSUS | Wei: scalability concern | Dana: disagreed, committed |
-    | 2 | Example  | One-way | REVISE | ESCALATED | User decision (escalated) — see Escalated Decisions (Resolved) | — |
-    | 3 | Example  | One-way | DEFER | ESCALATED | — (escalated, no winner) | — (escalated, no winner) |
+    | 2 | Example  | One-way | REVISE | ESCALATED | User decision (escalated); see Escalated Decisions (Resolved) | None |
+    | 3 | Example  | One-way | DEFER | ESCALATED | (escalated, no winner) | (escalated, no winner) |
 
     - **Door**: `one-way` or `two-way`
     - **Decision**: `REVISE`, `KEEP`, or `DEFER` (a deferred row has no closing-assessment input — see step 12)
     - **Resolution**: `CONSENSUS`, `BIAS-FOR-ACTION`, or `ESCALATED` (escalated rows resolved REVISE or KEEP in step 11, before this file was written; an escalated row resolved DEFER instead is still `ESCALATED` here, but lists in `## Deferred Items` below too, not just this table)
-    - An `ESCALATED` row resolved **REVISE or KEEP**: **Winning Argument** is `User decision (escalated) — see Escalated Decisions (Resolved)`, **Dissent** is `—`. Never reuse the DEFER row's placeholder here — this row *is* decided, and `/prfaq:meeting-listen` uses the Winning Argument text to tell the two cases apart.
-    - An `ESCALATED` row resolved **DEFER**: **Winning Argument** and **Dissent** are both `— (escalated, no winner)` — this row is still unresolved (see step 9), so there is nothing to name in either column
+    - An `ESCALATED` row resolved **REVISE or KEEP**: **Winning Argument** is `User decision (escalated); see Escalated Decisions (Resolved)`, **Dissent** is `None`. Never reuse the DEFER row's placeholder here — this row *is* decided, and `/prfaq:meeting-listen` uses the Winning Argument text to tell the two cases apart.
+    - An `ESCALATED` row resolved **DEFER**: **Winning Argument** and **Dissent** are both `(escalated, no winner)` — this row is still unresolved (see step 9), so there is nothing to name in either column
     - Items that were escalated and resolved REVISE/KEEP get an entry in a `## Escalated Decisions (Resolved)` section near the top of the summary, recording each item's competing arguments and the user's resolution from step 11 — see the field format in the meeting guide's Hive Summary Format section; do not invent your own format here
     - Items that were escalated and deferred get a `## Deferred Items` entry, in the same format as the meeting guide's Phase 3b template (see Phase 3b) — do not re-derive the field list here
 

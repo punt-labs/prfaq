@@ -287,6 +287,16 @@ def main() -> None:
 
     ti = payload.get("tool_input") or payload.get("toolInput") or {}
     proposed = resolve_proposed_content(tool_name, ti, path)
+    if proposed is None:
+        # Nothing to lint regardless of file class: an unsupported tool
+        # shape, a malformed tool_input, or a failed on-disk read for an
+        # Edit's starting point. resolve_proposed_content() already logged
+        # the specific reason for an Edit read failure; this covers every
+        # other None case uniformly, before in_scope() ever runs -- its
+        # meetings/ branch is path-only and would otherwise wave a None
+        # straight into lint_proposed_text()'s file write.
+        respond(hook_event)
+        return
     if not in_scope(path, proposed):
         respond(hook_event)
         return
