@@ -100,8 +100,8 @@ Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
 
    **DEFERRED-tone carve-out:** a `DEFER` row has no winner and no consensus — the hive escalated it and the user declined to resolve it, or (interactive) the user asked for more time. Do not invent a winning persona or a decisive line for it. Skip straight to a one-line note after the header and move to the next hot spot:
 
-   - **In voiced mode:** one `unmute` segment (no narrator, one persona voice — Alex, since Alex owns the closing read that will cover this properly) saying something like "This one's still open — see the closing recap." Do not attempt full dialogue.
-   - **In text-only mode:** print `**Alex:** Still open — deferred, see the closing recap.`
+   - **In both modes:** always print the transcript line first, same as step 6c's dialogue lines: `**Alex:** Still open — deferred, see the closing recap.`
+   - **In voiced mode, additionally:** make one `unmute` segment (no narrator, one persona voice — Alex, since Alex owns the closing read that will cover this properly) with that same line. Do not attempt full dialogue.
 
    The full "both sides' strongest argument" content for a deferred item belongs in the closing recap (step 7b), pulled from `## Deferred Items`, not dramatized here.
 
