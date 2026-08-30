@@ -160,7 +160,7 @@ After all agenda items are resolved (or the user exits early), present the summa
 MEETING SUMMARY
 
 Decisions made: N
-  1. [Hot spot] — [REVISE/KEEP/DEFER] (rationale)
+  1. [Hot spot] — [REVISE/KEEP/RESEARCH/DEFER] (rationale)
   2. ...
 
 Revision queue (for /prfaq:feedback):
@@ -374,6 +374,7 @@ Same structure as the regular meeting summary (Phase 3b) — including the `## O
 - **Door**: `one-way` or `two-way`
 - **Decision**: `REVISE`, `KEEP`, or `DEFER` — a `DEFER` row was never given to the closing assessment (see the ordering rule in Hive Mode above)
 - **Resolution**: `CONSENSUS`, `BIAS-FOR-ACTION`, or `ESCALATED` (an escalated row resolved REVISE or KEEP is recorded in `Escalated Decisions (Resolved)`; an escalated row resolved DEFER is recorded in `## Deferred Items` instead — see Phase 3b)
-- A `DEFER` row's **Winning Argument** and **Dissent** cells are always `— (escalated, no winner)` — an escalated hot spot produced no winner (see Synthesis in Hive Mode above), so neither column has anything to name
+- An `ESCALATED` row resolved **REVISE or KEEP**: **Winning Argument** is `User decision (escalated) — see Escalated Decisions (Resolved)`, **Dissent** is `—`. This is the user's tie-break, not a hive consensus — never reuse the DEFER row's placeholder here, since this row *is* decided and `/prfaq:meeting-listen` reads the Winning Argument text to tell the two cases apart.
+- An `ESCALATED` row resolved **DEFER**: **Winning Argument** and **Dissent** are both `— (escalated, no winner)` — this hot spot produced no winner and remains unresolved (see Synthesis in Hive Mode above), so neither column has anything to name
 - Items that were escalated and resolved REVISE/KEEP get an `Escalated Decisions (Resolved)` section near the top of the summary, recording each item's competing arguments and the user's resolution — a historical record, not a live prompt, since the resolution already happened before the closing assessment ran
 - Items that were escalated and resolved DEFER go in `## Deferred Items` (same field format as the Phase 3b template), not in `Escalated Decisions (Resolved)`

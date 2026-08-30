@@ -78,7 +78,7 @@ Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
 5. **Voice the opening assessment, if present.** Check the summary for an `## Overall Assessment` section with a `**Opening (Alex):**` line (summaries written before this section existed won't have one — skip this step entirely if so, don't fabricate one).
 
    If present:
-   - **In voiced mode:** make an `mcp__plugin_vox_mic__unmute` call before the first hot spot with `ephemeral: true` and two segments: a narrator line ("Before the agenda, Alex opens the meeting."), then Alex's opening assessment text as a dialogue segment (voice: Alex's resolved voice from step 3/4, `vibe_tags`: Alex's default `voice_vibe`).
+   - **In voiced mode:** make an `mcp__plugin_vox_mic__unmute` call before the first hot spot with `ephemeral: true` and two segments: a narrator line ("Before the agenda, Alex opens the meeting."), then Alex's opening assessment text as a dialogue segment (voice: Alex's resolved voice from step 3/4; `vibe_tags`: Alex's `voice_vibe` **on ElevenLabs only** — per step 3's provider table, omit `vibe_tags` entirely on OpenAI and fallback providers, where tags would otherwise be spoken literally).
    - **In text-only mode:** print `--- Opening Assessment ---` then `**Alex:** [opening assessment text]`.
 
 6. **Transform and voice each hot spot.** Process the decisions table row by row. For each hot spot:
@@ -108,7 +108,8 @@ Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
    **b. Write the dialogue** (KEEP/REVISE tone only — a DEFERRED-tone row skips this entirely, per the carve-out above). Transform the structured summary into 4-6 lines of natural conversation between personas. The personas speak to each other — no narrator, no stage directions.
 
    **For hive summaries** (persona-attributed):
-   - **Guard:** if the `Winning Argument` cell is `—` or `— (escalated, no winner)`, treat this row as DEFERRED tone regardless of what 6a derived from the `Decision` cell, and go back to the carve-out above — there is no winner to open with.
+   - **Guard — still-unresolved row:** if the `Winning Argument` cell is exactly `— (escalated, no winner)`, treat this row as DEFERRED tone regardless of what 6a derived from the `Decision` cell, and go back to the carve-out above — there is no winner to open with. Do not match this against any other `—`-prefixed cell; only this exact placeholder means unresolved.
+   - **Guard — user-resolved escalation:** if the `Winning Argument` cell starts with `User decision (escalated)`, this row *is* decided (REVISE or KEEP), but no persona won — the user broke a hive tie. Skip the persona-attributed flow below. Instead: look up this hot spot in the summary's `## Escalated Decisions (Resolved)` section, build 2-3 lines voicing both sides' original strongest argument (spoken by the two personas who held them), then close with one line stating the user's decision — spoken by Alex, since Alex owns meeting framing. This is shorter than a full consensus dramatization; there's no "winning" dialogue to build because a human made the call, not the hive.
    - The persona named in "Winning Argument" opens with their core point, expanded into natural speech using that persona's verbal style from their agent file
    - One or two other personas react — agree, push back, or build on the point
    - If there is dissent, the dissenting persona speaks their counterargument
@@ -190,7 +191,7 @@ Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
    - `## Deferred Items` has entries but the meeting wasn't cut short → "With most hot spots settled and N left open, Alex closes the meeting." (N = number of deferred items)
    - Neither — every hot spot reached a real decision → "With every hot spot resolved, Alex closes the meeting."
 
-   Then build Alex's closing assessment text as a dialogue segment (voice: Alex's resolved voice from step 3/4, `vibe_tags`: Alex's default `voice_vibe`).
+   Then build Alex's closing assessment text as a dialogue segment (voice: Alex's resolved voice from step 3/4; `vibe_tags`: Alex's `voice_vibe` **on ElevenLabs only**, same provider carve-out as 5).
 
    **b. Follow-up recap segment(s).** Two things to recap here, if present:
 
