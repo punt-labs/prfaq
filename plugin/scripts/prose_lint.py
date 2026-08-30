@@ -16,8 +16,9 @@ Usage:
     prose_lint.py --baseline FILE ...      # densities only, always exits 0
     prose_lint.py --config path/to/banlist.conf FILE
 
-Python 3.8+. Standard library only. No third-party imports, deliberately,
-so this runs in a hook on any machine without a virtualenv.
+Python 3.9+ (the --json path merges dicts with `|`, PEP 584). Standard
+library only. No third-party imports, deliberately, so this runs in a hook
+on any machine without a virtualenv.
 """
 
 from __future__ import annotations
@@ -29,9 +30,25 @@ import re
 import sys
 from dataclasses import dataclass, field, asdict
 from pathlib import Path
+from typing import NoReturn
 
 BANNED, RATIONED, REVIEW = "banned", "rationed", "review"
 EXIT_CLEAN, EXIT_RATIONED, EXIT_BANNED, EXIT_ERROR = 0, 1, 2, 3
+
+
+def fatal(message: str) -> NoReturn:
+    """
+    Abort on a config or usage error, exiting EXIT_ERROR.
+
+    `sys.exit(str)` prints the string and exits 1 -- which collides with
+    EXIT_RATIONED, so a caller reading only the exit code cannot tell a
+    malformed banlist.conf from a document that is merely over its density
+    rations. Every config/usage abort in this module goes through here
+    instead, so EXIT_ERROR (3) is the only exit code a config error can ever
+    produce.
+    """
+    print(message, file=sys.stderr)
+    raise SystemExit(EXIT_ERROR)
 
 # Emoji and pictographs. Deliberately excludes ordinary punctuation and
 # does not treat variation selectors alone as emoji.
@@ -124,6 +141,18 @@ LATEX_TEXT_WRAP_RE = re.compile(
 # bullets.
 LATEX_ITEM_RE = re.compile(r"\\item(?:\[[^\]\n]*\])?")
 
+# LaTeX's code-block equivalents. verbatim/lstlisting/minted content is source
+# text, not prose -- the same reason a markdown ``` fence is masked. minted
+# takes a language argument (\begin{minted}{python}); the rest take none.
+LATEX_VERBATIM_ENVIRONMENTS = ("verbatim\\*?", "lstlisting", "minted")
+LATEX_VERBATIM_RE = re.compile(
+    r"\\begin\{(" + "|".join(LATEX_VERBATIM_ENVIRONMENTS) + r")\}"
+    r"(?:\[[^\]\n]*\])?(?:\{[^{}]*\})?"
+    r".*?"
+    r"\\end\{\1\}",
+    re.DOTALL,
+)
+
 
 def mask_latex(text: str) -> str:
     """Blank LaTeX source syntax so only prose reaches the term/structure checks."""
@@ -140,6 +169,10 @@ def mask_latex(text: str) -> str:
         suffix_len = m.end(0) - m.end(1)
         return (" " * prefix_len) + inner + (" " * suffix_len)
 
+    # Verbatim-like environments first: their content is not prose and must
+    # not be re-interpreted by the comment/math/command passes that follow --
+    # a code sample containing a literal % or $ is not a LaTeX comment or math.
+    text = LATEX_VERBATIM_RE.sub(blank, text)
     text = LATEX_COMMENT_RE.sub(blank, text)
     text = LATEX_INLINE_MATH_RE.sub(blank, text)
     text = LATEX_DISPLAY_MATH_RE.sub(blank, text)
@@ -182,13 +215,27 @@ class Report:
     suppressed: int = 0
     skipped: bool = False
 
+    def hard_findings(self) -> list[Finding]:
+        """All BANNED-tier findings, flat and structural alike.
+
+        `structure` mixes tiers -- a structural check like `emoji = banned`
+        can produce a BANNED finding there, not just in `banned`. Both
+        `exit_code` and `render()` read this method so a finding can never
+        again be visible in the text report but invisible to the exit code.
+        """
+        return self.banned + [f for f in self.structure if f.tier == BANNED]
+
+    def soft_findings(self) -> list[Finding]:
+        """All RATIONED-tier findings, flat and structural alike."""
+        return self.rationed + [f for f in self.structure if f.tier == RATIONED]
+
     @property
     def exit_code(self) -> int:
         if self.skipped:
             return EXIT_CLEAN
-        if self.banned:
+        if self.hard_findings():
             return EXIT_BANNED
-        if self.rationed or any(f.tier == RATIONED for f in self.structure):
+        if self.soft_findings():
             return EXIT_RATIONED
         return EXIT_CLEAN
 
@@ -258,7 +305,7 @@ def load_config(path: Path) -> dict:
     try:
         lines = path.read_text(encoding="utf-8").splitlines()
     except FileNotFoundError:
-        sys.exit(f"prose_lint: config not found: {path}")
+        fatal(f"prose_lint: config not found: {path}")
 
     cfg = {
         "settings": {},
@@ -282,22 +329,22 @@ def load_config(path: Path) -> dict:
                 cfg.setdefault("profiles", {}).setdefault(
                     section.split(".", 1)[1], {})
             elif section not in known:
-                sys.exit(f"prose_lint: {path}:{lineno}: unknown section "
-                         f"[{section}]. known: {', '.join(sorted(known))}, "
-                         f"or [profile.<name>]")
+                fatal(f"prose_lint: {path}:{lineno}: unknown section "
+                      f"[{section}]. known: {', '.join(sorted(known))}, "
+                      f"or [profile.<name>]")
             continue
         if section is None:
-            sys.exit(f"prose_lint: {path}:{lineno}: entry outside any section")
+            fatal(f"prose_lint: {path}:{lineno}: entry outside any section")
 
         if section.startswith("profile."):
             if "=" not in line:
-                sys.exit(f"prose_lint: {path}:{lineno}: expected 'key = value'")
+                fatal(f"prose_lint: {path}:{lineno}: expected 'key = value'")
             key, _, val = line.partition("=")
             cfg["profiles"][section.split(".", 1)[1]][key.strip()] = _coerce(val)
 
         elif section == "settings":
             if "=" not in line:
-                sys.exit(f"prose_lint: {path}:{lineno}: expected 'key = value'")
+                fatal(f"prose_lint: {path}:{lineno}: expected 'key = value'")
             key, _, val = line.partition("=")
             cfg["settings"][key.strip()] = _coerce(val)
 
@@ -310,14 +357,14 @@ def load_config(path: Path) -> dict:
         elif section == "banned.patterns":
             parts = [p.strip() for p in line.split("::")]
             if len(parts) != 3:
-                sys.exit(f"prose_lint: {path}:{lineno}: expected "
-                         f"'id :: label :: regex'")
+                fatal(f"prose_lint: {path}:{lineno}: expected "
+                      f"'id :: label :: regex'")
             pid, label, rx = parts
             try:
                 re.compile(rx)
             except re.error as exc:
-                sys.exit(f"prose_lint: {path}:{lineno}: bad regex "
-                         f"for '{pid}': {exc}")
+                fatal(f"prose_lint: {path}:{lineno}: bad regex "
+                      f"for '{pid}': {exc}")
             cfg["banned"]["patterns"].append(
                 {"id": pid, "label": label, "regex": rx})
 
@@ -331,8 +378,8 @@ def load_config(path: Path) -> dict:
                 try:
                     cfg["rationed"]["rates"][term.lower()] = float(rate)
                 except ValueError:
-                    sys.exit(f"prose_lint: {path}:{lineno}: "
-                             f"'{rate.strip()}' is not a number")
+                    fatal(f"prose_lint: {path}:{lineno}: "
+                          f"'{rate.strip()}' is not a number")
                 cfg["rationed"]["terms"].append(term)
             else:
                 cfg["rationed"]["terms"].append(line)
@@ -428,10 +475,17 @@ def mask(text: str, cfg: dict, is_latex: bool = False) -> str:
     text = re.sub(r"(?m)^[ \t]*:?-{3,}:?([ \t]*\|[ \t]*:?-{3,}:?)+[ \t]*$",
                   blank, text)
 
+    # The 4-space-indent code block and single-backtick inline-code rules are
+    # markdown conventions. LaTeX uses 4-space indentation for ordinary
+    # \item continuation lines, and a lone ` opens a typographic quote
+    # (`` ... '' ), not a code span -- applying either rule to a .tex file
+    # blanks real prose. LaTeX's own code-block equivalents (verbatim,
+    # lstlisting, minted) are masked by mask_latex() below instead.
     if setting(cfg, "skip_code_blocks", True):
         text = re.sub(r"```.*?```", blank, text, flags=re.DOTALL)
-        text = re.sub(r"^(?: {4}|\t).*$", blank, text, flags=re.MULTILINE)
-    if setting(cfg, "skip_inline_code", True):
+        if not is_latex:
+            text = re.sub(r"^(?: {4}|\t).*$", blank, text, flags=re.MULTILINE)
+    if setting(cfg, "skip_inline_code", True) and not is_latex:
         text = re.sub(r"`[^`\n]+`", blank, text)
     if setting(cfg, "skip_urls", True):
         text = re.sub(r"https?://\S+", blank, text)
@@ -488,14 +542,25 @@ class LineIndex:
 
 
 def suppressions(index: LineIndex, marker: str) -> dict[int, set[str]]:
-    """Map line number -> set of suppressed ids. Empty set means suppress all."""
-    pattern = re.compile(rf"<!--\s*{re.escape(marker)}\s*(?::\s*([^>]*?))?\s*-->")
+    """
+    Map line number -> set of suppressed ids. Empty set means suppress all.
+
+    Two forms: `<!-- lint-ok: TERM -->` (markdown) and `% lint-ok: TERM`
+    (LaTeX). A .tex file has no working suppression without the second form
+    -- an HTML comment left in a .tex source is not a comment to pdflatex,
+    it is literal text that would typeset into the PDF. The `%` form uses
+    the same escaped-percent guard as LATEX_COMMENT_RE: `\\%` is a literal
+    percent sign, not the start of a comment.
+    """
+    html = rf"<!--\s*{re.escape(marker)}\s*(?::\s*([^>]*?))?\s*-->"
+    latex = rf"(?<!\\)%\s*{re.escape(marker)}\s*(?::\s*(.*?))?\s*$"
+    pattern = re.compile(rf"{html}|{latex}")
     found: dict[int, set[str]] = {}
     for i, line in enumerate(index.lines, start=1):
         m = pattern.search(line)
         if not m:
             continue
-        ids = m.group(1)
+        ids = m.group(1) if m.group(1) is not None else m.group(2)
         targets = {t.strip().lower() for t in ids.split(",")} if ids else set()
         # applies to this line and the next
         for target_line in (i, i + 1):
@@ -573,7 +638,7 @@ def check_terms(prose, exempted, index, sup, cfg, report) -> None:
         try:
             rx = re.compile(pat["regex"])
         except re.error as exc:
-            sys.exit(f"prose_lint: bad regex for pattern '{pat.get('id')}': {exc}")
+            fatal(f"prose_lint: bad regex for pattern '{pat.get('id')}': {exc}")
         for m in rx.finditer(prose):
             line, col = index.locate(m.start())
             if is_suppressed(sup, line, pat["id"]):
@@ -752,8 +817,10 @@ def file_overrides(text: str, cfg: dict) -> dict:
 
         <!-- lint-config: emoji=off, skip_tables=on -->
 
-    A document that teaches style by quoting bad examples needs this. The
-    guide that bans em dashes has to be able to print one.
+    A document that teaches style by quoting bad examples needs this --
+    `plugin/skills/prfaq/references/plain-style.md` sets `mode=off` because
+    its own "Bad:" examples contain the em dashes and banned vocabulary the
+    guide tells the author never to write.
     """
     m = FILE_DIRECTIVE_RE.search(text)
     if not m:
@@ -787,8 +854,8 @@ def apply_profile(cfg: dict, name: str) -> dict:
     """
     profiles = cfg.get("profiles", {})
     if name not in profiles:
-        sys.exit(f"prose_lint: unknown profile '{name}'. "
-                 f"available: {', '.join(sorted(profiles)) or 'none'}")
+        fatal(f"prose_lint: unknown profile '{name}'. "
+              f"available: {', '.join(sorted(profiles)) or 'none'}")
     local = dict(cfg)
     local["settings"] = {**cfg.get("settings", {}), **profiles[name]}
     return local
@@ -836,8 +903,8 @@ def render(report: Report, baseline: bool) -> str:
             out.append(f"    {v:>7}  {k}")
         return "\n".join(out) + "\n"
 
-    hard = report.banned + [f for f in report.structure if f.tier == BANNED]
-    soft = report.rationed + [f for f in report.structure if f.tier == RATIONED]
+    hard = report.hard_findings()
+    soft = report.soft_findings()
 
     if hard:
         out.append(f"\n  BANNED ({len(hard)})   zero tolerance")

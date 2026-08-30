@@ -409,7 +409,7 @@ Domain knowledge is encoded in standalone reference guides that agents load as n
 | `unit-economics.md` | Viability risk lens: CAC, LTV, payback period, margins |
 | `ux-bar-raiser.md` | Usability risk lens: customer journey, cognitive load, error recovery |
 | `precise-writing.md` | Precise writing rules: redundancy, weasel words, "so what" test |
-| `plain-style.md` | Generative writing rules every agent applies while drafting: no em dash, no negative parallelism, no corporate-register vocabulary, no explaining the document to the reader |
+| `plain-style.md` | Generative writing rules every agent applies while drafting: no em dash, no negative parallelism, no corporate-register vocabulary, no value-claim filler, no explaining the document to the reader |
 
 Each guide includes stage calibration — the same guide produces different expectations for a hypothesis-stage document vs. a growth-stage document.
 

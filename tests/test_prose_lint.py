@@ -169,6 +169,23 @@ class TestPatterns(unittest.TestCase):
             "nobody stress-tested.")
         self.assertIn("not-x-but-y-subject", terms(r.banned))
 
+    def test_not_x_but_y_subject_does_not_catch_ordinary_sentence(self):
+        """
+        A widened version of this pattern, added earlier, matched ordinary
+        correct English whenever "is not" was later followed anywhere by an
+        "it's/it is" clause -- including across a subordinating conjunction
+        like "so". Tightened to require the pivot land directly on the far
+        side of the nearest comma.
+        """
+        r = lint_text(
+            "The install path is not documented anywhere, so it is hard "
+            "to say what happens.")
+        self.assertNotIn("not-x-but-y-subject", terms(r.banned))
+        r2 = lint_text(
+            "The output format is not specified, because it is left to "
+            "the caller to decide.")
+        self.assertNotIn("not-x-but-y-subject", terms(r2.banned))
+
     def test_not_only_but_also_is_not_a_hard_ban(self):
         """
         Demoted from tier 1 by the calibration run. The baseline paper uses
@@ -202,9 +219,28 @@ class TestPatterns(unittest.TestCase):
         r = lint_text(r"The claim\textemdash{}that it works\textemdash{}is untested.")
         self.assertIn("em-dash-macro", terms(r.banned))
 
+    def test_latex_source_em_dash_spaced_form(self):
+        """
+        prfaq.tex itself uses only the spaced ` --- ` convention, never the
+        tight word---word form -- a rule that only recognizes the tight form
+        never fires on this project's actual documents.
+        """
+        r = lint_text("Our assumption --- consistent with the evidence --- holds.")
+        self.assertIn("em-dash-source", terms(r.banned))
+
     def test_latex_en_dash(self):
-        r = lint_text("A range of 10--20 items.")
+        r = lint_text("A range of word--word items.")
         self.assertIn("en-dash-source", terms(r.banned))
+
+    def test_latex_en_dash_numeric_range_is_not_a_finding(self):
+        """
+        LaTeX's own convention for a numeric range (100--200, \\$1.5--2
+        trillion) uses two hyphens. That is not a broken en dash; the rule
+        only fires when both sides are letters.
+        """
+        r = lint_text("Enterprises carry \\$1.5--2 trillion in debt, "
+                      "recruiting 10--20 target users across 100--200K rows.")
+        self.assertNotIn("en-dash-source", terms(r.banned))
 
     def test_ordinary_hyphen_is_not_a_dash(self):
         r = lint_text("A command-line tool with well-formed hyphens is fine.")
