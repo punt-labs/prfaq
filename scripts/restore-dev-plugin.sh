@@ -15,6 +15,16 @@ REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 # plugin/ so a git-subdir marketplace install fetches only that subtree.
 PLUGIN_JSON="plugin/.claude-plugin/plugin.json"
 
+# The old script took an optional restore ref and validated it. This one
+# doesn't restore from a ref at all, so a stale --resume=<sha>-style
+# invocation must fail loudly rather than silently do something else.
+if [[ $# -gt 0 ]]; then
+  echo "Error: this script takes no arguments (got: $*)." >&2
+  echo "       It rewrites the name field in the current working tree —" >&2
+  echo "       it no longer restores from a historical ref. Drop the argument." >&2
+  exit 1
+fi
+
 # Require a clean working tree so we don't overwrite local changes.
 if [ -n "$(git -C "$REPO_ROOT" status --porcelain)" ]; then
   echo "Error: working tree is not clean. Commit or stash changes before restoring." >&2
