@@ -1,7 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Restore dev plugin state on main after a release tag.
+# Restore dev plugin state on main after a release tag. Mirrors
+# release-plugin.sh's swap exactly, in reverse: a targeted rewrite of the
+# `name` field, nothing else. It does not check out plugin.json from a
+# historical ref — main can go an arbitrary number of commits between
+# releases without ever holding the dev name (e.g. if a prior release
+# skipped this script), and a ref-based restore has no correct commit to
+# point at in that case. Operating on the current working-tree content
+# instead makes the restore correct regardless of how main got here.
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 # Repo-relative, because it is handed to git. The shippable surface lives under
@@ -21,36 +28,15 @@ if [[ "$current_name" == *-dev ]]; then
   exit 1
 fi
 
-# Optional argument: commit/tag to restore from (defaults to HEAD~1).
-RESTORE_REF="${1:-HEAD~1}"
-if ! git -C "$REPO_ROOT" rev-parse "$RESTORE_REF" >/dev/null 2>&1; then
-  echo "Error: invalid ref to restore from: $RESTORE_REF" >&2
-  exit 1
-fi
+dev_name="${current_name}-dev"
+echo "Restoring plugin name: ${current_name} → ${dev_name}"
+PLUGIN_PATH="${REPO_ROOT}/${PLUGIN_JSON}" DEV_NAME="$dev_name" python3 -c "
+import json, pathlib, os
+p = pathlib.Path(os.environ['PLUGIN_PATH'])
+d = json.loads(p.read_text())
+d['name'] = os.environ['DEV_NAME']
+p.write_text(json.dumps(d, indent=2) + '\n')
+"
 
-COMMANDS_DIR="plugin/commands"
-
-# git checkout aborts if *any* pathspec matches nothing, so probe every one it
-# will be given — not just the first. A ref from before the plugin/ move
-# carries the surface at the repo root and matches neither, and an odd
-# intermediate ref could carry one without the other; either way git says only
-# "did not match any file(s) known to git". Name the ref and the paths instead.
-missing=()
-for path in "$PLUGIN_JSON" "$COMMANDS_DIR"; do
-  if ! git -C "$REPO_ROOT" ls-tree --name-only "$RESTORE_REF" -- "$path" | grep -q .; then
-    missing+=("$path")
-  fi
-done
-
-if [[ ${#missing[@]} -gt 0 ]]; then
-  echo "Error: $RESTORE_REF does not contain: ${missing[*]}" >&2
-  echo "       A ref from before the plugin/ move has the surface at the repo" >&2
-  echo "       root instead. Restore from a later ref, or check out" >&2
-  echo "       .claude-plugin/plugin.json and commands/ from it by hand." >&2
-  exit 1
-fi
-
-# Restore plugin.json and commands from the specified commit
-git -C "$REPO_ROOT" checkout "$RESTORE_REF" -- "$PLUGIN_JSON" "$COMMANDS_DIR"
-git -C "$REPO_ROOT" add "$PLUGIN_JSON" "$COMMANDS_DIR"
+git -C "$REPO_ROOT" add "$PLUGIN_JSON"
 git -C "$REPO_ROOT" commit --no-verify -m "chore: restore dev plugin state"
