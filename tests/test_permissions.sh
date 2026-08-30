@@ -46,6 +46,17 @@ mkdir -p "$WORK/bin"
 # already-registered branch is never taken.
 cat > "$WORK/bin/claude" <<'STUB'
 #!/bin/sh
+# Every real invocation of `claude` inherits whatever install.sh's own stdin
+# is at the time -- and when the installer is piped (`curl ... | sh`, the
+# only way it is actually distributed), that is the *same pipe* sh is still
+# reading its own remaining script text from. A CLI that reads even one byte
+# of stdin during startup (a first-run prompt, an update check) steals bytes
+# meant for sh's parser and corrupts everything after it. Consuming a chunk
+# here makes every test using this stub exercise that property, not just
+# the piped-execution test below. Gated on stdin not being a terminal: on
+# an interactive run (stdin is a TTY, nothing is piped in) an unconditional
+# read here would block waiting for keyboard input and hang the suite.
+[ -t 0 ] || dd bs=200 count=1 of=/dev/null 2>/dev/null || true
 [ -n "${CLAUDE_STUB_LOG:-}" ] && echo "$*" >> "$CLAUDE_STUB_LOG"
 case "$*" in
   "plugin marketplace list")
@@ -280,6 +291,36 @@ fi
 STATUS=0
 run_installer "$H" none || STATUS=$?
 check "an empty marketplace list registers cleanly" "0" "$STATUS"
+
+printf '\nPiped execution safety (install.sh)\n'
+
+# install.sh is only ever distributed as `curl -fsSL <url> | sh` -- every
+# prior test above runs it as `sh install.sh <file>`, where the script comes
+# from the file and stdin is free for subprocesses to read. That mode can
+# never exercise the actual failure this section guards: when piped, sh
+# reads its own remaining source from the same fd a `claude`/`ssh` call
+# inherits, and any subprocess stdin read corrupts the parse. Run it via a
+# real pipe, through every POSIX sh implementation available, with the
+# stdin-stealing stub above -- a regression here means the installer breaks
+# for every real user, not just this test.
+H="$WORK/home-piped"
+mkdir -p "$H"
+
+for SH_IMPL in sh dash busybox; do
+  command -v "$SH_IMPL" >/dev/null 2>&1 || continue
+  [ "$SH_IMPL" = "busybox" ] && SH_IMPL="busybox sh"
+  rm -f "$WORK/claude-calls.log"
+  STATUS=0
+  # shellcheck disable=SC2086 # $SH_IMPL is a fixed, known-safe word list (sh|dash|"busybox sh")
+  env HOME="$H" PATH="$WORK/bin:$PATH" CLAUDE_STUB_MARKETPLACES=registered \
+    CLAUDE_STUB_LOG="$WORK/claude-calls.log" \
+    sh -c "cat '$REPO/install.sh' | $SH_IMPL" >"$WORK/installer-piped.out" 2>&1 || STATUS=$?
+  if [ "$STATUS" -eq 0 ] && grep -q "is ready!" "$WORK/installer-piped.out"; then
+    pass "piped through $SH_IMPL survives a stdin-stealing subprocess"
+  else
+    fail "piped through $SH_IMPL survives a stdin-stealing subprocess (exit $STATUS)"
+  fi
+done
 
 printf '\n%s passed, %s failed\n\n' "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ]
