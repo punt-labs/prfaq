@@ -44,7 +44,7 @@
   citecolor=SectionBlue,
   pdfauthor={},
   pdftitle={PR/FAQ},
-  pdfsubject={Working Backwards — Product Discovery},
+  pdfsubject={Working Backwards: Product Discovery},
 }
 
 % ── Bibliography ─────────────────────────────────────────────────────────────
@@ -161,7 +161,7 @@
 \newcommand{\featureitem}[2]{%
   \refstepcounter{featurenum}%
   \item[\textbf{\color{SectionBlue}F\thefeaturenum.}]%
-  \textbf{#1} --- #2%
+  \textbf{#1}: #2%
 }
 \newcommand{\featureref}[1]{\hyperref[#1]{Feature~\ref*{#1}}}
 
@@ -194,7 +194,7 @@
 
 \section*{Press Release}
 
-CITY, STATE --- Today, COMPANY announced PRODUCT, which provides BENEFIT
+CITY, STATE: Today, COMPANY announced PRODUCT, which provides BENEFIT
 to TARGET CUSTOMER. Unlike ALTERNATIVES, PRODUCT offers DIFFERENTIATOR,
 enabling customers to OUTCOME.
 
@@ -351,7 +351,7 @@ Features that meaningfully improve the product but are not launch-blocking. Cand
 
 \subsection*{Won't Do}
 
-Features explicitly excluded. Naming what you won't build is as important as naming what you will — it prevents scope creep and clarifies the product's identity.
+Features explicitly excluded. Naming what you won't build is as important as naming what you will; it prevents scope creep and clarifies the product's identity.
 
 \begin{enumerate}[nosep,leftmargin=2.5em]
   \featureitem{FEATURE}{WHY NOT}\label{feat:example-6}
