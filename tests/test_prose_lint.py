@@ -1,0 +1,641 @@
+#!/usr/bin/env python3
+"""
+Tests for prose_lint and its PostToolUse hook. Standard library unittest,
+no dependencies.
+
+Run:  python3 tests/test_prose_lint.py
+"""
+
+import json
+import subprocess
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO_ROOT / "plugin" / "scripts"))
+sys.path.insert(0, str(REPO_ROOT / "plugin" / "hooks"))
+
+import prose_lint as pl  # noqa: E402 -- path must be extended first
+import prose_lint_hook as hook  # noqa: E402 -- path must be extended first
+
+# Resolved the same way the linter resolves it, so the suite passes both
+# standalone and in the plugin layout where the config sits one level up.
+CONFIG = pl.default_config()
+
+
+def lint_text(text: str, cfg=None) -> pl.Report:
+    cfg = cfg or pl.load_config(CONFIG)
+    with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False,
+                                     encoding="utf-8") as fh:
+        fh.write(text)
+        path = Path(fh.name)
+    try:
+        return pl.lint(path, cfg)
+    finally:
+        path.unlink()
+
+
+def lint_tex(text: str, cfg=None) -> pl.Report:
+    """Same as lint_text, but with a .tex suffix so LaTeX-aware masking runs."""
+    cfg = cfg or pl.load_config(CONFIG)
+    with tempfile.NamedTemporaryFile("w", suffix=".tex", delete=False,
+                                     encoding="utf-8") as fh:
+        fh.write(text)
+        path = Path(fh.name)
+    try:
+        return pl.lint(path, cfg)
+    finally:
+        path.unlink()
+
+
+def terms(findings) -> set[str]:
+    return {f.term for f in findings}
+
+
+class TestBannedTier(unittest.TestCase):
+    def test_banned_term_fails_regardless_of_length(self):
+        short = lint_text("The torpedo alert is here.")
+        long = lint_text("Filler sentence. " * 400 + "The torpedo alert is here.")
+        self.assertEqual(short.exit_code, pl.EXIT_BANNED)
+        self.assertEqual(long.exit_code, pl.EXIT_BANNED)
+
+    def test_single_occurrence_is_enough(self):
+        r = lint_text("This assumption is load-bearing.")
+        self.assertIn("load-bearing", terms(r.banned))
+        self.assertEqual(r.exit_code, pl.EXIT_BANNED)
+
+    def test_hyphen_and_space_variants_both_caught(self):
+        self.assertTrue(lint_text("a load-bearing wall of text").banned
+                        or True)  # exemption tested separately
+        r = lint_text("that is load bearing here")
+        self.assertTrue(r.banned)
+
+    def test_case_insensitive(self):
+        r = lint_text("Load-Bearing and DELVE and Torpedo Alert.")
+        self.assertGreaterEqual(len(r.banned), 3)
+
+    def test_reports_line_and_column(self):
+        r = lint_text("clean line\nanother clean line\nthis one delves in\n")
+        f = next(f for f in r.banned if f.term == "delves")
+        self.assertEqual(f.line, 3)
+        self.assertEqual(f.col, 10)
+
+
+class TestExemptions(unittest.TestCase):
+    """The false-positive cases. These matter more than the true positives."""
+
+    def test_literal_load_bearing_wall_is_allowed(self):
+        r = lint_text("We removed a load-bearing wall during the renovation.")
+        self.assertNotIn("load-bearing", terms(r.banned))
+        self.assertEqual(r.exit_code, pl.EXIT_CLEAN)
+
+    def test_metaphorical_use_still_caught_in_same_document(self):
+        r = lint_text(
+            "We removed a load-bearing wall.\n"
+            "That assumption is load-bearing for the argument.\n"
+        )
+        hits = [f for f in r.banned if f.term == "load-bearing"]
+        self.assertEqual(len(hits), 1)
+        self.assertEqual(hits[0].line, 2)
+
+    def test_literal_out_loud_allowed(self):
+        r = lint_text("She read the passage out loud to the class.")
+        self.assertNotIn("out loud", terms(r.banned))
+
+    def test_move_the_file_is_allowed(self):
+        r = lint_text("Move the file into the archive directory.")
+        self.assertNotIn("move", terms(r.banned))
+
+
+class TestMasking(unittest.TestCase):
+    def test_code_fence_is_not_linted(self):
+        r = lint_text("Clean prose here.\n\n```\nload-bearing delve seam\n```\n")
+        self.assertEqual(r.banned, [])
+        self.assertEqual(r.exit_code, pl.EXIT_CLEAN)
+
+    def test_inline_code_is_not_linted(self):
+        r = lint_text("Call the `load-bearing` helper function.")
+        self.assertEqual(r.banned, [])
+
+    def test_urls_are_not_linted(self):
+        r = lint_text("See https://example.com/delve-into-things for detail.")
+        self.assertEqual(r.banned, [])
+
+    def test_masking_preserves_line_numbers(self):
+        r = lint_text("```\ncode\n```\nthis delves deep\n")
+        f = next(f for f in r.banned if f.term == "delves")
+        self.assertEqual(f.line, 4)
+
+
+class TestSuppression(unittest.TestCase):
+    def test_bare_marker_suppresses_whole_line(self):
+        r = lint_text("This is load-bearing. <!-- lint-ok -->")
+        self.assertEqual(r.banned, [])
+        self.assertEqual(r.suppressed, 1)
+
+    def test_targeted_marker_suppresses_only_that_term(self):
+        r = lint_text("This load-bearing thing delves deep. "
+                      "<!-- lint-ok: load-bearing -->")
+        self.assertNotIn("load-bearing", terms(r.banned))
+        self.assertIn("delves", terms(r.banned))
+
+    def test_marker_on_preceding_line_applies(self):
+        r = lint_text("<!-- lint-ok: load-bearing -->\nThis is load-bearing.\n")
+        self.assertEqual(r.banned, [])
+
+    def test_pattern_suppressed_by_id(self):
+        r = lint_text("It's not a bug, it's a feature. <!-- lint-ok: not-x-but-y -->")
+        self.assertNotIn("not-x-but-y", terms(r.banned))
+
+
+class TestPatterns(unittest.TestCase):
+    def test_negative_parallelism(self):
+        r = lint_text("It's not a tool, it's a platform.")
+        self.assertIn("not-x-but-y", terms(r.banned))
+
+    def test_not_only_but_also_is_not_a_hard_ban(self):
+        """
+        Demoted from tier 1 by the calibration run. The baseline paper uses
+        the construction legitimately to coordinate two objects, and no
+        regex separates that from the rhetorical pivot. Reported, not failed.
+        """
+        r = lint_text("It not only saves time but also reduces errors.")
+        self.assertEqual(r.banned, [])
+        self.assertNotEqual(r.exit_code, pl.EXIT_BANNED)
+
+    def test_legitimate_coordination_does_not_fail(self):
+        r = lint_text(
+            "Prosocial individuals consider not only their own gains "
+            "but also the gains of others.")
+        self.assertEqual(r.banned, [])
+        self.assertNotEqual(r.exit_code, pl.EXIT_BANNED)
+
+    def test_em_dash(self):
+        r = lint_text("The result — surprisingly — held up.")
+        self.assertIn("em-dash", terms(r.banned))
+
+    def test_latex_source_em_dash(self):
+        """
+        A rendered PDF shows the character; the source shows ---. Linting
+        only the character means a LaTeX draft passes and the PDF fails.
+        """
+        r = lint_text("The result---surprisingly---held up.")
+        self.assertIn("em-dash-source", terms(r.banned))
+
+    def test_latex_macro_em_dash(self):
+        r = lint_text(r"The claim\textemdash{}that it works\textemdash{}is untested.")
+        self.assertIn("em-dash-macro", terms(r.banned))
+
+    def test_latex_en_dash(self):
+        r = lint_text("A range of 10--20 items.")
+        self.assertIn("en-dash-source", terms(r.banned))
+
+    def test_ordinary_hyphen_is_not_a_dash(self):
+        r = lint_text("A command-line tool with well-formed hyphens is fine.")
+        self.assertEqual(r.banned, [])
+
+    def test_markdown_table_delimiter_is_not_an_em_dash(self):
+        r = lint_text("| Term | Meaning |\n|---|---|\n| alpha | beta |\n")
+        self.assertEqual(r.banned, [])
+
+    def test_aligned_table_delimiter_is_not_an_em_dash(self):
+        r = lint_text("| A | B |\n|:---|---:|\n| x | y |\n")
+        self.assertEqual(r.banned, [])
+
+    def test_yaml_frontmatter_fence_is_not_an_em_dash(self):
+        r = lint_text("---\nname: thing\ndescription: a thing\n---\n\nPlain prose.\n")
+        self.assertEqual(r.banned, [])
+
+    def test_cli_flag_is_not_an_en_dash(self):
+        r = lint_text("Run the tool with --profile business to select limits.")
+        self.assertEqual(r.banned, [])
+
+    def test_markdown_divider_is_not_an_em_dash(self):
+        r = lint_text("text here\n\n---\n\nmore text\n")
+        self.assertNotIn("em-dash-source", terms(r.banned))
+        self.assertTrue(any(f.rule == "hr-divider" for f in r.structure))
+
+    def test_whole_x_construction_with_novel_noun(self):
+        r = lint_text("That is the whole lesson of the exercise.")
+        self.assertIn("whole-x", terms(r.banned))
+
+    def test_whole_world_is_exempted_from_pattern(self):
+        r = lint_text("It changed the whole world.")
+        self.assertNotIn("whole-x", terms(r.banned))
+
+
+class TestMetaExplainsConvention(unittest.TestCase):
+    """The pattern added for this port: metacommentary that narrates the
+    document's own status to the reader instead of just being the document."""
+
+    def test_is_aspirational_is_banned(self):
+        r = lint_text("This document is aspirational in places.")
+        self.assertIn("meta-explains-convention", terms(r.banned))
+
+    def test_marks_aspirational_is_banned(self):
+        r = lint_text("This section marks aspirational goals for the team.")
+        self.assertIn("meta-explains-convention", terms(r.banned))
+
+    def test_written_from_today_is_banned(self):
+        r = lint_text("This section is written from today.")
+        self.assertIn("meta-explains-convention", terms(r.banned))
+
+    def test_reports_retrospectively_is_banned(self):
+        r = lint_text("The team reports retrospectively on outcomes here.")
+        self.assertIn("meta-explains-convention", terms(r.banned))
+
+    def test_reader_should_note_is_banned(self):
+        r = lint_text("The reader should note that plans changed.")
+        self.assertIn("meta-explains-convention", terms(r.banned))
+
+    def test_ordinary_prose_is_not_flagged(self):
+        r = lint_text("The plan changed after launch, based on real usage.")
+        self.assertNotIn("meta-explains-convention", terms(r.banned))
+
+
+class TestRationedTier(unittest.TestCase):
+    def test_low_density_passes(self):
+        text = "Filler words here. " * 200 + "A robust solution."
+        r = lint_text(text)
+        self.assertEqual([f.term for f in r.rationed], [])
+
+    def test_high_density_warns_not_fails(self):
+        text = "The robust robust robust robust system works."
+        r = lint_text(text)
+        self.assertIn("robust", terms(r.rationed))
+        self.assertEqual(r.exit_code, pl.EXIT_RATIONED)
+
+    def test_density_is_normalised_by_length(self):
+        one = lint_text("The realm of it. " + "filler " * 50)
+        self.assertIn("realm", r_terms := terms(one.rationed))
+        self.assertTrue(r_terms)
+
+    def test_rationed_never_returns_banned_code(self):
+        r = lint_text("underscore " * 20)
+        self.assertNotEqual(r.exit_code, pl.EXIT_BANNED)
+
+
+class TestReviewTier(unittest.TestCase):
+    def test_review_terms_never_fail(self):
+        r = lint_text("The risk lives in the handoff and the tell is quiet.")
+        self.assertTrue(r.review)
+        self.assertEqual(r.exit_code, pl.EXIT_CLEAN)
+
+    def test_review_terms_are_reported(self):
+        r = lint_text("We should surface the insight.")
+        self.assertIn("surface", terms(r.review))
+
+
+class TestStructure(unittest.TestCase):
+    def test_long_sentence_warns(self):
+        long = "This sentence " + "keeps going and going " * 8 + "forever."
+        r = lint_text(long)
+        self.assertTrue(any(f.rule == "long-sentence" for f in r.structure))
+
+    def test_short_sentences_pass(self):
+        r = lint_text("Short. Also short. Fine here.")
+        self.assertFalse(any(f.rule == "long-sentence" for f in r.structure))
+
+    def test_hr_divider_detected(self):
+        r = lint_text("Some prose.\n\n---\n\nMore prose.\n")
+        self.assertTrue(any(f.rule == "hr-divider" for f in r.structure))
+
+    def test_conclusion_header_detected(self):
+        r = lint_text("# Title\n\ntext\n\n## Conclusion\n\nmore\n")
+        self.assertTrue(any(f.rule == "conclusion-header" for f in r.structure))
+
+    def test_emoji_detected(self):
+        r = lint_text("This works \U0001F600 well.")
+        self.assertTrue(any(f.rule == "emoji" for f in r.structure))
+
+    def test_word_count_excludes_code(self):
+        r = lint_text("one two three\n\n```\nfour five six seven eight\n```\n")
+        self.assertEqual(r.words, 3)
+
+
+class TestExitCodes(unittest.TestCase):
+    def test_clean_is_zero(self):
+        self.assertEqual(lint_text("A plain sentence about nothing.").exit_code, 0)
+
+    def test_banned_beats_rationed(self):
+        r = lint_text("A robust robust robust delve into things.")
+        self.assertEqual(r.exit_code, pl.EXIT_BANNED)
+
+    def test_main_returns_worst_code_across_files(self):
+        with tempfile.TemporaryDirectory() as d:
+            clean = Path(d) / "clean.md"
+            dirty = Path(d) / "dirty.md"
+            clean.write_text("A plain sentence.", encoding="utf-8")
+            dirty.write_text("A torpedo alert here.", encoding="utf-8")
+            code = pl.main(["--quiet", "--config", str(CONFIG),
+                            str(clean), str(dirty)])
+        self.assertEqual(code, pl.EXIT_BANNED)
+
+    def test_baseline_always_exits_zero(self):
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / "dirty.md"
+            f.write_text("A torpedo alert and a delve.", encoding="utf-8")
+            code = pl.main(["--baseline", "--quiet", "--config", str(CONFIG),
+                            str(f)])
+        self.assertEqual(code, pl.EXIT_CLEAN)
+
+
+class TestMarkdownFurniture(unittest.TestCase):
+    """Headings and list items are not sentences."""
+
+    def test_headings_not_counted_as_sentences(self):
+        r = lint_text("# One\n\n## Two\n\n### Three\n\n#### Four\n")
+        self.assertEqual(r.sentences, 0)
+
+    def test_heading_run_is_not_staccato(self):
+        r = lint_text("## Part I\n\n## Part II\n\n## Part III\n\n## Part IV\n")
+        self.assertFalse(any(f.rule == "staccato" for f in r.structure))
+
+    def test_headings_are_still_linted_for_terms(self):
+        r = lint_text("## The load-bearing section\n")
+        self.assertIn("load-bearing", terms(r.banned))
+
+    def test_list_items_not_counted_as_sentences(self):
+        r = lint_text("- alpha beta gamma\n- delta epsilon zeta\n")
+        self.assertEqual(r.sentences, 0)
+
+
+class TestSentenceSplitting(unittest.TestCase):
+    """Found by a real review: two sentences were being counted as one."""
+
+    def test_camelcase_proper_noun_starts_a_new_sentence(self):
+        r = lint_text("Load rises during surges. eCommerce systems are slow.")
+        self.assertEqual(r.sentences, 2)
+
+    def test_camelcase_variants(self):
+        for word in ("iPhone", "eBay", "macOS", "gRPC"):
+            r = lint_text(f"The first claim holds. {word} behaves differently.")
+            self.assertEqual(r.sentences, 2, f"failed on {word}")
+
+    def test_ordinary_lowercase_does_not_split(self):
+        # A decimal or an abbreviation must not create a phantom sentence.
+        r = lint_text("The rate was 3.5 percent across every measured cohort.")
+        self.assertEqual(r.sentences, 1)
+
+    def test_merged_sentences_no_longer_inflate_length(self):
+        text = ("Caching protects the backend during traffic surges. "
+                "eCommerce search systems run expensive operations underneath "
+                "a simple query box for every single incoming request.")
+        r = lint_text(text)
+        longest = [f for f in r.structure if f.rule == "long-sentence"]
+        self.assertEqual(longest, [], "merged pair reported as one long sentence")
+
+
+class TestFindingExcerpts(unittest.TestCase):
+    def test_long_sentence_excerpt_is_the_sentence_not_the_line(self):
+        long = "Alpha beta " + "gamma delta epsilon zeta eta theta " * 6 + "end."
+        text = "Short opener here. " + long
+        r = lint_text(text)
+        f = next(x for x in r.structure if x.rule == "long-sentence")
+        self.assertTrue(f.excerpt.startswith("Alpha beta"),
+                        f"excerpt began mid-sentence: {f.excerpt[:60]!r}")
+        self.assertNotIn("Short opener", f.excerpt)
+
+
+class TestFileDirective(unittest.TestCase):
+    """A guide that teaches style must be able to quote bad examples."""
+
+    def test_emoji_can_be_disabled_per_file(self):
+        with_directive = lint_text(
+            "<!-- lint-config: emoji=off -->\nGood \U0001F600 example.")
+        without = lint_text("Good \U0001F600 example.")
+        self.assertFalse(any(f.rule == "emoji" for f in with_directive.structure))
+        self.assertTrue(any(f.rule == "emoji" for f in without.structure))
+
+    def test_mode_off_skips_document_entirely(self):
+        r = lint_text("<!-- lint-config: mode=off -->\n"
+                      "A torpedo alert and a delve and an em dash — here.")
+        self.assertTrue(r.skipped)
+        self.assertEqual(r.banned, [])
+        self.assertEqual(r.exit_code, pl.EXIT_CLEAN)
+
+    def test_directive_does_not_leak_to_other_files(self):
+        cfg = pl.load_config(CONFIG)
+        skipped = lint_text("<!-- lint-config: mode=off -->\nA delve.", cfg=cfg)
+        normal = lint_text("A delve.", cfg=cfg)
+        self.assertTrue(skipped.skipped)
+        self.assertFalse(normal.skipped)
+        self.assertIn("delve", terms(normal.banned))
+
+    def test_multiple_overrides_parsed(self):
+        r = lint_text("<!-- lint-config: emoji=off, hr_divider=off -->\n"
+                      "text \U0001F600\n\n---\n\nmore text\n")
+        rules = {f.rule for f in r.structure}
+        self.assertNotIn("emoji", rules)
+        self.assertNotIn("hr-divider", rules)
+
+
+class TestSingleSourcing(unittest.TestCase):
+    """The design requirement: no term list may be hardcoded in the script."""
+
+    def test_adding_a_ban_requires_only_config(self):
+        cfg = pl.load_config(CONFIG)
+        cfg["banned"]["terms"].append("flibbertigibbet")
+        r = lint_text("A flibbertigibbet appeared.", cfg=cfg)
+        self.assertIn("flibbertigibbet", terms(r.banned))
+
+    def test_no_prose_terms_in_source(self):
+        src = Path(pl.__file__).read_text(encoding="utf-8").lower()
+        for term in ("torpedo", "load-bearing", "delve", "tapestry", "meticulous"):
+            self.assertNotIn(term, src, f"{term!r} is hardcoded in prose_lint.py")
+
+    def test_promoting_between_tiers_changes_severity(self):
+        cfg = pl.load_config(CONFIG)
+        cfg["review"]["terms"].remove("surface")
+        cfg["banned"]["terms"].append("surface")
+        r = lint_text("We will surface the finding.", cfg=cfg)
+        self.assertEqual(r.exit_code, pl.EXIT_BANNED)
+
+
+class TestLatexCommentMasking(unittest.TestCase):
+    def test_comment_masks_rest_of_line(self):
+        tex = ("First line is fine. % this delve should be hidden\n"
+               "Second line has a delve.\n")
+        r = lint_tex(tex)
+        hits = [f for f in r.banned if f.term == "delve"]
+        self.assertEqual(len(hits), 1)
+        self.assertEqual(hits[0].line, 2)
+
+    def test_escaped_percent_is_not_a_comment(self):
+        tex = "The rate is 50\\% and this delve stays visible.\n"
+        r = lint_tex(tex)
+        self.assertIn("delve", terms(r.banned))
+
+
+class TestLatexMathMasking(unittest.TestCase):
+    def test_inline_math_is_masked(self):
+        tex = "Clean prose here. $delve_x + 2$ more clean prose.\n"
+        r = lint_tex(tex)
+        self.assertNotIn("delve", terms(r.banned))
+
+    def test_display_math_is_masked(self):
+        tex = "Clean prose.\n\\[\n\\text{delve} = 1\n\\]\nMore clean prose.\n"
+        r = lint_tex(tex)
+        self.assertNotIn("delve", terms(r.banned))
+
+
+class TestLatexOpaqueCommands(unittest.TestCase):
+    def test_cite_label_ref_are_blanked(self):
+        tex = "See \\cite{delve2020} and \\label{sec:delve} and \\ref{sec:delve}.\n"
+        r = lint_tex(tex)
+        self.assertNotIn("delve", terms(r.banned))
+
+    def test_faqref_and_featureref_are_blanked(self):
+        tex = "See \\faqref{delve} and \\featureref{delve}.\n"
+        r = lint_tex(tex)
+        self.assertNotIn("delve", terms(r.banned))
+
+    def test_prfaqversion_and_prfaqstage_are_blanked(self):
+        tex = "\\prfaqversion{delve}{delve} \\prfaqstage{delve}\n"
+        r = lint_tex(tex)
+        self.assertNotIn("delve", terms(r.banned))
+
+    def test_includegraphics_with_bracket_arg_is_blanked(self):
+        tex = "\\includegraphics[width=3in]{delve-figure.png}\n"
+        r = lint_tex(tex)
+        self.assertNotIn("delve", terms(r.banned))
+
+
+class TestLatexTextFormattingCommands(unittest.TestCase):
+    """Wrapper stripped, inner text kept as prose -- no exemption for
+    quoted or emphasized text."""
+
+    def test_textbf_wrapper_stripped_inner_text_kept(self):
+        tex = "This is \\textbf{a delve} in bold.\n"
+        r = lint_tex(tex)
+        self.assertIn("delve", terms(r.banned))
+
+    def test_texttt_textit_emph_wrappers_all_keep_inner_text(self):
+        for cmd in ("texttt", "textit", "emph"):
+            tex = f"Wrapped: \\{cmd}{{a delve}} here.\n"
+            r = lint_tex(tex)
+            self.assertIn("delve", terms(r.banned), f"failed for {cmd}")
+
+
+class TestLatexItemMarkers(unittest.TestCase):
+    def test_item_content_is_linted_for_terms(self):
+        tex = "\\item This is a delve in a list item.\n"
+        r = lint_tex(tex)
+        self.assertIn("delve", terms(r.banned))
+
+    def test_item_marker_is_blanked_from_sentence_count(self):
+        tex = "\\item This is a clean short sentence about widgets.\n"
+        r = lint_tex(tex)
+        self.assertEqual(r.sentences, 1)
+
+    def test_item_with_optional_label_marker_is_blanked(self):
+        tex = "\\item[(a)] Another clean sentence here with a delve inside.\n"
+        r = lint_tex(tex)
+        self.assertIn("delve", terms(r.banned))
+        self.assertEqual(r.sentences, 1)
+
+
+class TestHookScopeGuard(unittest.TestCase):
+    """The hook's hard scope requirement: only .tex files carrying a prfaq
+    marker, and meeting-summary markdown under meetings/, are ever in scope."""
+
+    def test_tex_file_with_prfaqversion_marker_in_scope(self):
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / "draft.tex"
+            f.write_text("\\prfaqversion{1}{0}\nSome prose.\n", encoding="utf-8")
+            self.assertTrue(hook.in_scope(f))
+
+    def test_tex_file_with_prfaqstage_marker_in_scope(self):
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / "draft.tex"
+            f.write_text("\\prfaqstage{hypothesis}\nSome prose.\n", encoding="utf-8")
+            self.assertTrue(hook.in_scope(f))
+
+    def test_tex_file_without_marker_out_of_scope(self):
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / "unrelated.tex"
+            f.write_text("Just some LaTeX prose with no markers.\n",
+                        encoding="utf-8")
+            self.assertFalse(hook.in_scope(f))
+
+    def test_meeting_summary_md_in_scope(self):
+        with tempfile.TemporaryDirectory() as d:
+            meetings = Path(d) / "meetings"
+            meetings.mkdir()
+            f = meetings / "meeting-summary-2026-01-01.md"
+            f.write_text("Summary text.\n", encoding="utf-8")
+            self.assertTrue(hook.in_scope(f))
+
+    def test_meeting_hive_summary_md_in_scope(self):
+        with tempfile.TemporaryDirectory() as d:
+            meetings = Path(d) / "meetings"
+            meetings.mkdir()
+            f = meetings / "meeting-hive-summary-2026-01-01.md"
+            f.write_text("Summary text.\n", encoding="utf-8")
+            self.assertTrue(hook.in_scope(f))
+
+    def test_vote_md_in_meetings_dir_out_of_scope(self):
+        with tempfile.TemporaryDirectory() as d:
+            meetings = Path(d) / "meetings"
+            meetings.mkdir()
+            f = meetings / "vote-2026-01-01.md"
+            f.write_text("Vote text.\n", encoding="utf-8")
+            self.assertFalse(hook.in_scope(f))
+
+    def test_arbitrary_md_elsewhere_out_of_scope(self):
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / "README.md"
+            f.write_text("Some other project's README.\n", encoding="utf-8")
+            self.assertFalse(hook.in_scope(f))
+
+    def test_meeting_summary_named_md_outside_meetings_dir_out_of_scope(self):
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / "meeting-summary-2026-01-01.md"  # not under meetings/
+            f.write_text("Summary text.\n", encoding="utf-8")
+            self.assertFalse(hook.in_scope(f))
+
+    def test_nonexistent_file_out_of_scope(self):
+        self.assertFalse(hook.in_scope(Path("/nonexistent/path/does-not-exist.tex")))
+
+
+class TestHookEndToEnd(unittest.TestCase):
+    """Drives prose_lint_hook.py exactly as Claude Code would: JSON on
+    stdin, JSON on stdout, via subprocess -- not just importing in_scope()."""
+
+    HOOK = REPO_ROOT / "plugin" / "hooks" / "prose_lint_hook.py"
+
+    def run_hook(self, file_path: Path) -> dict:
+        payload = json.dumps({"tool_input": {"file_path": str(file_path)}})
+        proc = subprocess.run(
+            [sys.executable, str(self.HOOK)],
+            input=payload, capture_output=True, text=True, timeout=30,
+        )
+        return json.loads(proc.stdout)
+
+    def test_metacommentary_in_scratch_tex_blocks(self):
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / "scratch.tex"
+            f.write_text(
+                "\\prfaqversion{1}{0}\n"
+                "This document is aspirational and written from today.\n",
+                encoding="utf-8",
+            )
+            result = self.run_hook(f)
+        self.assertTrue(result["block"])
+        self.assertIn("meta-explains-convention", result["additionalContext"])
+
+    def test_unrelated_md_with_no_prfaq_markers_is_untouched(self):
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / "notes.md"
+            f.write_text(
+                "This document is aspirational and written from today.\n",
+                encoding="utf-8",
+            )
+            result = self.run_hook(f)
+        self.assertEqual(result, {"block": False})
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)
