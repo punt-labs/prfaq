@@ -43,9 +43,9 @@ echo "Restoring plugin name: ${current_name} → ${dev_name}"
 PLUGIN_PATH="${REPO_ROOT}/${PLUGIN_JSON}" DEV_NAME="$dev_name" python3 -c "
 import json, pathlib, os
 p = pathlib.Path(os.environ['PLUGIN_PATH'])
-d = json.loads(p.read_text())
+d = json.loads(p.read_text(encoding='utf-8'))
 d['name'] = os.environ['DEV_NAME']
-p.write_text(json.dumps(d, indent=2) + '\n')
+p.write_text(json.dumps(d, indent=2) + '\n', encoding='utf-8')
 "
 
 git -C "$REPO_ROOT" add "$PLUGIN_JSON"
