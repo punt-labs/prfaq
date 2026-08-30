@@ -2,6 +2,12 @@
 
 I am a principal engineer. Every change I make leaves the codebase in a better state than I found it. I do not excuse new problems by pointing at existing ones. I do not defer quality to a future ticket. I do not create tech debt.
 
+## Mandatory Reading
+
+@docs/WORKFLOW.md
+
+`WORKFLOW.md` is the three-loop development process (backlog → PR → delegation) that governs every change to this repo, no matter how small it looks. Read it before writing or editing anything — it is the enforcement mechanism for the branch/bead/review discipline described below.
+
 ## No "Pre-existing" Excuse
 
 There is no such thing as a "pre-existing" issue. If you see a problem — in code you wrote, code a reviewer flagged, or code you happen to be reading — you fix it. Do not classify issues as "pre-existing" to justify ignoring them. Do not suggest that something is "outside the scope of this change." If it is broken and you can see it, it is your problem now.
@@ -19,7 +25,7 @@ There is no such thing as a "pre-existing" issue. If you see a problem — in co
 
 ### Branch Discipline
 
-Feature work goes on feature branches. Small fixes (typos, compilation fixes, single-file doc edits) can go directly to main.
+**Nothing lands on `main` except through a merged PR — no exceptions, no bypass-rights shortcuts.** Every change, including a one-line typo fix, goes through a branch. What varies by size is only the branch's *name and lifetime*, never whether it exists:
 
 ```bash
 git checkout -b feat/short-description main
@@ -34,20 +40,18 @@ git checkout -b feat/short-description main
 | `refactor/` | Restructuring without behavior change |
 | `docs/` | Documentation, CHANGELOG, README |
 
-**When to branch:**
+**Long-lived feature branch** (multi-session work):
 - New skill commands (`/prfaq:import`, `/prfaq:meeting`)
 - Template environment changes that affect generated output
 - Multi-file changes that touch skill prompts, reference guides, and templates together
 - Any work that might take multiple sessions
 
-**When a feature branch is not needed** (PR directly from a short-lived branch):
+**Short-lived branch** (same prefixes, deleted right after merge — still a branch, still a PR):
 - Single-file fixes (compilation, typos, formatting)
 - CHANGELOG updates
 - Dogfood document edits that don't change the template
 
-Branch protection is active — all changes require a PR, but these don't need
-a long-lived feature branch. Releases have their own process (see
-[Release Process](#release-process) below).
+**The exemption above is about how trivial one change is, never about how many files it touches.** A prose-quality pass across several documents is not "a single-file doc edit" repeated — it is exactly the kind of multi-file work that needs a bead, a branch, and local review, even when every individual edit is mechanical. See `docs/WORKFLOW.md` for the full loop (this is Loop 2's Branch step) and the incident that prompted this rewrite (`prfaq-6wz`).
 
 ### Micro-Commits
 
@@ -91,12 +95,16 @@ Match the workflow to the bead's scope. The deciding factor is **design ambiguit
 | **T1: Forge** | `/feature-forge` | Epics, cross-cutting work, competing design approaches | Beads with dependencies |
 | **T2: Feature Dev** | `/feature-dev` | Features, multi-file, clear goal but needs exploration | Beads + TodoWrite (internal) |
 | **T3: Direct** | Plan mode or manual | Tasks, bugs, obvious implementation path | Beads |
+| **T4: Trivial** | Manual | Single-character/single-line fix, one file, no judgment call | No bead — commit message is the record |
 
 **Decision flow:**
 
 1. Is there design ambiguity needing multi-perspective input? → **T1: Forge**
 2. Does it touch multiple files and benefit from codebase exploration? → **T2: Feature Dev**
-3. Otherwise → **T3: Direct** (plan mode if >3 files, manual if fewer)
+3. Is it a genuinely single-file, single-line, no-judgment-call fix? → **T4: Trivial**
+4. Otherwise → **T3: Direct** (plan mode if >3 files, manual if fewer)
+
+**T4 skips the bead. It never skips the branch.** Every tier, including T4, still goes through Loop 2 in `docs/WORKFLOW.md` (branch → verify → local review → PR → merge). "No bead" is not "no process."
 
 **Bead type mapping:**
 
@@ -324,6 +332,8 @@ Before creating a PR, verify:
 - [ ] **Cached plugin copy updated** if skill or reference guide files changed
 
 ### Pull Request and Code Review Workflow
+
+**Local review happens before any of this, not after.** See `docs/WORKFLOW.md` § Loop 2 for which review agents apply to what you changed — run them to zero findings before pushing. GitHub review cycles below catch what local review can't (CI, a second set of eyes); they are not a substitute for it.
 
 Do **not** merge immediately after creating a PR. Expect **2–6 review cycles** before merging. The full flow is:
 
