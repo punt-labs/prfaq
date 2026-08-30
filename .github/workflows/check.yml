@@ -79,6 +79,20 @@ jobs:
       matrix:
         os: [ubuntu-24.04, macos-latest]
         toolchain: [tex, pandoc, none]
+        # Each leg asserts the installer's own detection message for its
+        # toolchain state, so a leg cannot pass with the wrong branch
+        # having fired (e.g. a preinstalled pandoc silently turning the
+        # tex leg into the pandoc branch).
+        include:
+          - toolchain: tex
+            expect: "pdflatex found (PDF output available)"
+            forbid: "pandoc found (DOCX export available)"
+          - toolchain: pandoc
+            expect: "pandoc found (DOCX export available)"
+            forbid: "pdflatex found (PDF output available)"
+          - toolchain: none
+            expect: "Neither pandoc nor TeX found"
+            forbid: ""
     name: install-e2e (${{ matrix.os }}, ${{ matrix.toolchain }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 20
@@ -86,21 +100,51 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - name: Install the real claude CLI
         run: npm install -g @anthropic-ai/claude-code
+      - name: Remove preinstalled pandoc (runner images may ship one)
+        if: matrix.toolchain != 'pandoc'
+        run: |
+          while p=$(command -v pandoc); do
+            sudo rm -f "$p"
+          done
+          true
       - name: Install pandoc only (Linux)
         if: matrix.toolchain == 'pandoc' && runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends pandoc
+        run: |
+          if ! command -v pandoc >/dev/null 2>&1; then
+            sudo apt-get update && sudo apt-get install -y --no-install-recommends pandoc
+          fi
       - name: Install pandoc only (macOS)
         if: matrix.toolchain == 'pandoc' && runner.os == 'macOS'
-        run: brew install pandoc
+        run: |
+          if ! command -v pandoc >/dev/null 2>&1; then
+            brew install pandoc
+          fi
       - name: Install a minimal TeX only (Linux)
         if: matrix.toolchain == 'tex' && runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends texlive-base biber
+        # texlive-latex-base, not texlive-base: /usr/bin/pdflatex is in
+        # the former (dpkg -S ground truth); the latter alone leaves the
+        # installer's TeX detection finding nothing.
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends texlive-latex-base biber
       - name: Install a minimal TeX only (macOS)
         if: matrix.toolchain == 'tex' && runner.os == 'macOS'
         run: |
           brew install --cask basictex
           echo "/Library/TeX/texbin" >> "$GITHUB_PATH"
       - name: Run the installer exactly as users do (piped through sh)
-        run: cat install.sh | sh
+        run: |
+          set -o pipefail
+          cat install.sh | sh 2>&1 | tee install-out.txt
+      - name: Assert the intended toolchain branch actually fired
+        env:
+          EXPECT: ${{ matrix.expect }}
+          FORBID: ${{ matrix.forbid }}
+        run: |
+          grep -F "$EXPECT" install-out.txt
+          if [ -n "$FORBID" ]; then
+            if grep -F "$FORBID" install-out.txt; then
+              echo "Forbidden detection message present — wrong branch fired" >&2
+              exit 1
+            fi
+          fi
       - name: Assert the plugin is actually installed
         run: claude plugin list | grep -q "prfaq@punt-labs"
