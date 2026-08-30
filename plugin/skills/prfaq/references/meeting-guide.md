@@ -376,5 +376,12 @@ Same structure as the regular meeting summary (Phase 3b) — including the `## O
 - **Resolution**: `CONSENSUS`, `BIAS-FOR-ACTION`, or `ESCALATED` (an escalated row resolved REVISE or KEEP is recorded in `Escalated Decisions (Resolved)`; an escalated row resolved DEFER is recorded in `## Deferred Items` instead — see Phase 3b)
 - An `ESCALATED` row resolved **REVISE or KEEP**: **Winning Argument** is `User decision (escalated) — see Escalated Decisions (Resolved)`, **Dissent** is `—`. This is the user's tie-break, not a hive consensus — never reuse the DEFER row's placeholder here, since this row *is* decided and `/prfaq:meeting-listen` reads the Winning Argument text to tell the two cases apart.
 - An `ESCALATED` row resolved **DEFER**: **Winning Argument** and **Dissent** are both `— (escalated, no winner)` — this hot spot produced no winner and remains unresolved (see Synthesis in Hive Mode above), so neither column has anything to name
-- Items that were escalated and resolved REVISE/KEEP get an `Escalated Decisions (Resolved)` section near the top of the summary, recording each item's competing arguments and the user's resolution — a historical record, not a live prompt, since the resolution already happened before the closing assessment ran
+- Items that were escalated and resolved REVISE/KEEP get an entry in a `## Escalated Decisions (Resolved)` section near the top of the summary — a historical record, not a live prompt, since the resolution already happened before the closing assessment ran. Field format, one bullet per item:
+
+  ```markdown
+  ## Escalated Decisions (Resolved)
+  - **[Hot Spot title]** — [Persona A]: [their strongest argument]. [Persona B]: [their strongest argument]. **Resolved:** [REVISE/KEEP] — [one-line rationale for the user's call, if given]
+  ```
+
+  `/prfaq:meeting-listen` reads this section by hot spot title to voice both sides for a user-resolved escalation (see its DEFERRED/user-resolved carve-outs) — if an item's `Winning Argument` cell says `User decision (escalated)` but this section has no matching entry, `meeting-listen` skips the dramatization rather than inventing one (see its own guard).
 - Items that were escalated and resolved DEFER go in `## Deferred Items` (same field format as the Phase 3b template), not in `Escalated Decisions (Resolved)`
