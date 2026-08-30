@@ -14,6 +14,8 @@ Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
 - **Voiced mode** — TTS is available. Voices will be used.
 - **Text-only mode** — TTS is not available. Tell the user: "TTS plugin not available — playing back as text-only transcript. Install punt-vox for voiced playback." Continue with all steps below, but skip all `mcp__plugin_vox_mic__*` calls. Print dialogue as attributed text instead.
 
+Load `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/plain-style.md` — generative prose rules (no em dash, no negative parallelism, no corporate-register vocabulary, no value-claim filler, no explaining the document to the reader). The persisted meeting summary you read in step 2 already passed through `prose_lint.py` when it was written, but every line of dialogue you construct in step 6b, and every narrator or recap segment you author in step 7, is new text that is spoken or printed and never written to a file — apply every rule in `plain-style.md` to that new text before it is voiced or printed.
+
 ## Steps
 
 1. **Find the meeting summary.** If `$ARGUMENTS` specifies a path, use it. Otherwise, use Glob to find meeting summaries with both patterns:
@@ -132,6 +134,7 @@ Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
    - For KEEP-tone decisions, the defending persona should sound confident; for REVISE-tone, the challenger should sound vindicated
    - **Ground every line in a specific from the document** — a quoted phrase, a real number, a named competitor or customer segment — never an abstract turn of phrase standing in for the reasoning ("same disease, different organ" tells a listener nothing; naming the actual number or claim does). A listener hearing only this hot spot's segment, with no other context, must be able to say what specific thing is wrong and what the fix is.
    - **Never have a persona reference this meeting's own sequence** — no "third hot spot in a row," "unlike the previous item," "this isn't a duplicate of hot spot N." Each hot spot must stand alone. If the summary's Notes section records a cross-hot-spot pattern, leave it there — do not voice it as something a persona says mid-debate.
+   - **Apply `plain-style.md` to every line you write here.** No em dash, no negative parallelism, no corporate-register vocabulary, no value-claim filler, no explaining the meeting's own format to the listener. This dialogue is new text, spoken or printed straight from this step — nothing downstream checks it.
 
    **c. Output each line.** Always print each dialogue line with a speaker label prefix for the transcript, regardless of mode:
 
@@ -153,6 +156,7 @@ Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
        - End with the decision outcome so the listener knows the frame
        - Example: "Hot spot 3 concerns the Getting Started FAQ, which prices the product at \$12 per seat with no volume discount. The team debated whether that alienates 5-person teams who'd pay \$60/month for a tool they use twice a week. They decided to revise."
      - Keep it to 2-4 sentences — enough to state the actual claim and the tension, not a full recap. Prioritize naming the specific over staying at the low end of the sentence count. (This narrator segment is the one exception to the 1-3 sentence dialogue-line guideline above, which applies to the persona lines that follow, not this scene-setter.)
+     - Apply `plain-style.md` to this scene-setter: no em dash, no negative parallelism, no corporate-register vocabulary, no value-claim filler, no explaining the meeting's own format to the listener.
      - Omit `voice` — uses the session default, naturally distinguishing the narrator from persona voices
      - Omit `vibe_tags`
 
@@ -204,6 +208,8 @@ Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
    Attribute both to a speaker: for hive summaries, use the Winning Argument persona from the hot spot the majority of the picked revision-queue directives trace back to (deferred items' Winning Argument cell is the `— (escalated, no winner)` placeholder, not a persona, so always attribute those to Alex); if that's not clearly one persona, Alex speaks all of it. For interactive summaries (no persona attribution on decisions), Alex always speaks it. Build one or two segments, one or two sentences each: `"Three things before we reconvene: fix the TAM stacking, add the tripwire to the Value risk mitigation, and hedge the competitive claim."` / `"One item's still open — the competitive-claim hedge — tabled pending more research."`
 
    **c. Agreement-to-reconvene segment.** Build this only if 7a fired *and* Alex's closing text actually names a concrete next step or condition to reconvene on (Phase 2b requires this, but a non-compliant response can still lack one — check the text itself, don't just assume). If 7a didn't fire, or fired but named no concrete next step, skip this sub-step — never invent a reconvene beat. When it does apply, build one more dialogue segment, spoken by a persona who did not speak 7a or 7b, affirming the proposed reconvene point in Alex's closing text — grounded in its actual words (e.g., "Works for me — ping when the TAM and Viability revisions land."), never a generic "let's touch base soon."
+
+   Every segment you author in 7b and 7c is new text, spoken or printed straight from this step with nothing downstream to check it. Apply `plain-style.md` to each: no em dash, no negative parallelism, no corporate-register vocabulary, no value-claim filler, no explaining the meeting's own format to the listener.
 
    **d. Make the call and print the footer.**
 
