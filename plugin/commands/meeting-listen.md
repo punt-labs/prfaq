@@ -75,12 +75,19 @@ Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
      ```
    - Use the fallback voice for affected personas for the rest of the playback.
 
-5. **Transform and voice each hot spot.** Process the decisions table row by row. For each hot spot:
+5. **Voice the opening assessment, if present.** Check the summary for an `## Overall Assessment` section with a `**Opening (Alex):**` line (summaries written before this section existed won't have one — skip this step entirely if so, don't fabricate one).
+
+   If present:
+   - **In voiced mode:** make an `mcp__plugin_vox_mic__unmute` call before the first hot spot with `ephemeral: true` and two segments: a narrator line ("Before the agenda, Alex opens the meeting."), then Alex's opening assessment text as a dialogue segment (voice: Alex's resolved voice from step 3/4; `vibe_tags`: Alex's `voice_vibe` **on ElevenLabs only** — per step 3's provider table, omit `vibe_tags` entirely on OpenAI and fallback providers, where tags would otherwise be spoken literally).
+   - **In text-only mode:** print `--- Opening Assessment ---` then `**Alex:** [opening assessment text]`.
+
+6. **Transform and voice each hot spot.** Process the decisions table row by row. For each hot spot:
 
    **a. Normalize the decision and print the hot spot header.** The raw `Decision` cell may contain markdown formatting (`**REVISE**`) or compound values (`RESEARCH + REVISE`). Before display:
 
    - Strip markdown formatting (`**`, backticks, leading/trailing whitespace) to get a clean decision label.
    - Derive a canonical decision tone for dialogue guidelines:
+     - Values containing "defer" (case-insensitive, e.g. `Defer`, `DEFER (pending research)`) → **DEFERRED** tone — see the carve-out below, skip 6b's dialogue construction entirely
      - Values containing "keep" (and not "revise" or "research") → **KEEP** tone
      - Values containing "revise", "research", "iterate", or "change" → **REVISE** tone
      - When ambiguous, default to **REVISE** if the value implies further work
@@ -91,9 +98,18 @@ Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
    --- Hot Spot N: [title] | [cleaned Decision label] ---
    ```
 
-   **b. Write the dialogue.** Transform the structured summary into 4-6 lines of natural conversation between personas. The personas speak to each other — no narrator, no stage directions.
+   **DEFERRED-tone carve-out:** a `DEFER` row has no winner and no consensus — the hive escalated it and the user declined to resolve it, or (interactive) the user asked for more time. Do not invent a winning persona or a decisive line for it. Skip straight to a one-line note after the header and move to the next hot spot:
+
+   - **In both modes:** always print the transcript line first, same as step 6c's dialogue lines: `**Alex:** Still open — deferred, see the closing recap.`
+   - **In voiced mode, additionally:** make one `unmute` segment (no narrator, one persona voice — Alex, since Alex owns the closing read that will cover this properly) with that same line. Do not attempt full dialogue.
+
+   The full "both sides' strongest argument" content for a deferred item belongs in the closing recap (step 7b), pulled from `## Deferred Items`, not dramatized here.
+
+   **b. Write the dialogue** (KEEP/REVISE tone only — a DEFERRED-tone row skips this entirely, per the carve-out above). Transform the structured summary into 4-6 lines of natural conversation between personas. The personas speak to each other — no narrator, no stage directions.
 
    **For hive summaries** (persona-attributed):
+   - **Guard — still-unresolved row:** if the `Winning Argument` cell is exactly `— (escalated, no winner)`, treat this row as DEFERRED tone regardless of what 6a derived from the `Decision` cell, and go back to the carve-out above — there is no winner to open with. Do not match this against any other `—`-prefixed cell; only this exact placeholder means unresolved.
+   - **Guard — user-resolved escalation:** if the `Winning Argument` cell starts with `User decision (escalated)`, this row *is* decided (REVISE or KEEP), but no persona won — the user broke a hive tie. Skip the persona-attributed flow below. Look up this hot spot's entry in the summary's `## Escalated Decisions (Resolved)` section (field format: hot spot, both personas' strongest argument, the resolution — see the meeting guide's Hive Summary Format). If found, build 2-3 lines voicing both sides' original strongest argument (spoken by the two personas who held them), then close with one line stating the user's decision — spoken by Alex, since Alex owns meeting framing. **If the section or a matching entry is missing** (an older or malformed summary), do not invent the two sides' arguments — fall back to a single Alex-voiced line stating only the hot spot and the decision, e.g. "This one was escalated and the team went with revise — the original arguments weren't recorded." This is shorter than a full consensus dramatization either way; there's no "winning" dialogue to build because a human made the call, not the hive.
    - The persona named in "Winning Argument" opens with their core point, expanded into natural speech using that persona's verbal style from their agent file
    - One or two other personas react — agree, push back, or build on the point
    - If there is dissent, the dissenting persona speaks their counterargument
@@ -167,7 +183,34 @@ Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
 
    **In text-only mode**, just print the labeled lines. No TTS calls.
 
-6. **Close the playback.** After all hot spots, print:
+7. **Close the playback.** After all hot spots, give the meeting a real close — a recap and an agreement to reconvene, not just a mechanical footer. Build the segments in 7a-7c first, then make one call in 7d — do not call `unmute` until all of the closing scene's segments are assembled.
+
+   **a. Closing assessment segment(s), if present.** Check the summary for an `## Overall Assessment` section with a `**Closing (Alex):**` line (older summaries won't have one — skip this sub-step if so, don't fabricate one). If present, build two segments: a narrator line orienting the listener, chosen by what actually happened:
+
+   - `## Not Discussed` has entries (early exit) → "With the meeting cut short, Alex offers a closing read."
+   - `## Deferred Items` has entries but the meeting wasn't cut short → "With most hot spots settled and N left open, Alex closes the meeting." (N = number of deferred items)
+   - Neither — every hot spot reached a real decision → "With every hot spot resolved, Alex closes the meeting."
+
+   Then build Alex's closing assessment text as a dialogue segment (voice: Alex's resolved voice from step 3/4; `vibe_tags`: Alex's `voice_vibe` **on ElevenLabs only**, same provider carve-out as 5).
+
+   **b. Follow-up recap segment(s).** Two things to recap here, if present:
+
+   i. **Revision queue directives.** Pull 2-3 concrete directives from the Revision Queue section — name what each one actually says (e.g., "fix the TAM stacking," "add the tripwire to the Value risk mitigation"), never a generic "a few things to fix." If the queue is empty, skip this. If it has more than 3 directives, pick which ones to name:
+      - **Interactive summaries:** prefer directives tied to Critical-severity hot spots. The Revision Queue template only guarantees `### Directive N: [Short title]`, not a hot-spot title or ID — match by content instead (the directive's title/body and the hot spot's description reference the same claim, section, or issue), not by exact string comparison. **If no hot spot match is clear for a directive, don't guess — fall back to queue order** (Directive 1, 2, 3...) for that pick.
+      - **Hive summaries:** the decisions table has no Severity column — prefer directives tied to one-way-door REVISE rows instead (same content-matching rule, same no-guessing fallback), then fall back to queue order (Directive 1, 2, 3...).
+
+   ii. **Deferred items.** If `## Deferred Items` has entries, name what's still open, using its actual content (e.g., "One item's still open — the competitive-claim hedge — we didn't reach consensus, and it's tabled pending more research."). Never dramatize this as a debate (step 6 already skipped that for these rows) — this is the one place their content surfaces.
+
+   Attribute both to a speaker: for hive summaries, use the Winning Argument persona from the hot spot the majority of the picked revision-queue directives trace back to (deferred items' Winning Argument cell is the `— (escalated, no winner)` placeholder, not a persona, so always attribute those to Alex); if that's not clearly one persona, Alex speaks all of it. For interactive summaries (no persona attribution on decisions), Alex always speaks it. Build one or two segments, one or two sentences each: `"Three things before we reconvene: fix the TAM stacking, add the tripwire to the Value risk mitigation, and hedge the competitive claim."` / `"One item's still open — the competitive-claim hedge — tabled pending more research."`
+
+   **c. Agreement-to-reconvene segment.** Build this only if 7a fired *and* Alex's closing text actually names a concrete next step or condition to reconvene on (Phase 2b requires this, but a non-compliant response can still lack one — check the text itself, don't just assume). If 7a didn't fire, or fired but named no concrete next step, skip this sub-step — never invent a reconvene beat. When it does apply, build one more dialogue segment, spoken by a persona who did not speak 7a or 7b, affirming the proposed reconvene point in Alex's closing text — grounded in its actual words (e.g., "Works for me — ping when the TAM and Viability revisions land."), never a generic "let's touch base soon."
+
+   **d. Make the call and print the footer.**
+
+   - **In voiced mode:** assemble every segment built in 7a-7c, in the order built, into a single `mcp__plugin_vox_mic__unmute` call with `ephemeral: true`. If 7a and 7c were both skipped and 7b built a segment, the call is just that one segment. If 7b was also skipped (nothing to recap — empty revision queue and no deferred items), skip the call entirely.
+   - **In text-only mode:** print each sub-step's labeled line as it's built — no batching needed for text.
+
+   Then print the footer:
 
    ```
    --- End of meeting playback ---

@@ -49,6 +49,22 @@ Rank each hot spot:
 
 Aim for 5-8 hot spots total. More than 8 makes the meeting too long. Fewer than 3 means the document might not need a meeting.
 
+### Phase 0b: Opening Assessment
+
+Real review meetings open with someone framing the stakes before diving into an itemized list — not a cold jump into agenda item one. Give this meeting the same opening.
+
+Launch a single `prfaq:meeting-executive` (Alex) agent — not all four personas, just Alex, since this is the person calling the meeting to order. Tell Alex explicitly: **this is a meeting-opening assessment, not a section evaluation — reply in 3-5 sentences of continuous prose, not the structured BIGGEST ASSUMPTION/OPPORTUNITY COST/POSITION/EVIDENCE format** (see the Exception in `meeting-executive.md`). Give Alex: the document's stage, the full Risk Assessment table, and the list of hot spots about to be debated (titles and severities, not the full debate). Ask for a holistic opening read, 3-5 sentences, organized around the three questions product development lives or dies on:
+
+1. **Is this a problem worth solving?** — does the document's own evidence support that the problem is real and significant, walking in?
+2. **Do we have a strong, differentiated solution?** — does the competitive-landscape evidence suggest this actually beats the alternatives, or does it just exist alongside them?
+3. **Should we build this now?** — given the stage and the hot spots about to be debated, is the timing and opportunity cost defensible, or is this competing against something more urgent?
+
+Alex doesn't need a final answer to all three before the debate — a live worry ("problem looks real, but I'm not sold on #2 yet") is a legitimate opening read. Ground it in real specifics — the actual risk ratings, the actual TAM figures, the actual stage — the same grounding rule as the rest of the meeting applies here too.
+
+Present this opening assessment to the user before the agenda list. It sets context; it does not replace the agenda.
+
+**If the agent call fails, times out, or returns content that isn't grounded in the specific risk ratings or hot spots provided:** tell the user the opening assessment could not be generated and proceed straight to the agenda. Never substitute a generic read ("the document looks broadly promising") to fill the gap — an ungrounded assessment is worse than no assessment.
+
 ### Phase 1: Agenda & Scope Selection
 
 Present the agenda and let the user choose scope:
@@ -116,6 +132,26 @@ The narrative should feel like eavesdropping on a real meeting — not reading f
 
 **Step 5: Show cascade consequences.** After the decision, identify what other sections are affected using the dependency graph from the feedback agent's Section Dependency Graph. Show: "This decision affects N other sections: [list]. These will be included in the revision queue."
 
+### Phase 2b: Closing Assessment
+
+Real review meetings don't just stop after the last agenda item — someone closes the meeting out. Give this meeting the same close, after every hot spot has been **addressed with an outcome** — REVISE, KEEP, RESEARCH, or DEFER, or an escalated item's user-resolved outcome in hive mode (see Hive Mode below) — and before the mechanical decisions summary. Do not wait for a "final" decision that will never arrive: a `Defer` outcome is itself the meeting reaching its end on that item, not a signal to keep waiting.
+
+A **Defer** outcome is not final in the sense that matters for the closing assessment's *input* — it means "needs more thinking," not "decided," so it doesn't belong in the settled-decisions list Alex reasons about. Exclude deferred items from Alex's decision list and tell Alex how many were deferred, so the closing read can acknowledge them honestly instead of assuming every hot spot is settled. This applies the same way in `/prfaq:meeting` (where the user can choose Defer per item) and `/prfaq:meeting-hive` (where an escalated item can resolve to Defer — see Hive Mode below).
+
+**On early exit** (see Early Exit below): still run the closing assessment, but tell Alex explicitly the meeting was cut short and pass only the decisions actually made — never pass "Not discussed" items to Alex as if they were decided.
+
+Launch a single `prfaq:meeting-executive` (Alex) agent again — standalone, not the full cast. Tell Alex explicitly: **this is a meeting-closing assessment, not a section evaluation — reply in 3-5 sentences of continuous prose, not the structured format** (see the Exception in `meeting-executive.md`). Give Alex: the opening assessment (for continuity), and the full list of final decisions made across every hot spot (title, decision, one-line rationale each) — or, on early exit, the decisions made before exiting plus a note that the meeting ended early. Ask for a closing read, 3-5 sentences, that revisits the opening's three questions in light of what the meeting decided:
+
+1. **Is this a problem worth solving?** — did any hot spot change the read on the problem's reality or significance?
+2. **Do we have a strong, differentiated solution?** — did the decisions strengthen or weaken the competitive case?
+3. **Should we build this now?** — once these revisions land, is the timing call still the same as the opening, or did the meeting surface a reason to reconsider?
+
+Alex doesn't need all three to have moved — naming which ones didn't change is as useful as naming which did. This is a narrative judgment call in Alex's voice, not a repeat of `/prfaq:vote`'s structured three-gate go/no-go — point the user at `/prfaq:vote` separately if they want that level of rigor.
+
+End the closing assessment with a concrete proposal for what happens next and when to reconvene — grounded in the actual revision queue ("let's revisit once the TAM and Viability revisions land"), never a generic "let's touch base soon."
+
+**If the agent call fails, times out, or returns content that isn't grounded in the specific decisions provided:** tell the user the closing assessment could not be generated and proceed straight to the mechanical summary. Never substitute a generic read to fill the gap.
+
 ### Phase 3: Post-Meeting Summary
 
 After all agenda items are resolved (or the user exits early), present the summary:
@@ -124,7 +160,7 @@ After all agenda items are resolved (or the user exits early), present the summa
 MEETING SUMMARY
 
 Decisions made: N
-  1. [Hot spot] — [REVISE/KEEP/DEFER] (rationale)
+  1. [Hot spot] — [REVISE/KEEP/RESEARCH/DEFER] (rationale)
   2. ...
 
 Revision queue (for /prfaq:feedback):
@@ -133,7 +169,10 @@ Revision queue (for /prfaq:feedback):
   ...
 
 Deferred items:
-  - [Item] — [what needs to happen before deciding]
+  - [Item] — [both sides' strongest argument, if this was an escalated hive decision] — [what needs to happen before deciding]
+
+Not discussed (early exit only):
+  - [Item] — identified as a hot spot, never reached before the meeting ended
 
 To apply all revisions automatically, run: /prfaq:feedback
 ```
@@ -154,6 +193,12 @@ After presenting the summary to the user, write it to a markdown file in the `./
 **Document:** [filename]
 **Scope:** [Full meeting / Critical only / Selected items]
 
+## Overall Assessment
+
+**Opening (Alex):** [The 3-5 sentence opening read from Phase 0b]
+
+**Closing (Alex):** [The 3-5 sentence closing read from Phase 2b, ending with the concrete next-step/reconvene proposal]
+
 ## Decisions
 
 | # | Hot Spot | Severity | Decision | Rationale |
@@ -170,7 +215,11 @@ After presenting the summary to the user, write it to a markdown file in the `./
 [Full feedback directive text]
 
 ## Deferred Items
-- [Item] — [what needs to happen before deciding]
+- [Item] — [both sides' strongest argument, if this was an escalated hive decision] — [what needs to happen before deciding]
+
+## Not Discussed
+[Only present on early exit — see Early Exit below]
+- [Item] — identified as a hot spot, never reached before the meeting ended
 
 ## Research Completed
 [If any researcher agents were invoked during the meeting, summarize findings here]
@@ -226,6 +275,8 @@ Do not have a persona comment on the meeting's own sequence or shape — "third 
 
 If the user wants to leave the meeting early (AskUserQuestion option or explicit request), immediately produce the post-meeting summary with whatever decisions have been made. Mark unaddressed items as "Not discussed" — not "Deferred" (which implies a decision to defer).
 
+The closing assessment (Phase 2b) still runs on early exit — a real meeting that ends early still gets a closing remark. Pass Alex only the decisions actually made; list "Not discussed" items separately and tell Alex the meeting was cut short, so the closing read can note that explicitly rather than assume full coverage.
+
 ## Stage Calibration
 
 Extract `\prfaqstage{value}` from the document before the pre-meeting scan. Stage calibrates both the hot spot ranking and persona behavior:
@@ -253,7 +304,11 @@ Extract `\prfaqstage{value}` from the document before the pre-meeting scan. Stag
 
 ## Hive Mode
 
-`/prfaq:meeting-hive` is the autonomous variant — the "team meeting without the boss." Same cast, same hot spot ranking, same stage calibration. The difference is the decision mechanism: personas reach consensus through multi-round debate instead of the user deciding at each point.
+`/prfaq:meeting-hive` is the autonomous variant — the "team meeting without the boss." Same cast, same hot spot ranking, same stage calibration, same opening and closing assessment. The difference is the decision mechanism: personas reach consensus through multi-round debate instead of the user deciding at each point.
+
+The opening assessment (Phase 0b) applies unchanged in hive mode: a single standalone Alex spawn before the agenda, not part of the `prfaq-hive` team.
+
+The closing assessment (Phase 2b) needs one hive-specific ordering rule: the debate loop's own decision mapping leaves `ESCALATED` items unresolved by design (see Decision Mapping below) — those are user calls, not hive consensus. Resolve every escalated item with the user (`AskUserQuestion`: REVISE / KEEP / DEFER) *before* launching the closing assessment. A REVISE or KEEP resolution becomes that hot spot's final decision and is included in what Alex sees; a DEFER resolution stays unresolved and is excluded from Alex's decision list — tell Alex how many items were deferred instead, so the closing read can acknowledge them honestly rather than assume every hot spot is settled. Like the opening spawn, the closing spawn is a single standalone Alex agent, not part of the team.
 
 ### Decision Philosophy: Arguments Win, Not Averages
 
@@ -290,7 +345,7 @@ The door type changes how votes are weighted — not equally, but by relevance:
 
 **Post-Round 2 resolution:**
 - Clear majority → that side wins. Minority disagrees and commits.
-- Persistent split on a one-way door → **escalate to user** with both sides' strongest argument.
+- Persistent split on a one-way door → mark `ESCALATED` and record both sides' strongest argument. Do not ask the user yet — the hive keeps running; escalations resolve in one batch once the full debate loop finishes (see Hive Mode above).
 - Persistent split on a two-way door → **bias for action**. Action side wins. Dissent noted.
 
 ### Decision Mapping
@@ -301,21 +356,32 @@ The door type changes how votes are weighted — not equally, but by relevance:
 | Either | 3-1 or 4-0 ITERATE/REJECT | REVISE |
 | Two-way | 2-2 split (Round 1) | BIAS-FOR-ACTION — action side wins unless caution raises a falsifiable concern → Round 2 |
 | Two-way | 2-2 split (after Round 2) | BIAS-FOR-ACTION — action side wins, dissent noted |
-| One-way | 2-2 split (after Round 2) | ESCALATED — user decides, both sides' strongest argument presented |
+| One-way | 2-2 split (after Round 2) | ESCALATED — recorded, not asked yet; resolved after the debate loop via REVISE / KEEP / DEFER (both sides' strongest argument presented then) |
 
 ### Synthesis in Hive Mode
 
-The debate narrative is shorter than in regular meetings (3-5 sentences per hot spot, not a full dramatic scene). The goal is to communicate the key tension and the resolution, not to dramatize the conflict. Save the user's reading time — they'll read N summaries, not participate in N debates. The same grounding rules apply at this shorter length: every sentence still needs to name a specific from the document, and no sentence references another hot spot's position in the sequence.
+The debate narrative is shorter than in regular meetings (3-5 sentences per hot spot, not a full dramatic scene). The goal is to communicate the key tension and the resolution, not to dramatize the conflict. Save the user's reading time — they'll read N summaries, not participate in N debates. The same grounding rules apply at this shorter length: every sentence still needs to name a specific from the document, and no sentence references another hot spot's position in the sequence. For a hot spot marked `ESCALATED` at synthesis time, there is no winner yet — write both sides' strongest argument and note the call is the user's; do not fabricate a winner.
 
-For split decisions, present both sides' strongest single argument and ask the user to decide.
+After the debate loop finishes (not during it — see Hive Mode above), present each escalated item's both sides' strongest single argument and ask the user to decide: REVISE / KEEP / DEFER.
 
 ### Hive Summary Format
 
-Same structure as the regular meeting summary (Phase 3b), with `**Mode:** Hive (autonomous consensus, Agent Teams)` in the header and this decisions table schema:
+Same structure as the regular meeting summary (Phase 3b) — including the `## Overall Assessment` and `## Deferred Items` sections — with `**Mode:** Hive (autonomous consensus, Agent Teams)` in the header and this decisions table schema:
 
 | # | Hot Spot | Door | Decision | Resolution | Winning Argument | Dissent |
 |---|----------|------|----------|------------|------------------|---------|
 
 - **Door**: `one-way` or `two-way`
-- **Resolution**: `CONSENSUS`, `BIAS-FOR-ACTION`, or `ESCALATED`
-- Escalated decisions get a `User Action Required` section at the top of the summary
+- **Decision**: `REVISE`, `KEEP`, or `DEFER` — a `DEFER` row was never given to the closing assessment (see the ordering rule in Hive Mode above)
+- **Resolution**: `CONSENSUS`, `BIAS-FOR-ACTION`, or `ESCALATED` (an escalated row resolved REVISE or KEEP is recorded in `Escalated Decisions (Resolved)`; an escalated row resolved DEFER is recorded in `## Deferred Items` instead — see Phase 3b)
+- An `ESCALATED` row resolved **REVISE or KEEP**: **Winning Argument** is `User decision (escalated) — see Escalated Decisions (Resolved)`, **Dissent** is `—`. This is the user's tie-break, not a hive consensus — never reuse the DEFER row's placeholder here, since this row *is* decided and `/prfaq:meeting-listen` reads the Winning Argument text to tell the two cases apart.
+- An `ESCALATED` row resolved **DEFER**: **Winning Argument** and **Dissent** are both `— (escalated, no winner)` — this hot spot produced no winner and remains unresolved (see Synthesis in Hive Mode above), so neither column has anything to name
+- Items that were escalated and resolved REVISE/KEEP get an entry in a `## Escalated Decisions (Resolved)` section near the top of the summary — a historical record, not a live prompt, since the resolution already happened before the closing assessment ran. Field format, one bullet per item:
+
+  ```markdown
+  ## Escalated Decisions (Resolved)
+  - **[Hot Spot title]** — [Persona A]: [their strongest argument]. [Persona B]: [their strongest argument]. **Resolved:** [REVISE/KEEP] — [one-line rationale for the user's call, if given]
+  ```
+
+  `/prfaq:meeting-listen` reads this section by hot spot title to voice both sides for a user-resolved escalation (see its DEFERRED/user-resolved carve-outs) — if an item's `Winning Argument` cell says `User decision (escalated)` but this section has no matching entry, `meeting-listen` skips the dramatization rather than inventing one (see its own guard).
+- Items that were escalated and resolved DEFER go in `## Deferred Items` (same field format as the Phase 3b template), not in `Escalated Decisions (Resolved)`

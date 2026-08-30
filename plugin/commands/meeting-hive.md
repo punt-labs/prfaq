@@ -43,11 +43,13 @@ Then restart Claude Code. Do not proceed without it — use `/prfaq:meeting` for
 
 4. **Classify each hot spot as a one-way or two-way door.** For each hot spot, determine whether the decision it implies is reversible (two-way door: positioning, scope, framing) or irreversible (one-way door: architecture, data model, public commitments). Mark each in the agenda.
 
-5. **Show the agenda.** Present the hot spots ranked by severity with door classification. All items will be debated — the user does not select scope. Tell the user: "The hive will debate these autonomously. I'll present the consensus when they're done."
+5. **Get the opening assessment.** Launch a single `prfaq:meeting-executive` (Alex) agent, standalone (not part of the `prfaq-hive` team — there's no back-and-forth to coordinate for a solo read), with the document's stage, the Risk Assessment table, and the hot spot titles/severities/door classifications from steps 3-4. Tell Alex explicitly: this is a meeting-opening assessment, not a section evaluation — reply in 3-5 sentences of continuous prose, not the structured format (see the Exception in `meeting-executive.md`). Ask for a 3-5 sentence holistic opening read, organized around Phase 0b's three questions (problem worth solving / strong and differentiated solution / build it now) in the meeting guide. Present it to the user before the agenda. If the agent call fails, times out, or returns ungrounded content, tell the user the opening assessment could not be generated and proceed to the agenda without one.
 
-6. **Create the team and task list.** Create a team named `prfaq-hive`. Create one task per hot spot using TaskCreate, named `Debate: [hot spot title]` with the hot spot description and door classification. This gives the user visible progress during the autonomous run.
+6. **Show the agenda.** Present the hot spots ranked by severity with door classification. All items will be debated — the user does not select scope. Tell the user: "The hive will debate these autonomously. I'll present the consensus when they're done."
 
-7. **Run the debate loop.** For each hot spot (processing sequentially, one at a time):
+7. **Create the team and task list.** Create a team named `prfaq-hive`. Create one task per hot spot using TaskCreate, named `Debate: [hot spot title]` with the hot spot description and door classification. This gives the user visible progress during the autonomous run.
+
+8. **Run the debate loop.** For each hot spot (processing sequentially, one at a time):
 
    Mark the hot spot task in-progress via TaskUpdate.
 
@@ -94,30 +96,47 @@ Then restart Claude Code. Do not proceed without it — use `/prfaq:meeting` for
 
    Resolve after Round 2:
    - Clear majority → that side wins. The minority disagrees and commits.
-   - Persistent split on a one-way door → **escalate to user**. Present both sides' strongest single argument.
+   - Persistent split on a one-way door → mark the hot spot `ESCALATED` and record both sides' strongest single argument. **Do not ask the user yet** — the hive keeps running autonomously; step 11 resolves every escalation in one batch after the full debate loop finishes.
    - Persistent split on a two-way door → **bias for action**. The action side wins. Note the dissent in the summary so the user can revisit after learning more.
 
    Mark the hot spot task complete via TaskUpdate after resolution.
 
-8. **Synthesize the debate.** For each hot spot, write a brief narrative (3-5 sentences) that shows which argument won and why. Name the winner and the loser. Do not soften — "Wei's scalability concern overruled Dana's push to ship" is better than "the group balanced speed and caution." Ground every sentence in a specific from the document (a quoted phrase, a real number, a named competitor or customer segment) — never in an abstract metaphor standing in for the reasoning, and never in a reference to another hot spot's position in this meeting ("third hot spot in a row," "unlike the previous item"). A cross-hot-spot pattern, if one emerges, belongs in the summary's Notes section, not spoken in a persona's voice. Follow the synthesis voice guidelines from the meeting guide.
+9. **Synthesize the debate.** For each hot spot, write a brief narrative (3-5 sentences) that shows which argument won and why. Name the winner and the loser. Do not soften — "Wei's scalability concern overruled Dana's push to ship" is better than "the group balanced speed and caution." For a hot spot marked `ESCALATED`, there is no winner yet — state both sides' strongest argument instead and note that the call is the user's, pending step 11; do not fabricate a winner. Ground every sentence in a specific from the document (a quoted phrase, a real number, a named competitor or customer segment) — never in an abstract metaphor standing in for the reasoning, and never in a reference to another hot spot's position in this meeting ("third hot spot in a row," "unlike the previous item"). A cross-hot-spot pattern, if one emerges, belongs in the summary's Notes section, not spoken in a persona's voice. Follow the synthesis voice guidelines from the meeting guide.
 
-9. **Shut down the team.** Send a shutdown request to each teammate using SendMessage with `type: "shutdown_request"`. Wait for acknowledgment, then clean up the team.
+10. **Shut down the team.** Send a shutdown request to each teammate using SendMessage with `type: "shutdown_request"`. Wait for acknowledgment, then clean up the team.
 
-10. **Present the consensus summary.** Show:
+11. **Resolve any escalated decisions.** If any hot spot's resolution is `ESCALATED` (a persistent one-way-door split after Round 2), present both sides' strongest argument to the user now, one at a time or batched, via AskUserQuestion: REVISE / KEEP / DEFER.
+
+    - **REVISE or KEEP:** record it as that hot spot's final decision. This was the user's tie-break, not a hive consensus — no persona "won." In the persisted Decisions table (step 14), set **Winning Argument** to `User decision (escalated) — see Escalated Decisions (Resolved)` and **Dissent** to `—`. Do not reuse the `— (escalated, no winner)` placeholder here — that's reserved for rows that are still unresolved (`DEFER`), and reusing it on a resolved row would make `/prfaq:meeting-listen` treat a decided hot spot as still open.
+    - **DEFER:** this hot spot stays unresolved — it is *not* a final decision. Track it separately as a deferred item; do not pass it to step 12 as if decided. In the persisted Decisions table, both **Winning Argument** and **Dissent** are `— (escalated, no winner)`.
+
+    **This must happen before step 12** — the closing assessment needs the complete, final set of REVISE/KEEP decisions (deferred items are handled separately, not folded into that set). If nothing escalated, skip this step.
+
+12. **Get the closing assessment.** Launch a single `prfaq:meeting-executive` (Alex) agent, standalone, with the opening assessment and the full list of *final* REVISE/KEEP decisions made across every hot spot (title, decision, one-line rationale each) — including the resolutions from step 11, but excluding any item deferred in step 11. If one or more items were deferred, tell Alex how many and let the closing read acknowledge them honestly rather than assume full closure. Tell Alex explicitly: this is a meeting-closing assessment, not a section evaluation — reply in 3-5 sentences of continuous prose, not the structured format (see the Exception in `meeting-executive.md`). Ask for a 3-5 sentence closing read that revisits Phase 2b's three questions in light of the meeting's decisions, ending in a concrete next-step/reconvene proposal (see Phase 2b in the meeting guide). If the agent call fails, times out, or returns ungrounded content, tell the user the closing assessment could not be generated and proceed to step 13 without one.
+
+13. **Present the consensus summary.** Show:
+    - **Overall assessment:** The opening and closing reads from steps 5 and 12.
     - **Consensus decisions:** Items where the hive reached resolution. Show the decision (REVISE/KEEP), the door type, the winning argument, and the noted dissent (if any).
-    - **Escalated decisions:** One-way door splits that require user input. Show both sides' strongest argument. Ask the user to decide via AskUserQuestion: REVISE / KEEP / DEFER.
+    - **Escalated decisions (resolved):** Items that were escalated in step 11 and resolved REVISE or KEEP. Show both sides' strongest argument and the user's resolution — this is now a historical record, not a live prompt, since the resolution already happened.
+    - **Deferred decisions:** Items escalated in step 11 where the user chose DEFER. Show both sides' strongest argument and what needs to happen before deciding.
     - **Revision queue:** Specific feedback directives for each REVISE decision, written to work as `/prfaq:feedback` input.
 
-11. **Persist the summary.** Write to `./meetings/meeting-hive-summary-YYYY-MM-DD.md`. If that filename exists, append a counter (`-2`, `-3`, etc.). Use the same format as regular meeting summaries (see Phase 3b in the meeting guide), with `**Mode:** Hive (autonomous consensus, Agent Teams)` in the header and this decisions table schema:
+14. **Persist the summary.** Write to `./meetings/meeting-hive-summary-YYYY-MM-DD.md`. If that filename exists, append a counter (`-2`, `-3`, etc.). Use the same format as regular meeting summaries (see Phase 3b in the meeting guide), including the `## Overall Assessment` section, with `**Mode:** Hive (autonomous consensus, Agent Teams)` in the header and this decisions table schema:
 
     **Migration:** Before writing, use Glob to check for `meeting-summary-*.md` and `meeting-hive-summary-*.md` in the project root (same directory as the `.tex` file). If any are found, move them to `./meetings/` using the Read and Write tools (read content, write to new path, delete old file via Bash `rm`). Tell the user: "Moved N meeting summary file(s) to ./meetings/ for organization."
 
     | # | Hot Spot | Door | Decision | Resolution | Winning Argument | Dissent |
     |---|----------|------|----------|------------|------------------|---------|
     | 1 | Example  | Two-way | REVISE | CONSENSUS | Wei: scalability concern | Dana: disagreed, committed |
+    | 2 | Example  | One-way | REVISE | ESCALATED | User decision (escalated) — see Escalated Decisions (Resolved) | — |
+    | 3 | Example  | One-way | DEFER | ESCALATED | — (escalated, no winner) | — (escalated, no winner) |
 
     - **Door**: `one-way` or `two-way`
-    - **Resolution**: `CONSENSUS`, `BIAS-FOR-ACTION`, or `ESCALATED`
-    - Escalated decisions get a `User Action Required` section at the top of the summary listing each escalated item, the competing arguments, and a prompt for the user to choose REVISE / KEEP / DEFER
+    - **Decision**: `REVISE`, `KEEP`, or `DEFER` (a deferred row has no closing-assessment input — see step 12)
+    - **Resolution**: `CONSENSUS`, `BIAS-FOR-ACTION`, or `ESCALATED` (escalated rows resolved REVISE or KEEP in step 11, before this file was written; an escalated row resolved DEFER instead is still `ESCALATED` here, but lists in `## Deferred Items` below too, not just this table)
+    - An `ESCALATED` row resolved **REVISE or KEEP**: **Winning Argument** is `User decision (escalated) — see Escalated Decisions (Resolved)`, **Dissent** is `—`. Never reuse the DEFER row's placeholder here — this row *is* decided, and `/prfaq:meeting-listen` uses the Winning Argument text to tell the two cases apart.
+    - An `ESCALATED` row resolved **DEFER**: **Winning Argument** and **Dissent** are both `— (escalated, no winner)` — this row is still unresolved (see step 9), so there is nothing to name in either column
+    - Items that were escalated and resolved REVISE/KEEP get an entry in a `## Escalated Decisions (Resolved)` section near the top of the summary, recording each item's competing arguments and the user's resolution from step 11 — see the field format in the meeting guide's Hive Summary Format section; do not invent your own format here
+    - Items that were escalated and deferred get a `## Deferred Items` entry, in the same format as the meeting guide's Phase 3b template (see Phase 3b) — do not re-derive the field list here
 
-12. **Offer to apply revisions.** If the revision queue is non-empty, tell the user to run `/prfaq:feedback` (no arguments) to automatically discover this meeting summary and apply all directives.
+15. **Offer to apply revisions.** If the revision queue is non-empty, tell the user to run `/prfaq:feedback` (no arguments) to automatically discover this meeting summary and apply all directives.
