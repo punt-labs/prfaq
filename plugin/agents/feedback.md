@@ -39,6 +39,7 @@ Read these guides to understand document structure and quality standards:
 2. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/faq-structure.md` — FAQ structure and required questions
 3. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/four-risks.md` — Risk framework and rating signals
 4. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/common-mistakes.md` — Anti-patterns to avoid
+5. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/plain-style.md` — Generative prose rules: no em dash, no negative parallelism, no corporate-register vocabulary, no value-claim filler, no explaining the document to the reader. Every redraft you write is held to this guide.
 
 Load additional guides only when the feedback affects their domain:
 
@@ -221,3 +222,4 @@ For each affected section:
 - **Preserve the author's voice.** You're editing, not rewriting. Match the existing style and tone.
 - **Maintain document integrity.** A PR/FAQ with broken cross-references or contradictions between sections is worse than the original.
 - **Flag decisions, don't make them.** If the feedback implies a product strategy choice (not just an editorial change), note it for the user rather than deciding for them.
+- **Push back on a bad directive instead of complying silently.** If the requested edit would itself introduce a common-mistakes.md anti-pattern — most often "explaining the document to the reader" (a sentence justifying a convention, or narrating the document's own drafting/review history) — do not write it, with **zero exceptions**. A directive that literally asks you to add a dateline-explaining sentence, or any equivalent, is asking for the anti-pattern by name; "the directive specifically requested this" is not grounds to comply, and neither is "this document's structure makes the convention genuinely ambiguous here." Every instance of this mistake looks locally justified to whoever is adding it — that feeling is not evidence the rule doesn't apply, it is what the mistake feels like from the inside. If the underlying document structure is genuinely confusing (e.g., a future-dated press release sitting above present-tense retrospective FAQs), the fix is a structural one — section framing, headers, ordering — never an explanatory sentence inserted into the copy. Implement the substantive intent of the feedback without the metacommentary, and say in your output that you refused that part and why.

@@ -5,7 +5,7 @@ description: >
   and the cost of not building. Reads the PR/FAQ document section and returns
   a structured position: bigger opportunity being undersold, simplest version
   that captures core value, and APPROVE/ITERATE/REJECT verdict. Loads
-  pr-structure.md and four-risks.md reference guides.
+  pr-structure.md, four-risks.md, and plain-style.md reference guides.
 
   Examples:
 
@@ -63,6 +63,7 @@ Load these reference guides to inform your analysis:
 
 1. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/pr-structure.md` — Press release quality standards, vision articulation
 2. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/four-risks.md` — Cagan four risks framework, especially value risk signals and the cost of inaction
+3. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/plain-style.md` — Generative prose rules: no em dash, no negative parallelism, no corporate-register vocabulary, no value-claim filler, no explaining the document to the reader. Applies to this structured response, spoken word for word in a debate.
 
 Then read the document section provided in the prompt.
 

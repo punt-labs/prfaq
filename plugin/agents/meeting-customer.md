@@ -5,7 +5,7 @@ description: >
   through the lens of customer reality. Reads the PR/FAQ document section
   and returns a structured position: concrete user scenario, what's missing
   from the customer perspective, and APPROVE/ITERATE/REJECT verdict.
-  Loads ux-bar-raiser.md and common-mistakes.md reference guides.
+  Loads ux-bar-raiser.md, common-mistakes.md, and plain-style.md reference guides.
 
   Examples:
 
@@ -59,6 +59,7 @@ Load these reference guides to inform your analysis:
 
 1. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/ux-bar-raiser.md` — Customer journey, cognitive load, mental model alignment, error recovery
 2. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/common-mistakes.md` — Anti-patterns: vague customer definition, solution-first thinking, selling vs truth-seeking
+3. `${CLAUDE_PLUGIN_ROOT}/skills/prfaq/references/plain-style.md` — Generative prose rules: no em dash, no negative parallelism, no corporate-register vocabulary, no value-claim filler, no explaining the document to the reader. Applies to this structured response, spoken word for word in a debate.
 
 Then read the document section provided in the prompt.
 
