@@ -119,8 +119,12 @@ LATEX_OPAQUE_COMMANDS = (
     "cite", "label", "faqref", "featureref", "ref",
     "prfaqversion", "prfaqstage", "includegraphics",
 )
+# \cite* (natbib/biblatex's starred variant, e.g. \citet*, \citep* would be
+# separate commands, but the plain \cite* form is common) takes the same
+# brace-only invocation as \cite -- the optional \*? admits it without a
+# separate entry in LATEX_OPAQUE_COMMANDS.
 LATEX_OPAQUE_RE = re.compile(
-    r"\\(?:" + "|".join(LATEX_OPAQUE_COMMANDS) + r")\b"
+    r"\\(?:" + "|".join(LATEX_OPAQUE_COMMANDS) + r")\b\*?"
     r"(?:\s*\[[^\]\n]*\])?"
     r"(?:\s*\{[^{}]*\})+"
 )

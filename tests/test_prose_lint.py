@@ -7,6 +7,7 @@ Run:  python3 tests/test_prose_lint.py
 """
 
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -67,10 +68,10 @@ class TestBannedTier(unittest.TestCase):
         self.assertEqual(r.exit_code, pl.EXIT_BANNED)
 
     def test_hyphen_and_space_variants_both_caught(self):
-        self.assertTrue(lint_text("a load-bearing wall of text").banned
-                        or True)  # exemption tested separately
-        r = lint_text("that is load bearing here")
-        self.assertTrue(r.banned)
+        hyphen = lint_text("The plan is load-bearing for the whole team.")
+        self.assertIn("load-bearing", terms(hyphen.banned))
+        spaced = lint_text("that is load bearing here")
+        self.assertIn("load-bearing", terms(spaced.banned))
 
     def test_case_insensitive(self):
         r = lint_text("Load-Bearing and DELVE and Torpedo Alert.")
@@ -588,103 +589,446 @@ class TestLatexItemMarkers(unittest.TestCase):
 
 
 class TestHookScopeGuard(unittest.TestCase):
-    """The hook's hard scope requirement: only .tex files carrying a prfaq
-    marker, and meeting-summary markdown under meetings/, are ever in scope."""
+    """
+    The hook's hard scope requirement: only .tex content carrying a prfaq
+    marker, and meeting-summary markdown under meetings/, are ever in
+    scope. `in_scope()` takes the reconstructed proposed content directly
+    -- a PreToolUse hook fires before the write lands, so there is often
+    nothing to read from disk yet.
+    """
 
-    def test_tex_file_with_prfaqversion_marker_in_scope(self):
-        with tempfile.TemporaryDirectory() as d:
-            f = Path(d) / "draft.tex"
-            f.write_text("\\prfaqversion{1}{0}\nSome prose.\n", encoding="utf-8")
-            self.assertTrue(hook.in_scope(f))
+    def test_tex_content_with_prfaqversion_marker_in_scope(self):
+        self.assertTrue(hook.in_scope(
+            Path("draft.tex"), "\\prfaqversion{1}{0}\nSome prose.\n"))
 
-    def test_tex_file_with_prfaqstage_marker_in_scope(self):
-        with tempfile.TemporaryDirectory() as d:
-            f = Path(d) / "draft.tex"
-            f.write_text("\\prfaqstage{hypothesis}\nSome prose.\n", encoding="utf-8")
-            self.assertTrue(hook.in_scope(f))
+    def test_tex_content_with_prfaqstage_marker_in_scope(self):
+        self.assertTrue(hook.in_scope(
+            Path("draft.tex"), "\\prfaqstage{hypothesis}\nSome prose.\n"))
 
-    def test_tex_file_without_marker_out_of_scope(self):
-        with tempfile.TemporaryDirectory() as d:
-            f = Path(d) / "unrelated.tex"
-            f.write_text("Just some LaTeX prose with no markers.\n",
-                        encoding="utf-8")
-            self.assertFalse(hook.in_scope(f))
+    def test_tex_content_without_marker_out_of_scope(self):
+        self.assertFalse(hook.in_scope(
+            Path("unrelated.tex"), "Just some LaTeX prose with no markers.\n"))
 
-    def test_meeting_summary_md_in_scope(self):
-        with tempfile.TemporaryDirectory() as d:
-            meetings = Path(d) / "meetings"
-            meetings.mkdir()
-            f = meetings / "meeting-summary-2026-01-01.md"
-            f.write_text("Summary text.\n", encoding="utf-8")
-            self.assertTrue(hook.in_scope(f))
+    def test_tex_with_no_reconstructed_content_out_of_scope(self):
+        """resolve_proposed_content() returned None -- an unsupported tool
+        shape or a failed on-disk read. Fails closed, not open, since a
+        marker can't be confirmed either way."""
+        self.assertFalse(hook.in_scope(Path("draft.tex"), None))
+
+    def test_meeting_summary_md_in_scope_regardless_of_content(self):
+        self.assertTrue(hook.in_scope(
+            Path("meetings/meeting-summary-2026-01-01.md"), None))
 
     def test_meeting_hive_summary_md_in_scope(self):
-        with tempfile.TemporaryDirectory() as d:
-            meetings = Path(d) / "meetings"
-            meetings.mkdir()
-            f = meetings / "meeting-hive-summary-2026-01-01.md"
-            f.write_text("Summary text.\n", encoding="utf-8")
-            self.assertTrue(hook.in_scope(f))
+        self.assertTrue(hook.in_scope(
+            Path("meetings/meeting-hive-summary-2026-01-01.md"), "Summary.\n"))
 
     def test_vote_md_in_meetings_dir_out_of_scope(self):
-        with tempfile.TemporaryDirectory() as d:
-            meetings = Path(d) / "meetings"
-            meetings.mkdir()
-            f = meetings / "vote-2026-01-01.md"
-            f.write_text("Vote text.\n", encoding="utf-8")
-            self.assertFalse(hook.in_scope(f))
+        self.assertFalse(hook.in_scope(
+            Path("meetings/vote-2026-01-01.md"), "Vote text.\n"))
 
     def test_arbitrary_md_elsewhere_out_of_scope(self):
-        with tempfile.TemporaryDirectory() as d:
-            f = Path(d) / "README.md"
-            f.write_text("Some other project's README.\n", encoding="utf-8")
-            self.assertFalse(hook.in_scope(f))
+        self.assertFalse(hook.in_scope(Path("README.md"), "Some README.\n"))
 
     def test_meeting_summary_named_md_outside_meetings_dir_out_of_scope(self):
-        with tempfile.TemporaryDirectory() as d:
-            f = Path(d) / "meeting-summary-2026-01-01.md"  # not under meetings/
-            f.write_text("Summary text.\n", encoding="utf-8")
-            self.assertFalse(hook.in_scope(f))
+        self.assertFalse(hook.in_scope(
+            Path("meeting-summary-2026-01-01.md"), "Summary text.\n"))
 
-    def test_nonexistent_file_out_of_scope(self):
-        self.assertFalse(hook.in_scope(Path("/nonexistent/path/does-not-exist.tex")))
+
+class TestResolveProposedContent(unittest.TestCase):
+    """
+    Reconstructing what a file will contain once the pending Write/Edit
+    lands, without touching disk for a Write and without trusting only the
+    edited fragment for an Edit.
+    """
+
+    def test_write_uses_content_directly(self):
+        got = hook.resolve_proposed_content(
+            "Write", {"content": "\\prfaqversion{1}{0}\nProse.\n"},
+            Path("new.tex"))
+        self.assertEqual(got, "\\prfaqversion{1}{0}\nProse.\n")
+
+    def test_write_missing_content_returns_none(self):
+        self.assertIsNone(
+            hook.resolve_proposed_content("Write", {}, Path("new.tex")))
+
+    def test_edit_applies_substitution_to_on_disk_content(self):
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / "draft.tex"
+            f.write_text("\\prfaqversion{1}{0}\nOld line.\nOther line.\n",
+                        encoding="utf-8")
+            got = hook.resolve_proposed_content(
+                "Edit",
+                {"old_string": "Old line.", "new_string": "New line."},
+                f,
+            )
+        self.assertEqual(
+            got, "\\prfaqversion{1}{0}\nNew line.\nOther line.\n")
+
+    def test_edit_marker_outside_edited_region_still_visible(self):
+        """The scope marker lives far from the edited text -- the
+        reconstructed content must still carry it, since it was never part
+        of old_string/new_string."""
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / "draft.tex"
+            f.write_text(
+                "\\prfaqversion{1}{0}\n"
+                "Section one is unrelated filler text.\n"
+                "Section two has the sentence we are editing.\n",
+                encoding="utf-8",
+            )
+            got = hook.resolve_proposed_content(
+                "Edit",
+                {"old_string": "sentence we are editing",
+                 "new_string": "sentence we just edited"},
+                f,
+            )
+        self.assertIn("\\prfaqversion{1}{0}", got)
+        self.assertIn("sentence we just edited", got)
+
+    def test_edit_replace_all(self):
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / "draft.tex"
+            f.write_text("x x x\n", encoding="utf-8")
+            got = hook.resolve_proposed_content(
+                "Edit",
+                {"old_string": "x", "new_string": "y", "replace_all": True},
+                f,
+            )
+        self.assertEqual(got, "y y y\n")
+
+    def test_edit_unreadable_file_returns_none(self):
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / "locked.tex"
+            f.write_text("\\prfaqversion{1}{0}\n", encoding="utf-8")
+            f.chmod(0o000)
+            try:
+                got = hook.resolve_proposed_content(
+                    "Edit", {"old_string": "a", "new_string": "b"}, f)
+            finally:
+                f.chmod(0o644)  # restore so tempdir cleanup can remove it
+        self.assertIsNone(got)
+
+    def test_unsupported_tool_returns_none(self):
+        self.assertIsNone(
+            hook.resolve_proposed_content("NotebookEdit", {}, Path("x.tex")))
 
 
 class TestHookEndToEnd(unittest.TestCase):
-    """Drives prose_lint_hook.py exactly as Claude Code would: JSON on
-    stdin, JSON on stdout, via subprocess -- not just importing in_scope()."""
+    """
+    Drives prose_lint_hook.py exactly as Claude Code would: a real
+    PreToolUse payload on stdin, via subprocess -- not just importing the
+    module's functions directly -- and asserts on the real
+    hookSpecificOutput contract (verified against the official hookify
+    plugin's rule_engine.py and README, which documents blocking as a
+    PreToolUse-only capability), not an invented PostToolUse `{"block":
+    bool}` shape.
+    """
 
     HOOK = REPO_ROOT / "plugin" / "hooks" / "prose_lint_hook.py"
 
-    def run_hook(self, file_path: Path) -> dict:
-        payload = json.dumps({"tool_input": {"file_path": str(file_path)}})
+    def run_hook(self, tool_name: str, tool_input: dict,
+                env: dict | None = None) -> tuple[dict, str]:
+        payload = json.dumps({
+            "hook_event_name": "PreToolUse",
+            "tool_name": tool_name,
+            "tool_input": tool_input,
+        })
         proc = subprocess.run(
             [sys.executable, str(self.HOOK)],
             input=payload, capture_output=True, text=True, timeout=30,
+            env=env,
         )
-        return json.loads(proc.stdout)
+        return json.loads(proc.stdout), proc.stderr
 
-    def test_metacommentary_in_scratch_tex_blocks(self):
+    def test_write_with_banned_term_denies_before_it_lands(self):
         with tempfile.TemporaryDirectory() as d:
             f = Path(d) / "scratch.tex"
+            result, _ = self.run_hook("Write", {
+                "file_path": str(f),
+                "content": (
+                    "\\prfaqversion{1}{0}\n"
+                    "This document is aspirational and written from today.\n"
+                ),
+            })
+        output = result["hookSpecificOutput"]
+        self.assertEqual(output["hookEventName"], "PreToolUse")
+        self.assertEqual(output["permissionDecision"], "deny")
+        self.assertIn("meta-explains-convention", output["permissionDecisionReason"])
+        self.assertNotIn("additionalContext", output)
+        self.assertFalse(f.exists(), "the file must never have been written")
+
+    def test_edit_introducing_banned_term_denies(self):
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / "draft.tex"
             f.write_text(
-                "\\prfaqversion{1}{0}\n"
-                "This document is aspirational and written from today.\n",
+                "\\prfaqversion{1}{0}\nA clean sentence about nothing.\n",
                 encoding="utf-8",
             )
-            result = self.run_hook(f)
-        self.assertTrue(result["block"])
-        self.assertIn("meta-explains-convention", result["additionalContext"])
+            result, _ = self.run_hook("Edit", {
+                "file_path": str(f),
+                "old_string": "A clean sentence about nothing.",
+                "new_string": "This is load-bearing to the argument.",
+            })
+            output = result["hookSpecificOutput"]
+            self.assertEqual(output["permissionDecision"], "deny")
+            self.assertIn("load-bearing", output["permissionDecisionReason"])
+            self.assertEqual(
+                f.read_text(encoding="utf-8"),
+                "\\prfaqversion{1}{0}\nA clean sentence about nothing.\n",
+                "the on-disk file must be untouched by a denied edit",
+            )
+
+    def test_edit_marker_outside_edited_region_still_denies(self):
+        """The prfaq marker lives outside old_string/new_string entirely --
+        the hook must still recognize the file as in scope."""
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / "draft.tex"
+            f.write_text(
+                "\\prfaqversion{1}{0}\n"
+                "Section one is unrelated filler text.\n"
+                "Section two has the sentence we are editing.\n",
+                encoding="utf-8",
+            )
+            result, _ = self.run_hook("Edit", {
+                "file_path": str(f),
+                "old_string": "sentence we are editing",
+                "new_string": "sentence that is load-bearing here",
+            })
+        output = result["hookSpecificOutput"]
+        self.assertEqual(output["permissionDecision"], "deny")
+        self.assertIn("load-bearing", output["permissionDecisionReason"])
 
     def test_unrelated_md_with_no_prfaq_markers_is_untouched(self):
         with tempfile.TemporaryDirectory() as d:
             f = Path(d) / "notes.md"
-            f.write_text(
-                "This document is aspirational and written from today.\n",
-                encoding="utf-8",
-            )
-            result = self.run_hook(f)
-        self.assertEqual(result, {"block": False})
+            result, _ = self.run_hook("Write", {
+                "file_path": str(f),
+                "content": "This document is aspirational and written from today.\n",
+            })
+        self.assertEqual(result, {})
+
+    def test_rationed_finding_is_advisory_not_blocking(self):
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / "scratch.tex"
+            result, _ = self.run_hook("Write", {
+                "file_path": str(f),
+                "content": (
+                    "\\prfaqversion{1}{0}\n"
+                    "The robust robust robust robust system works well.\n"
+                ),
+            })
+        output = result["hookSpecificOutput"]
+        self.assertEqual(output["hookEventName"], "PreToolUse")
+        self.assertNotIn("permissionDecision", output)
+        self.assertIn("robust", output["additionalContext"])
+
+    def test_clean_write_is_silent(self):
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / "scratch.tex"
+            result, _ = self.run_hook("Write", {
+                "file_path": str(f),
+                "content": (
+                    "\\prfaqversion{1}{0}\n"
+                    "A plain sentence about nothing in particular.\n"
+                ),
+            })
+        self.assertEqual(result, {})
+
+    def test_config_error_surfaces_as_advisory_and_does_not_block(self):
+        """The hook's EXIT_ERROR branch: a broken config must not read as
+        a content problem with the file, and must never block."""
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d) / "plugin_root"
+            (root / "scripts").mkdir(parents=True)
+            real_script = REPO_ROOT / "plugin" / "scripts" / "prose_lint.py"
+            (root / "scripts" / "prose_lint.py").write_text(
+                real_script.read_text(encoding="utf-8"), encoding="utf-8")
+            (root / "banlist.conf").write_text(
+                "[bogus-section]\nx\n", encoding="utf-8")
+            env = dict(os.environ)
+            env["CLAUDE_PLUGIN_ROOT"] = str(root)
+            f = Path(d) / "scratch.tex"
+            result, stderr = self.run_hook("Write", {
+                "file_path": str(f),
+                "content": "\\prfaqversion{1}{0}\nA plain sentence.\n",
+            }, env=env)
+        output = result["hookSpecificOutput"]
+        self.assertNotIn("permissionDecision", output)
+        self.assertIn("configuration or usage error",
+                      output["additionalContext"])
+        self.assertIn("prose-lint hook: linter exited with a config/usage "
+                      "error", stderr)
+
+
+class TestTargetPathsShapes(unittest.TestCase):
+    """target_paths() tolerates payload shape variance."""
+
+    def test_snake_case_tool_input_file_path(self):
+        paths = hook.target_paths(
+            {"tool_input": {"file_path": "/a/b.tex"}})
+        self.assertEqual(paths, [Path("/a/b.tex")])
+
+    def test_camel_case_tool_input_fallback(self):
+        paths = hook.target_paths(
+            {"toolInput": {"filePath": "/a/b.tex"}})
+        self.assertEqual(paths, [Path("/a/b.tex")])
+
+    def test_edits_list_contributes_paths(self):
+        paths = hook.target_paths({
+            "tool_input": {
+                "edits": [
+                    {"file_path": "/a/one.tex"},
+                    {"file_path": "/a/two.tex"},
+                ]
+            }
+        })
+        self.assertEqual(paths, [Path("/a/one.tex"), Path("/a/two.tex")])
+
+    def test_no_recognized_field_yields_no_paths(self):
+        self.assertEqual(hook.target_paths({"tool_input": {}}), [])
+
+
+class TestSuppressionHint(unittest.TestCase):
+    def test_tex_gets_latex_comment_form(self):
+        self.assertEqual(hook.suppression_hint(Path("draft.tex")),
+                         "% lint-ok: TERM")
+
+    def test_markdown_gets_html_comment_form(self):
+        self.assertEqual(
+            hook.suppression_hint(Path("meetings/meeting-summary-x.md")),
+            "<!-- lint-ok: TERM -->")
+
+
+class TestLatexSuppression(unittest.TestCase):
+    """The .tex-native suppression directive, matching the hook's own
+    suggested fix for a .tex finding."""
+
+    def test_percent_comment_suppresses_line(self):
+        r = lint_tex("This is load-bearing. % lint-ok\n")
+        self.assertEqual(r.banned, [])
+        self.assertEqual(r.suppressed, 1)
+
+    def test_targeted_percent_comment_suppresses_only_that_term(self):
+        r = lint_tex("This load-bearing thing delves deep. "
+                     "% lint-ok: load-bearing\n")
+        self.assertNotIn("load-bearing", terms(r.banned))
+        self.assertIn("delves", terms(r.banned))
+
+    def test_escaped_percent_is_not_a_suppression_marker(self):
+        r = lint_tex("The rate is 50\\% lint-ok this delve stays visible.\n")
+        self.assertIn("delve", terms(r.banned))
+
+
+class TestConfigErrors(unittest.TestCase):
+    """Malformed banlist.conf aborts with EXIT_ERROR, distinct from
+    EXIT_RATIONED -- both are 1 under bare sys.exit(str), which is the bug
+    fatal() exists to close."""
+
+    def _write(self, tmp_path: Path, body: str) -> Path:
+        cfg = tmp_path / "banlist.conf"
+        cfg.write_text(body, encoding="utf-8")
+        return cfg
+
+    def test_unknown_section_exits_error(self):
+        with tempfile.TemporaryDirectory() as d:
+            cfg = self._write(Path(d), "[nonsense]\nfoo\n")
+            with self.assertRaises(SystemExit) as ctx:
+                pl.load_config(cfg)
+        self.assertEqual(ctx.exception.code, pl.EXIT_ERROR)
+
+    def test_bad_pattern_regex_exits_error(self):
+        with tempfile.TemporaryDirectory() as d:
+            cfg = self._write(
+                Path(d), "[banned.patterns]\nbad :: label :: ([unclosed\n")
+            with self.assertRaises(SystemExit) as ctx:
+                pl.load_config(cfg)
+        self.assertEqual(ctx.exception.code, pl.EXIT_ERROR)
+
+    def test_non_numeric_rationed_rate_exits_error(self):
+        with tempfile.TemporaryDirectory() as d:
+            cfg = self._write(Path(d), "[rationed]\nfoo: not-a-number\n")
+            with self.assertRaises(SystemExit) as ctx:
+                pl.load_config(cfg)
+        self.assertEqual(ctx.exception.code, pl.EXIT_ERROR)
+
+    def test_config_not_found_exits_error(self):
+        with self.assertRaises(SystemExit) as ctx:
+            pl.load_config(Path("/nonexistent/banlist.conf"))
+        self.assertEqual(ctx.exception.code, pl.EXIT_ERROR)
+
+    def test_unknown_profile_exits_error(self):
+        cfg = pl.load_config(CONFIG)
+        with self.assertRaises(SystemExit) as ctx:
+            pl.apply_profile(cfg, "no-such-profile")
+        self.assertEqual(ctx.exception.code, pl.EXIT_ERROR)
+
+    def test_entry_outside_section_exits_error(self):
+        with tempfile.TemporaryDirectory() as d:
+            cfg = self._write(Path(d), "loose line\n")
+            with self.assertRaises(SystemExit) as ctx:
+                pl.load_config(cfg)
+        self.assertEqual(ctx.exception.code, pl.EXIT_ERROR)
+
+
+class TestStructuralPositiveCases(unittest.TestCase):
+    """Every structural check so far has only a negative-case test
+    (proving it doesn't misfire). Each needs a positive case proving it
+    actually fires on the condition it targets."""
+
+    def test_staccato_run_detected(self):
+        cfg = pl.load_config(CONFIG)
+        r = lint_text(
+            "We shipped the feature. We fixed the bug. "
+            "We wrote the test. We closed the ticket.",
+            cfg=cfg)
+        self.assertTrue(any(f.rule == "staccato" for f in r.structure))
+
+    def test_passive_ratio_warns_above_threshold(self):
+        cfg = pl.load_config(CONFIG)
+        text = " ".join([
+            "The file was written by the tool.",
+            "The result was seen by the reviewer.",
+            "The change was made by the author.",
+            "The bug was found by the tester.",
+            "The patch was sent by the maintainer.",
+        ])
+        r = lint_text(text, cfg=cfg)
+        self.assertTrue(any(f.rule == "passive-voice" for f in r.structure))
+
+    def test_nominalization_density_warns_above_threshold(self):
+        cfg = pl.load_config(CONFIG)
+        text = ("We make a determination. We make a recommendation. "
+                "We make an observation. We provide a clarification. "
+                "We make a declaration.")
+        r = lint_text(text, cfg=cfg)
+        self.assertTrue(any(f.rule == "nominalization" for f in r.structure))
+
+    def test_title_case_heading_detected_when_enabled(self):
+        cfg = pl.load_config(CONFIG)
+        cfg["settings"]["title_case_headings"] = "rationed"
+        r = lint_text("## This Is A Title Case Heading\n", cfg=cfg)
+        self.assertTrue(any(f.rule == "title-case-heading"
+                           for f in r.structure))
+
+
+class TestLatexNestedFormatting(unittest.TestCase):
+    """Nested text-formatting commands and starred cite variants are
+    realistic in the dogfood document (see prfaq.tex's \\textit{\\texttt{...}}
+    and \\cite*{...} usage patterns in academic LaTeX)."""
+
+    def test_nested_textbf_textit_keeps_inner_text_as_prose(self):
+        tex = "This is \\textbf{\\textit{a delve}} in bold italic.\n"
+        r = lint_tex(tex)
+        self.assertIn("delve", terms(r.banned))
+
+    def test_starred_cite_is_blanked(self):
+        # A bare "delve" citation key (not "delve2020") so a masking failure
+        # would show up as a real word-boundary match, not be hidden by the
+        # trailing digits merging into the word under term_regex.
+        tex = "See \\cite*{delve} for detail.\n"
+        r = lint_tex(tex)
+        self.assertNotIn("delve", terms(r.banned))
 
 
 if __name__ == "__main__":
