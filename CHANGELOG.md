@@ -4,6 +4,9 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+### Fixed
+- **`install.sh` could break when piped, its only real distribution method.** None of its `claude`/`ssh` subprocess calls redirected stdin, so a subprocess reading even one byte from stdin during its own startup stole bytes from the same pipe `sh` was still reading its own remaining script source from, a classic `curl | sh` footgun. Every such invocation now redirects stdin from `/dev/null`. The existing test suite ran the installer as `sh install.sh <file>`, a mode that can never exhibit this bug since the script comes from the file and stdin is untouched; a new `tests/test_permissions.sh` section runs it via a real pipe under `sh`, `dash`, and `busybox sh` with a stdin-stealing stub `claude`, and fails 3/3 without the fix.
+
 ## [1.9.0] - 2026-08-30
 
 ### Added

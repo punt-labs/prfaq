@@ -54,7 +54,7 @@ info "Registering Punt Labs marketplace..."
 # source repo happens to contain it. Match a line that holds nothing but the
 # name (any leading decoration allowed) to read the name field alone.
 marketplace_listed() {
-  claude plugin marketplace list 2>/dev/null \
+  claude plugin marketplace list </dev/null 2>/dev/null \
     | grep -qE "^[^A-Za-z0-9]*[[:space:]]*${MARKETPLACE_NAME}[[:space:]]*$"
 }
 
@@ -63,14 +63,14 @@ marketplace_listed() {
 # is in fact registered. Registering again is then the recoverable path — if
 # add fails, look for the name anywhere in the listing before giving up.
 marketplace_mentioned() {
-  claude plugin marketplace list 2>/dev/null | grep -q "$MARKETPLACE_NAME"
+  claude plugin marketplace list </dev/null 2>/dev/null | grep -q "$MARKETPLACE_NAME"
 }
 
 # Every already-registered path has to refresh. Skipping it on one of them
 # resolves the install against whatever ref was cached last time, silently —
 # which is the failure this warning exists to surface.
 refresh_marketplace() {
-  if ! claude plugin marketplace update "$MARKETPLACE_NAME" >/dev/null 2>&1; then
+  if ! claude plugin marketplace update "$MARKETPLACE_NAME" </dev/null >/dev/null 2>&1; then
     # Not fatal — the cached marketplace still resolves. But say so.
     warn "could not refresh the marketplace; installing from the cached copy"
     warn "if you end up on an old version, re-run this installer when back online"
@@ -80,7 +80,7 @@ refresh_marketplace() {
 if marketplace_listed; then
   ok "marketplace already registered"
   refresh_marketplace
-elif claude plugin marketplace add "$MARKETPLACE_REPO"; then
+elif claude plugin marketplace add "$MARKETPLACE_REPO" </dev/null; then
   ok "marketplace registered"
 elif marketplace_mentioned; then
   ok "marketplace already registered"
@@ -114,7 +114,7 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-if ! ssh -o StrictHostKeyChecking=accept-new -o BatchMode=yes -o ConnectTimeout=5 -T git@github.com 2>&1 | grep -q "successfully authenticated"; then
+if ! ssh -o StrictHostKeyChecking=accept-new -o BatchMode=yes -o ConnectTimeout=5 -T git@github.com </dev/null 2>&1 | grep -q "successfully authenticated"; then
   warn "SSH auth to GitHub unavailable, using HTTPS fallback"
   git config --global url."https://github.com/".insteadOf "git@github.com:"
   NEED_HTTPS_REWRITE=1
@@ -124,12 +124,12 @@ fi
 
 info "Installing $PLUGIN_NAME..."
 
-claude plugin uninstall "${PLUGIN_NAME}@${MARKETPLACE_NAME}" 2>/dev/null || true
-if ! claude plugin install "${PLUGIN_NAME}@${MARKETPLACE_NAME}"; then
+claude plugin uninstall "${PLUGIN_NAME}@${MARKETPLACE_NAME}" </dev/null 2>/dev/null || true
+if ! claude plugin install "${PLUGIN_NAME}@${MARKETPLACE_NAME}" </dev/null; then
   cleanup_https_rewrite
   fail "Failed to install $PLUGIN_NAME"
 fi
-if ! claude plugin list 2>/dev/null | grep -q "$PLUGIN_NAME@$MARKETPLACE_NAME"; then
+if ! claude plugin list </dev/null 2>/dev/null | grep -q "$PLUGIN_NAME@$MARKETPLACE_NAME"; then
   cleanup_https_rewrite
   fail "$PLUGIN_NAME install reported success but plugin not found"
 fi
