@@ -15,7 +15,7 @@ These anti-patterns consistently undermine PR/FAQ quality. Check every draft aga
 
 ## Confusing Speed with Velocity
 
-**The mistake:** Rushing the PR/FAQ to "get to building." The entire point of Working Backwards is to slow down the decision, not the execution. A PR/FAQ that took two hours to write will produce a product that takes two years to fix.
+**The mistake:** Rushing the PR/FAQ to "get to building." Working Backwards exists to slow down the decision, not the execution. A PR/FAQ that took two hours to write will produce a product that takes two years to fix.
 
 **How it shows up in a PR/FAQ:**
 - FAQs have one-sentence answers
@@ -56,7 +56,7 @@ These anti-patterns consistently undermine PR/FAQ quality. Check every draft aga
 - The problem section describes a universal frustration rather than a specific pain
 - The Getting Started section requires different paths for different customer types
 
-**The fix:** Name one real person (or realistic persona) who represents the target customer. Write the entire PR/FAQ for that one person. If the product cannot delight one specific person, it cannot delight a market.
+**The fix:** Name one real person (or realistic persona) who represents the target customer. Write the PR/FAQ for that one person. If the product cannot delight one specific person, it cannot delight a market.
 
 ## Great Product, Wrong Problem
 
@@ -71,7 +71,7 @@ These anti-patterns consistently undermine PR/FAQ quality. Check every draft aga
 
 ## False Precision in Timeline Estimates
 
-**The mistake:** Presenting detailed hour estimates, month-by-month schedules, or phase-specific targets at hypothesis stage. The planning fallacy (Kahneman, 2011) shows that insiders systematically underestimate time and cost when using an inside view. Adding specific numbers without a reference class creates anchoring --- stakeholders remember "300--500 hours" long after the assumptions behind it have changed. AI-augmented development makes this worse: historical velocity data from human-only teams is no longer a reliable baseline.
+**The mistake:** Presenting detailed hour estimates, month-by-month schedules, or phase-specific targets at hypothesis stage. The planning fallacy (Kahneman, 2011) shows that insiders systematically underestimate time and cost when using an inside view. Adding specific numbers without a reference class creates anchoring: stakeholders remember "300--500 hours" long after the assumptions behind it have changed. AI-augmented development makes this worse: historical velocity data from human-only teams is no longer a reliable baseline.
 
 **How it shows up in a PR/FAQ:**
 - Per-phase hour estimates ("Phase 1: 80--120 hours, Phase 2: 80--140 hours")
@@ -79,21 +79,23 @@ These anti-patterns consistently undermine PR/FAQ quality. Check every draft aga
 - Total development hour ranges presented as reliable ("Total: 300--500 hours")
 - P\&L sections that treat unvalidated hour estimates as cost inputs
 
-**The fix:** At hypothesis stage, describe phased delivery order and cut discipline --- what comes first, what comes last, what gets cut if scope compresses --- without dates or hours. The timeline FAQ should answer "what order and what gets cut," not "how long." Reserve detailed estimates for validated stage, when prototype velocity data provides a reference class.
+**The fix:** At hypothesis stage, describe phased delivery order and cut discipline (what comes first, what comes last, what gets cut if scope compresses) without dates or hours. The timeline FAQ should answer "what order and what gets cut," not "how long." Reserve detailed estimates for validated stage, when prototype velocity data provides a reference class.
 
 ## Explaining the Document to the Reader
 
 **The mistake:** Writing a sentence that explains the document's own conventions, structure, or process to the reader instead of stating product content. A PR/FAQ reader already knows how a PR/FAQ works: a future dateline means an aspirational future state, an FAQ answers a question, a risk table rates risk. Explaining these mechanics is metacommentary about the artifact, not information about the product, and it reads as if the author doesn't trust the reader to know the genre. This includes any sentence that narrates how the document was written, reviewed, or revised (naming an internal review process, a meeting, a review-cycle count, or "this section was added because..."); the document is written as if drafted fresh in one pass, never as a record of its own editing history.
 
 **How it shows up in a PR/FAQ:**
+<!-- lint-ok: meta-explains-convention -->
 - A sentence explaining why a dateline is in the future ("this date is aspirational, marking the state at which...")
+<!-- lint-ok: meta-explains-convention -->
 - "This document is written from the perspective of..." or "the reader should note that this FAQ..."
 - References to "a prior review," "a review cycle," "eight rounds of feedback," or any other narration of the document's own drafting or revision history
 - A parenthetical justifying why a section exists or is formatted a certain way, rather than just writing the section
 
-**The fix:** Delete the sentence and trust the genre convention. If a fact genuinely needs stating (e.g., a specific date matters), state it as a plain fact without explaining the convention around it: "prfaq will ship v2.0 in March 2027" needs no clause explaining that this is aspirational; the press-release format already signals that.
+**The fix:** Delete the sentence and trust the genre convention. If a fact needs stating (e.g., a specific date matters), state it as a plain fact without explaining the convention around it: "prfaq will ship v2.0 in March 2027" needs no clause explaining why; the press-release format already signals that.
 
-**There is no exception for a case that seems locally confusing.** The most common way this mistake survives a review is an agent (or author) reasoning "the convention is usually self-evident, but *this particular document* is a genuinely ambiguous edge case, so a clarifying note is warranted here." That reasoning is the mistake, not a valid exception to it: every author who adds this kind of sentence believes their case is the ambiguous one. If a document is structured in a way that makes a genre convention read as confusing (for example, a future-dated press release sitting above present-tense retrospective FAQs), the fix is to restructure or caption the *section*, never to insert an explanatory sentence into the copy. Do not write the sentence and then justify it as an exception. If you catch yourself explaining why this instance is different, that is the signal to delete the sentence, not to keep it.
+**There is no exception for a case that seems locally confusing.** The most common way this mistake survives a review is an agent (or author) reasoning "the convention is usually self-evident, but *this particular document* is an ambiguous edge case, so a clarifying note is warranted here." That reasoning is the mistake, not a valid exception to it: every author who adds this kind of sentence believes their case is the ambiguous one. If a document is structured in a way that makes a genre convention read as confusing (for example, a future-dated press release sitting above present-tense retrospective FAQs), the fix is to restructure or caption the *section*, never to insert an explanatory sentence into the copy. Do not write the sentence and then justify it as an exception. If you catch yourself explaining why this instance is different, that is the signal to delete the sentence, not to keep it.
 
 ## Stage Calibration
 
@@ -102,9 +104,9 @@ Anti-patterns apply at every stage, but some are more dangerous at specific stag
 | Anti-Pattern | Hypothesis | Validated | Growth |
 |--------------|-----------|-----------|--------|
 | **Skills-forward thinking** | Most dangerous here. Early-stage documents are most susceptible to "we can build it, so let's find a use." Flag aggressively. | Still important but less common; validation usually forces customer focus. | Rare but appears as "we have this infrastructure, so let's add a feature for it." |
-| **Confusing speed with velocity** | Common. Authors rush to code without validating the problem. Thin FAQs and unrated risks are the signal. | Should be decreasing; if FAQs are still thin after validation, the validation wasn't rigorous. | Appears as shipping features without checking if they move key metrics. |
-| **Selling instead of truth-seeking** | Acceptable to be enthusiastic at idea stage, but the document must still surface risks honestly. | No longer acceptable. Validation data should drive honest assessment. | Critical failure: growth-stage documents should be the most honest. |
-| **Discounting competition** | Some tolerance for incomplete competitive analysis if the space is genuinely new. | Must engage seriously with competitors and their likely response. | Must include observed competitive behavior and market share changes. |
+| **Confusing speed with velocity** | Common. Authors rush to code without validating the problem. Thin FAQs and unrated risks are the signal. | Should be decreasing; if FAQs are still thin after validation, the validation wasn't rigorous. | Appears as shipping features without checking if they affect key metrics. |
+| **Selling instead of truth-seeking** | Acceptable to be enthusiastic at idea stage, but the document must still surface risks in plain terms. | No longer acceptable. Validation data should drive honest assessment. | Critical failure: growth-stage documents should be the most honest. |
+| **Discounting competition** | Some tolerance for incomplete competitive analysis if the space is new. | Must engage seriously with competitors and their likely response. | Must include observed competitive behavior and market share changes. |
 | **Vague customer definition** | Warning. Some vagueness is OK if the document proposes how to narrow it. | Must be specific. Validation should have identified the exact customer. | Must match actual user base, not aspirational target. |
 | **Great product, wrong problem** | Hard to detect without customer data. Flag if no validation plan exists. | Should be detectable from interview data. Flag if problem priority isn't established. | Detectable from usage patterns. Flag if engagement is low despite adoption. |
 | **False precision in timeline estimates** | Most dangerous here. No reference class exists. Specific hours and dates create anchoring and planning fallacy. Flag any per-phase hour estimates or calendar targets. Describe delivery order and cut discipline only. | Becoming acceptable if prototype velocity data provides a reference class. Still flag calendar targets without uncertainty ranges. | Expected. Team velocity data from actual development justifies specific estimates. |
