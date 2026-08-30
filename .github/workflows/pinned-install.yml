@@ -32,11 +32,16 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - name: Install the real claude CLI
         run: npm install -g @anthropic-ai/claude-code
-      - name: Run the README's documented install command verbatim
+      - name: Run the README's documented install command
+        # Downloaded to a file first so a network/404 failure is
+        # distinguishable from a script failure, then still fed to sh
+        # through a pipe — the piped-execution semantics are the exact
+        # property this test exists to exercise (prfaq-vut).
         run: |
-          URL=$(grep -o 'https://raw\.githubusercontent\.com/punt-labs/prfaq/[a-f0-9]*/install\.sh' README.md | head -1)
-          test -n "$URL" || { echo "No pinned install.sh URL found in README.md" >&2; exit 1; }
+          URL=$(grep -Eo 'https://raw\.githubusercontent\.com/punt-labs/prfaq/[a-f0-9]{7,40}/install\.sh' README.md | head -1)
+          test -n "$URL" || { echo "No SHA-pinned install.sh URL found in README.md" >&2; exit 1; }
           echo "Testing pinned URL: $URL"
-          curl -fsSL "$URL" | sh
+          curl -fsSL "$URL" -o pinned-install.sh
+          cat pinned-install.sh | sh
       - name: Assert the plugin is actually installed
         run: claude plugin list | grep -q "prfaq@punt-labs"

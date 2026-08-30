@@ -32,6 +32,7 @@ prfaq: ## Compile .tex to .pdf and clean artifacts
 	@for f in $(TEX_FILES); do \
 	  echo "Compiling $$f ..."; \
 	  dir=$$(dirname "$$f"); base=$$(basename "$$f" .tex); \
+	  rm -f "$$dir/$$base.pdf"; \
 	  pdflatex -interaction=nonstopmode -output-directory="$$dir" "$$f" > /dev/null 2>&1; \
 	  if [ -f "$$dir/$$base.bib" ] && command -v biber > /dev/null 2>&1; then \
 	    (cd "$$dir" && biber "$$base") > /dev/null 2>&1 || true; \

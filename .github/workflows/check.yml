@@ -29,6 +29,15 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Ensure jq (the permission suite hard-requires it)
+        run: |
+          if ! command -v jq >/dev/null 2>&1; then
+            if command -v apt-get >/dev/null 2>&1; then
+              sudo apt-get update && sudo apt-get install -y --no-install-recommends jq
+            else
+              brew install jq
+            fi
+          fi
       - name: Permission and installer test suites
         run: make test-perms
       - name: Prose-lint test suite
@@ -58,33 +67,38 @@ jobs:
   # The actual product install, end to end, with the REAL claude CLI — not
   # the stub the test suite uses. Pipes install.sh through sh exactly as
   # the documented `curl | sh` does, registers the real marketplace,
-  # installs the real plugin, and asserts it is listed. The toolchain
-  # matrix covers the installer's detection branches: tex-only,
-  # pandoc-only, and neither (the warn-and-continue path).
+  # installs the real plugin, and asserts it is listed. Full matrix: every
+  # supported OS crossed with every toolchain detection branch — tex-only,
+  # pandoc-only, and neither (the warn-and-continue path). The tex+pandoc
+  # combination has no code path of its own (it is the two success
+  # branches with no warning), so it is not a separate leg.
   install-e2e:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: ubuntu-24.04
-            toolchain: pandoc
-          - os: ubuntu-24.04
-            toolchain: tex
-          - os: macos-latest
-            toolchain: none
+        os: [ubuntu-24.04, macos-latest]
+        toolchain: [tex, pandoc, none]
     name: install-e2e (${{ matrix.os }}, ${{ matrix.toolchain }})
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - name: Install the real claude CLI
         run: npm install -g @anthropic-ai/claude-code
-      - name: Install pandoc only
-        if: matrix.toolchain == 'pandoc'
+      - name: Install pandoc only (Linux)
+        if: matrix.toolchain == 'pandoc' && runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y --no-install-recommends pandoc
-      - name: Install a minimal TeX only
-        if: matrix.toolchain == 'tex'
+      - name: Install pandoc only (macOS)
+        if: matrix.toolchain == 'pandoc' && runner.os == 'macOS'
+        run: brew install pandoc
+      - name: Install a minimal TeX only (Linux)
+        if: matrix.toolchain == 'tex' && runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y --no-install-recommends texlive-base biber
+      - name: Install a minimal TeX only (macOS)
+        if: matrix.toolchain == 'tex' && runner.os == 'macOS'
+        run: |
+          brew install --cask basictex
+          echo "/Library/TeX/texbin" >> "$GITHUB_PATH"
       - name: Run the installer exactly as users do (piped through sh)
         run: cat install.sh | sh
       - name: Assert the plugin is actually installed
