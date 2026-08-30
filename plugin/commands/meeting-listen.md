@@ -196,8 +196,8 @@ Check whether `mcp__plugin_vox_mic__unmute` is available. Set a session flag:
    **b. Follow-up recap segment(s).** Two things to recap here, if present:
 
    i. **Revision queue directives.** Pull 2-3 concrete directives from the Revision Queue section — name what each one actually says (e.g., "fix the TAM stacking," "add the tripwire to the Value risk mitigation"), never a generic "a few things to fix." If the queue is empty, skip this. If it has more than 3 directives, pick which ones to name:
-      - **Interactive summaries:** prefer directives tied to Critical-severity hot spots (match each directive back to its hot spot in the Decisions table by title, then check that row's Severity column).
-      - **Hive summaries:** the decisions table has no Severity column — prefer directives tied to one-way-door REVISE rows instead, then fall back to queue order (Directive 1, 2, 3...).
+      - **Interactive summaries:** prefer directives tied to Critical-severity hot spots. The Revision Queue template only guarantees `### Directive N: [Short title]`, not a hot-spot title or ID — match by content instead (the directive's title/body and the hot spot's description reference the same claim, section, or issue), not by exact string comparison. **If no hot spot match is clear for a directive, don't guess — fall back to queue order** (Directive 1, 2, 3...) for that pick.
+      - **Hive summaries:** the decisions table has no Severity column — prefer directives tied to one-way-door REVISE rows instead (same content-matching rule, same no-guessing fallback), then fall back to queue order (Directive 1, 2, 3...).
 
    ii. **Deferred items.** If `## Deferred Items` has entries, name what's still open, using its actual content (e.g., "One item's still open — the competitive-claim hedge — we didn't reach consensus, and it's tabled pending more research."). Never dramatize this as a debate (step 6 already skipped that for these rows) — this is the one place their content surfaces.
 

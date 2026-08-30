@@ -134,9 +134,9 @@ The narrative should feel like eavesdropping on a real meeting — not reading f
 
 ### Phase 2b: Closing Assessment
 
-Real review meetings don't just stop after the last agenda item — someone closes the meeting out. Give this meeting the same close, after every hot spot has a **final** decision (including any escalated items a hive meeting resolved — see Hive Mode below) and before the mechanical decisions summary.
+Real review meetings don't just stop after the last agenda item — someone closes the meeting out. Give this meeting the same close, after every hot spot has been **addressed with an outcome** — REVISE, KEEP, RESEARCH, or DEFER, or an escalated item's user-resolved outcome in hive mode (see Hive Mode below) — and before the mechanical decisions summary. Do not wait for a "final" decision that will never arrive: a `Defer` outcome is itself the meeting reaching its end on that item, not a signal to keep waiting.
 
-A **Defer** decision is not final in either mode — it means "needs more thinking," not "decided." Exclude deferred items from Alex's decision list and tell Alex how many were deferred, so the closing read can acknowledge them honestly instead of assuming every hot spot is settled. This applies the same way in `/prfaq:meeting` (where the user can choose Defer per item) and `/prfaq:meeting-hive` (where an escalated item can resolve to Defer — see Hive Mode below).
+A **Defer** outcome is not final in the sense that matters for the closing assessment's *input* — it means "needs more thinking," not "decided," so it doesn't belong in the settled-decisions list Alex reasons about. Exclude deferred items from Alex's decision list and tell Alex how many were deferred, so the closing read can acknowledge them honestly instead of assuming every hot spot is settled. This applies the same way in `/prfaq:meeting` (where the user can choose Defer per item) and `/prfaq:meeting-hive` (where an escalated item can resolve to Defer — see Hive Mode below).
 
 **On early exit** (see Early Exit below): still run the closing assessment, but tell Alex explicitly the meeting was cut short and pass only the decisions actually made — never pass "Not discussed" items to Alex as if they were decided.
 
