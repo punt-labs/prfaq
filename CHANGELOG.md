@@ -4,6 +4,8 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+## [1.9.0] - 2026-08-30
+
 ### Added
 - **A deterministic prose linter now blocks LLM-tell writing at write time, not just at review time.** A PreToolUse hook scans every proposed `Write`/`Edit` to a prfaq-family document: a `.tex` file containing `\prfaqversion` or `\prfaqstage`, or a `meetings/meeting-summary-*.md` / `meetings/meeting-hive-summary-*.md` file. It denies the write before it reaches disk on a banned-tier hit, including em dashes, negative-parallelism constructions (both the pronoun-led and full-noun-phrase-subject forms), and a first-cut pattern for sentences that explain the document's own conventions to the reader instead of stating product content. The scanner (`plugin/scripts/prose_lint.py`, stdlib Python, no new dependency) is LaTeX-aware: it masks `%` comments, math mode, and identifier-only commands (`\cite{}`, `\label{}`, `\faqref{}`), and strips text-formatting command wrappers (`\texttt{}`, `\textit{}`) while keeping the inner text in scope, so quoted and emphasized text gets the same scrutiny as everything else. The hook stays narrow by design: it never touches an unrelated file in an unrelated project, even in a session where prfaq is active. `plugin/banlist.conf` is the single source of truth for every term and pattern.
 - **Every writing agent and command now loads a generative writing guide before it drafts a single sentence.** `plugin/skills/prfaq/references/plain-style.md` covers the same rules the linter enforces, held to a stricter bar: zero occurrences at write time, not a density threshold. It is wired into all four meeting personas, the peer-reviewer, feedback, streamliner, and researcher agents, the initial drafting skill, and the three commands that produce live debate dialogue and spoken narration (`/prfaq:meeting`, `/prfaq:meeting-hive`, `/prfaq:meeting-listen`). Narration is never written to a file, so the hook cannot reach it there, and this guide is its only defense.
@@ -374,7 +376,8 @@ First tagged release.
 - Plugin cache not clearing on reinstall (stale cache hid new agents)
 - FAQ paragraph indentation inconsistency in `faqpair` environment
 
-[Unreleased]: https://github.com/punt-labs/prfaq/compare/v1.8.0...HEAD
+[Unreleased]: https://github.com/punt-labs/prfaq/compare/v1.9.0...HEAD
+[1.9.0]: https://github.com/punt-labs/prfaq/compare/v1.8.0...v1.9.0
 [1.8.0]: https://github.com/punt-labs/prfaq/compare/v1.7.3...v1.8.0
 [1.7.3]: https://github.com/punt-labs/prfaq/compare/v1.7.2...v1.7.3
 [1.7.2]: https://github.com/punt-labs/prfaq/compare/v1.7.1...v1.7.2
