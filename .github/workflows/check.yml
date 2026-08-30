@@ -9,17 +9,83 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: check-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  check:
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
+  # Shell-behavior and hook suites on every supported OS. These are the
+  # OS-sensitive tests: macOS /bin/sh is bash in POSIX mode with BSD
+  # userland, Ubuntu's is dash with GNU userland — the difference that made
+  # the install.sh stdin-theft bug (prfaq-vut) shell-dependent. No TeX
+  # needed here, so both legs finish in about a minute.
+  tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-latest]
+    name: tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Permission and installer test suites
+        run: make test-perms
+      - name: Prose-lint test suite
+        run: make test-prose
 
-      - name: Install jq and a full TeX distribution
+  # The compile gate. TeX output is not OS-dependent, so one OS suffices;
+  # what matters is that every shipped .tex compiles. Installs the specific
+  # collections the documents need instead of texlive-full (~4 GB) — if a
+  # package is missing the compile fails loudly, so the slim set is
+  # self-verifying.
+  compile:
+    name: compile
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Install TeX packages the documents use
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends jq texlive-full biber
+          sudo apt-get install -y --no-install-recommends \
+            texlive-latex-recommended texlive-latex-extra \
+            texlive-fonts-recommended texlive-fonts-extra \
+            texlive-pictures texlive-bibtex-extra biber
+      - name: Compile every shipped .tex
+        run: make test
 
-      - name: make check
-        run: make check
+  # The actual product install, end to end, with the REAL claude CLI — not
+  # the stub the test suite uses. Pipes install.sh through sh exactly as
+  # the documented `curl | sh` does, registers the real marketplace,
+  # installs the real plugin, and asserts it is listed. The toolchain
+  # matrix covers the installer's detection branches: tex-only,
+  # pandoc-only, and neither (the warn-and-continue path).
+  install-e2e:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            toolchain: pandoc
+          - os: ubuntu-24.04
+            toolchain: tex
+          - os: macos-latest
+            toolchain: none
+    name: install-e2e (${{ matrix.os }}, ${{ matrix.toolchain }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Install the real claude CLI
+        run: npm install -g @anthropic-ai/claude-code
+      - name: Install pandoc only
+        if: matrix.toolchain == 'pandoc'
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends pandoc
+      - name: Install a minimal TeX only
+        if: matrix.toolchain == 'tex'
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends texlive-base biber
+      - name: Run the installer exactly as users do (piped through sh)
+        run: cat install.sh | sh
+      - name: Assert the plugin is actually installed
+        run: claude plugin list | grep -q "prfaq@punt-labs"
