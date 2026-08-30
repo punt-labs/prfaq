@@ -4,6 +4,8 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+## [1.8.0] - 2026-08-29
+
 ### Added
 - **`/prfaq:meeting` and `/prfaq:meeting-hive` open and close with an exec assessment.** A standalone Alex (Skeptical Executive) read frames the stakes before the agenda and delivers a closing verdict — plus a concrete next-step/reconvene proposal — after every hot spot is decided, matching typical review-meeting structure instead of jumping straight into itemized debate and stopping cold after the last item. Both reads are organized around the three questions product development lives or dies on: is this a problem worth solving, do we have a strong and differentiated solution, and should we build this now given competing priorities. Persisted in the summary's new `## Overall Assessment` section. `/prfaq:meeting-listen` voices both, and its closing now recaps concrete follow-up items from the revision queue and any deferred decisions, plus the agreement to reconvene when the closing read names one (grounded in the actual proposal — never a generic "let's touch base").
 
