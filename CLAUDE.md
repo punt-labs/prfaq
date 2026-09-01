@@ -176,9 +176,14 @@ Branch protection is active, so every step that touches main goes through a PR.
    # (use scripts/release-plugin.sh if working tree is clean,
    #  or edit plugin.json manually if untracked files exist)
    git add plugin/.claude-plugin/plugin.json
-   git commit --no-verify -m "chore: prepare plugin for release [skip ci]"
+   git commit --no-verify -m "chore: prepare plugin for release"
    git tag vX.Y.Z
    ```
+
+   Never put `[skip ci]` (or any CI-skip marker) in this commit message: GitHub
+   honors the marker anywhere in a head commit message, so it suppresses all CI
+   on the release PR and deadlocks required-checks rules (defect class observed
+   on ethos#496).
 
 7. **Restore the dev name** immediately:
    ```bash
