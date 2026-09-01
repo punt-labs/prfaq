@@ -4,6 +4,10 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+### Fixed
+
+- **Release-prep commits no longer carry `[skip ci]`.** `scripts/release-plugin.sh` stamped `[skip ci]` into the commit that becomes the HEAD of the release PR, which suppressed all CI on that PR — releases merged unverified, and any required-checks rule would deadlock waiting for checks that could never run (the same defect class observed on ethos#496).
+
 ## [1.9.1] - 2026-08-30
 
 ### Fixed
