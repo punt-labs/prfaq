@@ -6,6 +6,13 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ### Fixed
 
+- **Removed internal adoption-signals note from the bibliography.** The
+  `authornotes2026adoption` entry described internal research (PM conversations,
+  inbound interest) and pointed to a private research file; it was surfacing on
+  public-website's public bibliography page and Algolia index. Removed the entry
+  from `prfaq.bib` and the corresponding `\cite` from `prfaq.tex` so the
+  document still compiles.
+
 - **Release-prep commits no longer carry `[skip ci]`.** `scripts/release-plugin.sh` stamped `[skip ci]` into the commit that becomes the HEAD of the release PR, which suppressed all CI on that PR — releases merged unverified, and any required-checks rule would deadlock waiting for checks that could never run (the same defect class observed on ethos#496).
 
 ## [1.9.1] - 2026-08-30
