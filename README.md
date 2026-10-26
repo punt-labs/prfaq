@@ -313,7 +313,7 @@ prfaq's commands compile documents, edit `.tex` files, and search the web. Left 
 
 That writes prfaq's rules into the project's `.claude/settings.json` and nothing else. Two consequences worth knowing:
 
-- **The rules are scoped to that project.** prfaq never writes to your global `~/.claude/settings.json` — rules there would apply in every project you open, including projects that have nothing to do with prfaq. Versions 1.5.0 through 1.6.1 did write global rules; installing 1.7.0 or later removes them and leaves a backup next to the file.
+- **The rules are scoped to that project.** prfaq never writes to your global `~/.claude/settings.json` — rules there would apply in every project you open, including projects that have nothing to do with prfaq. Versions 1.5.0 through 1.6.1 did write global rules; if you used one of them, delete prfaq's entries from that file by hand.
 - **`.claude/settings.json` is normally committed**, so the permissions are shared with everyone working in the repo. To keep them to yourself, move the block into `.claude/settings.local.json`, which is gitignored.
 
 `/prfaq:permissions check` reports what's in place; `/prfaq:permissions remove` takes it back out. The rules cover the plugin's own compile and export scripts, edits to `*prfaq*.tex`, `*prfaq*.bib`, `press-release-*.tex`, `meetings/**`, `research/**`, `README.md`, and `.gitignore`, plus `WebSearch` and `WebFetch` for the researcher agent. `Bash(curl *)` and every `Bash(rm *)` form are deliberately left out — those keep prompting.

@@ -315,7 +315,7 @@ scratch `.tex` in `.tmp/`, or the gate will compile it and fail on it. To compil
 one file on its own, `bash plugin/scripts/compile_prfaq.sh <file.tex>`. If a
 LaTeX change breaks compilation, fix it before committing.
 
-The permission tests cover `plugin/scripts/prfaq_permissions.sh` and `install.sh` Step 5 — both edit a user's Claude Code settings file, so the cases that matter are the destructive ones: rules the user wrote must survive, a no-op must not rewrite the file, and a successful run must exit 0. Run them after touching either script. They need `jq` and take about five seconds.
+The permission tests cover `plugin/scripts/prfaq_permissions.sh`, which edits a project's Claude Code settings file, so the cases that matter are the destructive ones: rules the user wrote must survive, a no-op must not rewrite the file, and a successful run must exit 0. They also check that `install.sh` leaves `~/.claude/settings.json` untouched. Run them after touching either script. They need `jq` and take about five seconds.
 
 ### GitHub Operations
 
