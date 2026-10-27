@@ -278,10 +278,11 @@ function poll_tick(pr):
             stop; the operator rules
         push once                          # every fix reaches the PR head
     close each escalated finding the operator ruled on, by its answered(f)
-        path, only once its fix commit is on the PR head and passed
-        local_review — a finding with a Qodo id through the Qodo CLI
-        (mark-implemented; or dismiss if the ruling was dismiss), because
-        a ledger line does not close it
+        path — a finding with a Qodo id through the Qodo CLI, because a
+        ledger line does not close it: a dismiss ruling closes it (dismiss)
+        as soon as the ruling is recorded; a fix ruling closes it
+        (mark-implemented) only once its fix commit is on the PR head and
+        passed local_review
     resolve each thread that is answered, one by one — the leader
         resolves, not the agent
     if not skipped(pr) and not pending(pr) and N == 1
