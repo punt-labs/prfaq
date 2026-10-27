@@ -4,6 +4,10 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+### Changed
+
+- **`Installer` no longer touches `~/.claude/settings.json`.** It used to remove the permission rules versions 1.5.0–1.6.1 wrote there. Under the repo-level-only permission standard ([punt-kit#396](https://github.com/punt-labs/punt-kit/pull/396)) no Punt Labs installer edits the global settings file, cleanup included. Remove any leftover prfaq rules from it by hand; `/prfaq:permissions` still grants rules per project.
+
 ### Fixed
 
 - **Removed internal adoption-signals note from the bibliography.** The
