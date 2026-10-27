@@ -371,8 +371,11 @@ function poll_tick(pr):
             post an escalation comment naming the blocked fix commit and
                 what blocked it, and one on each fix-ruled finding in the
                 diff; every other finding in the diff stays unanswered
-                and is taken again after the operator rules on the block;
-                stop
+                and is taken again after the operator rules on the block:
+                "retry" (the fix is reworked and passes local_review
+                before any push) or "drop" (the blocked fix commit is
+                discarded unpushed and its findings return unanswered);
+                either ruling's ledger entry closes the escalation; stop
         push once                          # every fix reaches the PR head
     answer each finding fixed this tick, or fix-ruled, whose fix commit is
         now on the PR head and passed local_review — a Qodo id by
