@@ -353,7 +353,8 @@ function poll_tick(pr):
                                            #   the run ends or the operator
                                            #   later rules "proceed" on it,
                                            #   which needs no new escalation
-    for each finding not answered(f) and not under an open escalation:
+    for each finding not answered(f) and not under an open escalation
+            nor in a diff whose block escalation is open:
         if N == 2 and f is a new High with no ruling:
             post an escalation comment; the operator rules
         else:
