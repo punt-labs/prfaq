@@ -338,19 +338,15 @@ Before creating a PR, verify:
 
 ### Pull Request and Code Review Workflow
 
-**Local review happens before any of this, not after.** See `docs/WORKFLOW.md` § Loop 2 for which review agents apply to what you changed — run them to zero findings before pushing. GitHub review cycles below catch what local review can't (CI, a second set of eyes); they are not a substitute for it.
+**Local review happens before any of this, not after.** See `docs/WORKFLOW.md` § Loop 2 for which review agents apply to what you changed — run them to zero findings before pushing. The remote review below is an automated second opinion on already-clean code; it is not a substitute for local review.
 
-Do **not** merge immediately after creating a PR. Expect **2–6 review cycles** before merging. The full flow is:
+PR review follows punt-kit/standards/pr-review.md: local review (qodo review + silent-failure-hunter + code-reviewer) before the PR, then Qodo and Bugbot once at open, at most two rounds, Copilot only on request.
 
 1. **Create PR** — Push branch, open PR via `mcp__github__create_pull_request`.
-2. **Watch for CI and review feedback without blocking your main shell** — Do not stop waiting:
-   ```bash
-   gh pr checks <number> --watch         # Blocks until all checks resolve — run in background task or separate session
-   ```
-3. **Read all feedback via MCP** — Use `mcp__github__pull_request_read` with `get_reviews` and `get_review_comments` to read Copilot, Bugbot, and human reviewer feedback. Prefer MCP GitHub tools over `gh` CLI for all read operations.
-4. **Take every comment seriously.** There is no such thing as "pre-existing" or "unrelated to this change" — if you can see it, you own it. If a reviewer flags it, investigate and fix it.
-5. **Fix, re-push, repeat** — Commit fixes, run quality gates, push. Go back to step 2.
-6. **Merge only when the last review cycle is uneventful** — Zero new comments, all checks green. Merge via `mcp__github__merge_pull_request` (not `gh pr merge` — it has local side effects in worktrees).
+2. **Read all feedback via MCP** — Use `mcp__github__pull_request_read` with `get_reviews` and `get_review_comments` to read Qodo, Bugbot, and CI results. Poll in the background with `/loop`, never in a blocking watch. Prefer MCP GitHub tools over `gh` CLI for all read operations.
+3. **Take every comment seriously.** There is no such thing as "pre-existing" or "unrelated to this change" — if you can see it, you own it. If a reviewer flags it, investigate and fix it.
+4. **Fix, run local review on the fix, push once** — Commit fixes, run quality gates, push. A push restarts CI, not review.
+5. **Merge when the gate in `docs/WORKFLOW.md` is satisfied** — CI green, every finding answered, zero unresolved threads. Merge via `mcp__github__merge_pull_request` (not `gh pr merge` — it has local side effects in worktrees).
 
 ### Session Close Protocol
 
