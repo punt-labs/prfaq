@@ -254,13 +254,15 @@ answered(f)  = one path per source, never both:
                whose latest ruling is "fix" is answered only by its fix; a
                "dismiss" ruling, including one after a blocked fix,
                answers it once recorded.
-               After a force-push or rebase, a mark-implemented finding is
-               reopened, unanswered, only if the change its recorded fix
-               sha made is no longer in the branch; new commit ids alone
-               do not reopen it. A ledger line naming its Qodo id and a new
-               fix sha answers it again, under the fix rule above, and that
-               sha is its recorded fix.
-               A finding repeated from an earlier round keeps its answer.
+               After a force-push or rebase, a finding answered by a fix,
+               from any source, is reopened, unanswered, only if that
+               fix's change is no longer in the branch; new commit ids
+               alone do not reopen it. A Qodo finding is answered again by
+               a ledger line naming its Qodo id and a new fix sha, which is
+               its recorded fix; any other by a new fix commit; both under
+               the fix rule above.
+               A finding repeated from an earlier round keeps its answer,
+               unless it was reopened.
 new High     = a High raised by a round-2 review (one that started at or
                after trigger(2)) and not raised in an earlier round; a manual
                review may re-scan the whole PR and repeat old findings, and a
