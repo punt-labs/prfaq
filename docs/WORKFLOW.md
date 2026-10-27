@@ -199,11 +199,12 @@ trigger(N)   = the PR open, for N = 1; the leader's (N-1)th
                "/agentic_review" comment, for N > 1
 head(N)      = the PR head commit when trigger(N) happened
 qodo_in(N)   = `qodo read pr-review-session findings --pr-url <url>` reports
-               review_session.status "completed" with a commit_sha that is
-               head(N) or a later commit on the branch; or the outage
-               fallback ran for round N. A late reply to an earlier round
-               never completes round N, and a clean review counts like any
-               other.
+               review_session.status "completed" with a started_at at or
+               after trigger(N) and a commit_sha that is head(N) or a later
+               commit on the branch; or the outage fallback ran for round
+               N. A session that started before trigger(N), or a late reply
+               to an earlier round, never completes round N, and a clean
+               review counts like any other.
 bugbot_in(N) = a "Cursor Bugbot" check run on head(N) or a later branch
                commit, started at or after trigger(N) — the PR open for
                N = 1 (Bugbot's automatic run), round 2's "bugbot run"
@@ -272,6 +273,9 @@ function poll_tick(pr):
             # no deferral beads
     for each escalation the operator has ruled on:
         apply the ruling; record it in a ledger comment
+        close the escalated finding by its answered(f) path — a finding
+            with a Qodo id through the Qodo CLI (mark-implemented or
+            dismiss), because a ledger line does not close it
     if fixes were made: delegate them to a bare agent; make check; commit
         if local_review(the fix diff) is blocked:
             stop; the operator rules
@@ -312,12 +316,17 @@ function merge_gate(state) -> bool:
 
 function close_out():
     cancel the poll loop
-    delete the branch; checkout main; pull
+    checkout main; pull; delete the branch # local and remote; a checked-out
+                                           #   branch cannot be deleted
+    bd close the bead(s), if the unit had any
     send the merge recap                   # every merge, unprompted, with the
                                            #   review data block from
                                            #   ../.bin/review-metrics.py pr
                                            #   punt-labs/prfaq <N> --format
                                            #   recap, pasted verbatim
+    if the PR was a release/ branch:
+        run the remaining Release Process steps in CLAUDE.md (name swap and
+            tag, GitHub Release, marketplace, downstream pins) first
     start the next unit immediately        # no stopping to report
 ```
 
@@ -326,9 +335,9 @@ A fix push is reviewed locally first (`local_review` on the fix diff) and is
 never followed by a request for another remote review; the only way back into
 remote review is round 2, and only after a High fix.
 
-**Close.** `bd close <id>` (if a bead existed), delete the branch, pull
-main, and — this is also mandatory, not optional — actually push before the
-session ends (see `CLAUDE.md` § Session Close Protocol).
+**Close.** `close_out` above: `bd close <id>` (if a bead existed), pull main,
+delete the branch, and — this is also mandatory, not optional — actually push
+before the session ends (see `CLAUDE.md` § Session Close Protocol).
 
 ## Loop 3: Delegation
 
