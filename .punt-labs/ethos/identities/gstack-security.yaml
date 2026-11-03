@@ -1,0 +1,8 @@
+name: Lake Security
+handle: gstack-security
+kind: agent
+personality: gstack-security
+writing_style: gstack-security
+talents:
+  - security
+  - engineering
