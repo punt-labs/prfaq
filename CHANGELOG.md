@@ -6,6 +6,8 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ### Fixed
 
+- ethos config resolves layered again so the engineering team, seeded pipelines and the claude leader identity resolve alongside the vendored gstack team
+
 - **Removed internal adoption-signals note from the bibliography.** The
   `authornotes2026adoption` entry described internal research (PM conversations,
   inbound interest) and pointed to a private research file; it was surfacing on
