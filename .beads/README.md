@@ -1,15 +1,23 @@
 # Beads (this repo)
 
-Issue tracking via **bd** (beads), pointed at the punt-labs central
-Hosted DoltDB instance. There is **no per-repo issue store** — all
-beads live in one shared database, distinguished by `issue_prefix` set
-in `.beads/metadata.json`.
+Linear is the tracker of record for prfaq: the Punt Labs team (key `PL`),
+issues labelled `repo:prfaq`. **bd** (beads) is a read-mostly local mirror
+of those issues in the punt-labs central Hosted DoltDB instance. There is
+**no per-repo issue store** — all beads live in one shared database,
+distinguished by `issue_prefix` set in `.beads/metadata.json`. The
+operating rules are in `.punt-labs/punt/CLAUDE.md`.
 
 ## Source of truth
 
-- Issues live in central Hosted DoltDB (`punt-labs-beads-1.dbs.hosted.doltdb.com`).
+- Issues live in Linear; every mirrored bead stores its Linear URL in
+  `external_ref`. The mirror is central Hosted DoltDB
+  (`punt-labs-beads-1.dbs.hosted.doltdb.com`).
 - `.beads/metadata.json` holds the connection mode + this repo's
   `issue_prefix`.
+- `.beads/config.yaml` scopes `bd linear sync --pull` to this repo:
+  `linear.pull_label` selects the issues, and `issue-prefix` names the
+  beads a pull creates. `bd` reads one prefix key, this one when set and
+  the `metadata.json` value as the fallback, so keep the two equal.
 - `.beads/issues.jsonl` and `.beads/interactions.jsonl` are local
   export views. Auto-export is disabled (`export.auto: false`);
   run `bd export` manually if needed. They are **gitignored** and
@@ -27,16 +35,44 @@ password store). See punt-labs/`.envrc` for the canonical setup.
 ## Daily commands
 
 ```bash
-bd list               # issues for THIS repo (auto-scoped via directory.labels)
-bd ready              # ready work — NOTE: bd 1.0.4 does NOT auto-scope bd ready;
-                      #   use: bd ready --label-any repo:prfaq
-bd create "title"     # creates a new bead with this repo's prefix
-bd close <id>         # close an existing bead
+bd linear sync --pull-if-stale --relations --team c1dfbb2c-985e-40cf-b004-5127646efc9d
+                      # refresh the mirror from Linear (needs LINEAR_API_KEY)
+bd list --label-any repo:prfaq
+                      # issues for THIS repo (the shared DB holds every repo)
+bd ready --label-any repo:prfaq --exclude-label deferred
+                      # pick ready work
 ```
+
+Create, claim, finish and cancel issues in Linear, not in beads: the next
+pull skips a locally edited bead and a later one overwrites it, status
+included. A new issue needs the `repo:prfaq` label plus a type label
+(`Bug`, `Feature`, `Improvement`, `Epic`); a pull imports only issues
+carrying the repo label. A pull with `--relations` adds `blocks` edges and
+no pull removes one: a blocker added in Linear also needs `bd dep add
+<bead> <blocker>` here when the mirror was refreshed without `--relations`,
+and a blocker cleared in Linear needs `bd dep remove <bead> <blocker>`.
+The guide's "Never" list applies here in full: no bare `bd linear sync`, no
+unscoped `--push`, no `bd config set linear.*` (shared by every repo), and
+never remove
+`issue-prefix` or `linear.pull_label` from `config.yaml`. A pull is a beads
+write: before running one, `bd config get linear.pull_label` on the main
+checkout must print `repo:prfaq`, or the pull imports the whole Punt Labs
+team.
 
 ## bd version
 
-This repo expects **bd 1.0.4 or newer** with the local TLS/init patch
-applied (see `.tmp/beads-fork/` in the meta-repo for source + build).
+This repo needs `bd` built from the punt-labs fork, branch
+`factory-fixes`, at or after punt-labs/beads#8 (commit `769f8a1`).
+Build it from the meta-repo with `.bin/install-bd.sh install`, which
+clones the fork into `.tmp/beads-fork/` and installs `~/.local/bin/bd`.
+
+Upstream `bd` and fork builds before punt-labs/beads#7 ignore
+`linear.pull_label`, so their `bd linear sync --pull` turns other repos'
+Linear issues into `prfaq-*` beads; builds from #7 up to #8 honour the
+label but let a bulk pull refresh other repos' linked beads. Before
+pulling, take the commit `bd version` prints (the branch name beside it is
+the current directory's, not the fork's) and confirm it is at or after
+`769f8a1` with `git merge-base --is-ancestor 769f8a1 <that commit>` in
+the fork clone; if it is not, rebuild.
 
 Upstream bd: <https://github.com/gastownhall/beads>
