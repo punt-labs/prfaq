@@ -31,7 +31,16 @@ is available. Every migrated bead stores its Linear URL in `external_ref`.
 - **Plan from Linear.** `bd ready` and `bd show` are fine as local reads
   because the mirror carries the dependency graph; `bd list` and `bd ready`
   need `--label-any <the repo label>` to stay inside this repo, because the
-  shared database holds every repo's beads. Refresh the mirror first:
+  shared database holds every repo's beads. Before the first pull, check the
+  installed `bd`: it must be built from the punt-labs fork at or after
+  punt-labs/beads#8 (commit `769f8a1`). Take the commit `bd version` prints
+  and confirm `git merge-base --is-ancestor 769f8a1 <that commit>` in the
+  fork clone (`.bin/install-bd.sh install` in the punt-labs/punt-labs
+  meta-repo clones the fork into `.tmp/beads-fork/` and installs
+  `~/.local/bin/bd`); if it is not, rebuild before pulling. Earlier builds
+  ignore or only partly honour `linear.pull_label` and write other repos'
+  Linear issues into the shared database as this repo's beads. Then refresh
+  the mirror:
   `bd linear sync --pull-if-stale --relations --team c1dfbb2c-985e-40cf-b004-5127646efc9d`
   pulls only when `.beads/last_pull` is missing or older than 20 minutes, never
   twice within 5 minutes (needs `LINEAR_API_KEY`). `--relations` imports added
@@ -39,7 +48,9 @@ is available. Every migrated bead stores its Linear URL in `external_ref`.
   blocks locally until you run `bd dep remove <bead> <blocker>`. Until both the
   add and the removal are reconciled, `bd ready` can disagree with Linear.
   Auto-pull (`bd prime` pulling on its own at session start) is not on in every
-  repo; never assume it ran.
+  repo; never assume it ran. Do not turn it on in a repo until the installed
+  `bd` has passed the build check above: an auto-pull runs before any agent
+  can check, so an older build contaminates the shared database unattended.
 - **Write in Linear, not beads.** Create an issue with the mandatory repo
   label (the value `bd config get linear.pull_label` printed) plus a type
   label (`Bug`, `Feature`, `Improvement`, `Epic`); a pull imports only issues
