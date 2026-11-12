@@ -6,7 +6,7 @@ I am a principal engineer. Every change I make leaves the codebase in a better s
 
 @docs/WORKFLOW.md
 
-`WORKFLOW.md` is the three-loop development process (backlog → PR → delegation) that governs every change to this repo, no matter how small it looks. Read it before writing or editing anything — it is the enforcement mechanism for the branch/bead/review discipline described below.
+`WORKFLOW.md` is the three-loop development process (backlog → PR → delegation) that governs every change to this repo, no matter how small it looks. Read it before writing or editing anything — it is the enforcement mechanism for the branch/issue/review discipline described below.
 
 ## No "Pre-existing" Excuse
 
@@ -51,7 +51,7 @@ git checkout -b feat/short-description main
 - CHANGELOG updates
 - Dogfood document edits that don't change the template
 
-**The exemption above is about how trivial one change is, never about how many files it touches.** A prose-quality pass across several documents is not "a single-file doc edit" repeated — it is exactly the kind of multi-file work that needs a bead, a branch, and local review, even when every individual edit is mechanical. See `docs/WORKFLOW.md` for the full loop (this is Loop 2's Branch step) and the incident that prompted this rewrite (`prfaq-6wz`).
+**The exemption above is about how trivial one change is, never about how many files it touches.** A prose-quality pass across several documents is not "a single-file doc edit" repeated — it is exactly the kind of multi-file work that needs a Linear issue, a branch, and local review, even when every individual edit is mechanical. See `docs/WORKFLOW.md` for the full loop (this is Loop 2's Branch step) and the incident that prompted this rewrite (`prfaq-6wz`).
 
 ### Micro-Commits
 
@@ -68,34 +68,36 @@ Commit message format: `type: description`
 | `release:` | Version bump and release |
 | `style:` | Formatting, layout changes |
 
-### Issue Tracking with Beads
+### Issue Tracking
 
-This project uses **beads** (`bd`) for issue tracking. If an issue discovered here affects multiple repos or requires a standards change, escalate to a [punt-kit bead](https://github.com/punt-labs/punt-kit) instead (see [bead placement scheme](../CLAUDE.md#where-to-create-a-bead)).
+Linear is the tracker of record: the Punt Labs team, issues labelled `repo:prfaq`, listed in the shared `prfaq` view. Beads (`bd`) is a read-mostly local mirror; `.punt-labs/punt/CLAUDE.md` (imported below) has the rules for which tracker to write to, and `.beads/README.md` has the mirror commands and the required `bd` build. If an issue discovered here affects multiple repos or requires a standards change, file it against punt-kit instead (see [bead placement scheme](../.docs/CLAUDE.md#where-to-create-a-bead)).
 
-| Use Beads (`bd`) | Use TodoWrite |
-|------------------|---------------|
+| Use the tracker | Use TodoWrite |
+|-----------------|---------------|
 | Multi-session work | Single-session tasks |
 | Work with dependencies | Simple linear execution |
 | Discovered work to track | Immediate TODO items |
 
 ```bash
-bd ready --limit=99         # Show ALL issues ready to work
-bd show <id>                # View issue details
-bd update <id> --status=in_progress   # Claim work
-bd close <id>               # Mark complete
-bd sync                     # Sync with git remote
+# Local reads of the mirror; refresh it first
+bd config get linear.pull_label   # Must print repo:prfaq; if not, pull main and re-run before any pull
+bd linear sync --pull-if-stale --relations --team c1dfbb2c-985e-40cf-b004-5127646efc9d
+bd ready --label-any repo:prfaq --exclude-label deferred   # Ready work in this repo
+bd show <id>                                               # Details with dependencies
 ```
+
+Create, claim (In Progress), finish (Done) and cancel issues in Linear, with the `repo:prfaq` label plus a type label (`Bug`, `Feature`, `Improvement`, `Epic`). A local `bd update`, `bd close` or `bd create` is undone by the next pull. Blockers are `blocks` relations in Linear, mirrored with `bd dep add <bead> <blocker>` when the refresh ran without `--relations`.
 
 ### Workflow Tiers
 
-Match the workflow to the bead's scope. The deciding factor is **design ambiguity**, not size.
+Match the workflow to the issue's scope. The deciding factor is **design ambiguity**, not size.
 
 | Tier | Tool | When | Tracking |
 |------|------|------|----------|
-| **T1: Forge** | `/feature-forge` | Epics, cross-cutting work, competing design approaches | Beads with dependencies |
-| **T2: Feature Dev** | `/feature-dev` | Features, multi-file, clear goal but needs exploration | Beads + TodoWrite (internal) |
-| **T3: Direct** | Plan mode or manual | Tasks, bugs, obvious implementation path | Beads |
-| **T4: Trivial** | Manual | Single-character/single-line fix, one file, no judgment call | No bead — commit message is the record |
+| **T1: Forge** | `/feature-forge` | Epics, cross-cutting work, competing design approaches | Linear issues with `blocks` relations |
+| **T2: Feature Dev** | `/feature-dev` | Features, multi-file, clear goal but needs exploration | Linear issue + TodoWrite (internal) |
+| **T3: Direct** | Plan mode or manual | Tasks, bugs, obvious implementation path | Linear issue |
+| **T4: Trivial** | Manual | Single-character/single-line fix, one file, no judgment call | No issue — commit message is the record |
 
 **Decision flow:**
 
@@ -104,13 +106,13 @@ Match the workflow to the bead's scope. The deciding factor is **design ambiguit
 3. Is it a genuinely single-file, single-line, no-judgment-call fix? → **T4: Trivial**
 4. Otherwise → **T3: Direct** (plan mode if >3 files, manual if fewer)
 
-**T4 skips the bead. It never skips the branch.** Every tier, including T4, still goes through Loop 2 in `docs/WORKFLOW.md` (branch → verify → local review → PR → merge). "No bead" is not "no process."
+**T4 skips the issue. It never skips the branch.** Every tier, including T4, still goes through Loop 2 in `docs/WORKFLOW.md` (branch → verify → local review → PR → merge). "No issue" is not "no process."
 
-**Bead type mapping:**
+**Issue type mapping:**
 
-| Bead Scope | Default Tier | Override When |
-|------------|-------------|---------------|
-| Epic (multi-bead, dependencies) | T1: Forge | Design decisions already settled → T2 |
+| Issue Scope | Default Tier | Override When |
+|-------------|-------------|---------------|
+| Epic (multi-issue, `blocks` relations) | T1: Forge | Design decisions already settled → T2 |
 | Feature (new command or agent) | T2: Feature Dev | Cross-cutting with design ambiguity → T1 |
 | Task (focused, single-concern) | T3: Direct | Scope expands during work → escalate to T2 |
 | Bug | T3: Direct | Root-cause unclear across subsystems → T2 |
@@ -352,18 +354,19 @@ PR review follows punt-kit/standards/pr-review.md: local review (qodo review + s
 
 Before ending any session:
 
-1. **File issues for remaining work** — Create beads for anything that needs follow-up
+1. **File issues for remaining work** — Create Linear issues (`repo:prfaq` plus a type label) for anything that needs follow-up
 2. **Run quality gates** — Both `.tex` files compile to valid PDFs
-3. **Update issue status** — Close finished work, update in-progress items
+3. **Update issue status** — Close finished work and update in-progress items in Linear, never with a local `bd` edit
 4. **PUSH TO REMOTE** — This is MANDATORY:
    ```bash
    git pull --rebase
-   bd sync
    git push
    git status  # MUST show "up to date with origin"
    ```
 5. **Verify** — All changes committed AND pushed
 6. **Hand off** — Provide context for next session
+
+Issue status is written in Linear, never with a local `bd` edit; there is no beads sync step.
 
 **CRITICAL RULES:**
 - Work is NOT complete until `git push` succeeds

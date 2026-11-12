@@ -30,6 +30,9 @@ bd.db
 
 # Sync state (per-machine)
 .sync.lock
+# bd linear sync runtime (lock, bd prime auto-pull clock)
+.linear-sync.lock
+last_pull
 sync_base.jsonl
 redirect
 

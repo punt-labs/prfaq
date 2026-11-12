@@ -4,7 +4,7 @@ Three nested loops. Read this before touching any file in the repo — it is
 `@`-imported from `CLAUDE.md` so it loads at session start.
 
 This doc exists because a 2026-08-30 session edited `prfaq.tex` and eight
-files under `meetings/` directly on `main` — no bead, no branch, no local
+files under `meetings/` directly on `main` — no issue, no branch, no local
 review, nothing committed for hours of work. The cause was a single
 ambiguous sentence in `CLAUDE.md`'s old Branch Discipline section ("Small
 fixes... can go directly to main") read as license to skip the PR loop
@@ -16,26 +16,31 @@ except through a merged PR.** See `prfaq-6wz`.
 
 *What to work on, and in what order.*
 
-1. `bd ready --label-any repo:prfaq` — see everything unblocked. Beads is a
-   single shared central DB across all punt-labs repos; `bd ready` does not
-   auto-scope to this repo in bd 1.0.4 the way `bd list` does (see
-   `.beads/config.yaml` and `.beads/README.md`), so the bare form can surface
-   other repos' work. `bd list` alone is auto-scoped and fine for a quick
-   look; use the `--label-any` form for anything you're about to act on.
-2. Pick a bead, or create one (`bd create "<title>"`, optionally with
-   `--description "..."` for extra context) if the work isn't tracked yet.
+1. Refresh the mirror, then `bd ready --label-any repo:prfaq --exclude-label
+   deferred` — see everything unblocked. Linear is the tracker of record
+   (Punt Labs team, label `repo:prfaq`); beads is a read-mostly local mirror
+   in a single shared central DB across all punt-labs repos, so `bd ready`
+   and `bd list` need `--label-any repo:prfaq` to stay inside this repo (see
+   `.beads/README.md` and `.punt-labs/punt/CLAUDE.md`). Before the refresh,
+   `bd config get linear.pull_label` must print `repo:prfaq`; then
+   `bd linear sync --pull-if-stale --relations --team
+   c1dfbb2c-985e-40cf-b004-5127646efc9d`.
+2. Pick an issue, or create one in Linear (`repo:prfaq` plus a type label:
+   `Bug`, `Feature`, `Improvement`, `Epic`) if the work isn't tracked yet.
    Skip this only for genuinely trivial,
    single-file, single-session fixes (see Workflow Tiers, T4 below) — even
    those still go through Loop 2.
-3. `bd update <id> --status=in_progress` to claim it.
+3. Claim it in Linear (state In Progress), then refresh the bead with
+   `bd linear sync --pull --issues <PL id> --team <id>`. A local `bd update`
+   is undone by the next pull.
 4. Pick a tier (`CLAUDE.md` § Workflow Tiers) — T1 Forge, T2 Feature Dev, T3
    Direct, or T4 (see below). The tier decides which tool drives Loop 2, not
    whether Loop 2 runs.
 
-**T4: Trivial, no bead.** A single-character typo fix, a broken link, a
+**T4: Trivial, no issue.** A single-character typo fix, a broken link, a
 version-string bump nobody could disagree with. No design ambiguity, no
 judgment call, one file, one line. Still goes through Loop 2 (branch, PR) —
-T4 only means skip the bead, not skip the branch.
+T4 only means skip the issue, not skip the branch.
 
 **The exemption is about triviality of the single change, never about
 count.** "Eight files, each edit mechanical" is not T4 — it is exactly the
@@ -43,13 +48,13 @@ kind of work Loop 2 exists to catch, because a mechanical edit repeated
 eight times is eight chances to get one of them wrong, and nobody reviewed
 any of them before this session found out the hard way (`prfaq-6wz`). If
 you are touching more than one file, or a content-quality pass across
-several documents, claim a bead and branch — full stop.
+several documents, claim an issue and branch — full stop.
 
 ## Loop 2: PR
 
 *One rollback-coherent merge.* This is the loop that failed on 2026-08-30.
 Every step below is mandatory; none is exempt for "small" work — only the
-bead in Loop 1 is optional (T4), never the branch, never local review.
+issue in Loop 1 is optional (T4), never the branch, never local review.
 
 ```text
 claim (Loop 1)
@@ -59,7 +64,7 @@ claim (Loop 1)
   → document            CHANGELOG.md, README.md, DESIGN.md as applicable
   → local review        local_review(diff) (see below) until it returns clean
   → ship                commit → push → PR → Qodo + Bugbot at open → merge gate → merge
-  → close               bd close <id>, delete branch, pull main
+  → close               mark Done in Linear, delete branch, pull main
 ```
 
 **Branch.** `git checkout -b <prefix>/<short-description> main` — always,
@@ -446,7 +451,9 @@ function close_out():
     cancel the poll loop
     checkout main; pull; delete the branch # local and remote; a checked-out
                                            #   branch cannot be deleted
-    bd close the bead(s), if the unit had any
+    mark the issue(s) Done in Linear, if the unit had any, then refresh
+                                           #   the bead: bd linear sync --pull
+                                           #   --issues <PL id> --team <id>
     send the merge recap                   # every merge, unprompted, with the
                                            #   review data block from
                                            #   ../.bin/review-metrics.py pr
@@ -466,9 +473,11 @@ remote review is round 2, and only after a High fix.
 **Demo.** prfaq explicitly declares that it has no demo. `demo_ok(pr)` is
 therefore true for every PR.
 
-**Close.** `close_out` above: `bd close <id>` (if a bead existed), pull main,
-delete the branch, and — this is also mandatory, not optional — actually push
-before the session ends (see `CLAUDE.md` § Session Close Protocol).
+**Close.** `close_out` above: mark the issue Done in Linear (if one existed)
+and refresh its bead with a by-id pull, pull main, delete the branch, and —
+this is also mandatory, not optional — actually push before the session ends
+(see `CLAUDE.md` § Session Close Protocol). Nothing under `.beads/` is
+committed.
 
 ## Loop 3: Delegation
 
