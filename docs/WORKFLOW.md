@@ -476,8 +476,10 @@ therefore true for every PR.
 **Close.** `close_out` above: mark the issue Done in Linear (if one existed)
 and refresh its bead with a by-id pull, pull main, delete the branch, and —
 this is also mandatory, not optional — actually push before the session ends
-(see `CLAUDE.md` § Session Close Protocol). Nothing under `.beads/` is
-committed.
+(see `CLAUDE.md` § Session Close Protocol). The generated mirror state under
+`.beads/` (the Dolt database, JSONL exports, `.linear-sync.lock`, `last_pull`)
+is gitignored and never committed; tracked `.beads/` configuration and docs
+(`config.yaml`, `README.md`, `.gitignore`) are committed like any other file.
 
 ## Loop 3: Delegation
 

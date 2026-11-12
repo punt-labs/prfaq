@@ -4,13 +4,6 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
-### Changed
-
-- Linear is the tracker of record (Punt Labs team, label `repo:prfaq`);
-  beads is a scoped local mirror. `.beads/config.yaml` carries
-  `issue-prefix` and `linear.pull_label`, and the agent instructions no
-  longer tell a session to run `bd sync` or edit beads locally.
-
 ### Fixed
 
 - ethos config resolves layered again so the engineering team, seeded pipelines and the claude leader identity resolve alongside the vendored gstack team

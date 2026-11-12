@@ -52,7 +52,8 @@ no pull removes one: a blocker added in Linear also needs `bd dep add
 <bead> <blocker>` here when the mirror was refreshed without `--relations`,
 and a blocker cleared in Linear needs `bd dep remove <bead> <blocker>`.
 The guide's "Never" list applies here in full: no bare `bd linear sync`, no
-`bd config set linear.*` (shared by every repo), and never remove
+unscoped `--push`, no `bd config set linear.*` (shared by every repo), and
+never remove
 `issue-prefix` or `linear.pull_label` from `config.yaml`. A pull is a beads
 write: before running one, `bd config get linear.pull_label` on the main
 checkout must print `repo:prfaq`, or the pull imports the whole Punt Labs
