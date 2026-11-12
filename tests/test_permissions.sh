@@ -1,9 +1,10 @@
 #!/bin/sh
 # Tests for the permission scripts: plugin/scripts/prfaq_permissions.sh
-# (project rules) and install.sh Step 5 (legacy global cleanup).
+# (project rules) and install.sh (which must never touch the global settings
+# file).
 #
-# Both scripts edit a user's Claude Code settings file, so the cases that
-# matter are the destructive ones: rules the user wrote must survive, a
+# The permissions script edits a user's Claude Code settings file, so the
+# cases that matter are the destructive ones: rules the user wrote must survive, a
 # no-op must not rewrite the file, and a successful run must exit 0.
 #
 # Usage: sh tests/test_permissions.sh
@@ -185,67 +186,35 @@ env HOME="$FAKE_HOME" sh "$PERMS" --add "$WORK/guard-home-link" >/dev/null 2>&1 
 check "writing \$HOME through a symlink is refused" "1" "$STATUS"
 check "the guard wrote nothing" "0" "$(find "$FAKE_HOME" -name settings.json | wc -l | tr -d ' ')"
 
-printf '\nLegacy global cleanup (install.sh)\n'
+printf '\nGlobal settings untouched (install.sh)\n'
 
-# --- Cleanup removes prfaq's rules and nothing else ---
-H="$WORK/home-with-legacy"
+# The installer grants nothing and cleans up nothing: rules live in the
+# project's .claude/settings.json, added by /prfaq:permissions.
+H="$WORK/home-with-global-rules"
 mkdir -p "$H/.claude"
-jq -n '{permissions:{allow:["Bash(git:*)","Write(*prfaq*.tex)","Write(meetings/**)","Edit(*prfaq*.tex)","WebSearch","Read"],deny:["Bash(sudo:*)"]},env:{FOO:"bar"}}' > "$H/.claude/settings.json"
+jq -n '{permissions:{allow:["Bash(git:*)","Write(*prfaq*.tex)","Edit(*prfaq*.tex)","WebSearch"]},env:{FOO:"bar"}}' > "$H/.claude/settings.json"
+cp "$H/.claude/settings.json" "$WORK/global-before.json"
 STATUS=0
 run_installer "$H" || STATUS=$?
-check "installer exits 0 after cleanup" "0" "$STATUS"
-check "legacy rules are gone" "0" "$(jq '[.permissions.allow[] | select(startswith("Write("))] | length' "$H/.claude/settings.json")"
-check "user rules survive" "Bash(git:*) Read" "$(jq -r '.permissions.allow | join(" ")' "$H/.claude/settings.json")"
-check "deny list survives cleanup" "Bash(sudo:*)" "$(jq -r '.permissions.deny[0]' "$H/.claude/settings.json")"
-check "a backup is left behind" "1" "$(find "$H/.claude" -name 'settings.json.prfaq-backup.*' | wc -l | tr -d ' ')"
-check "no temp file is left behind" "0" "$(find "$H/.claude" -name 'settings.json.tmp' | wc -l | tr -d ' ')"
-
-# --- Second run has nothing to do ---
-STATUS=0
-run_installer "$H" || STATUS=$?
-check "second installer run exits 0" "0" "$STATUS"
-if grep -q "no legacy global rules found" "$WORK/installer.out"; then
-  pass "second installer run reports nothing to clean"
+check "installer exits 0 with a global settings file" "0" "$STATUS"
+if cmp -s "$WORK/global-before.json" "$H/.claude/settings.json"; then
+  pass "global settings file is byte-for-byte unchanged"
 else
-  fail "second installer run reports nothing to clean"
+  fail "global settings file is byte-for-byte unchanged"
 fi
-
-# --- A global settings file that is not an object must not abort the install ---
-H="$WORK/home-not-an-object"
-mkdir -p "$H/.claude"
-printf '["not","an","object"]' > "$H/.claude/settings.json"
-STATUS=0
-run_installer "$H" || STATUS=$?
-check "non-object global settings does not abort the install" "0" "$STATUS"
-check "non-object global settings is left alone" '["not","an","object"]' "$(cat "$H/.claude/settings.json")"
-
-# --- A malformed global settings file must not abort the install ---
-# install.sh is piped from curl. A hard exit here strands the user after the
-# plugin installed but before the toolchain checks and the closing message.
-H="$WORK/home-malformed-allow"
-mkdir -p "$H/.claude"
-printf '{"permissions":{"allow":"nope"}}' > "$H/.claude/settings.json"
-STATUS=0
-run_installer "$H" || STATUS=$?
-check "malformed global permissions.allow does not abort the install" "0" "$STATUS"
-check "malformed global settings is left alone" '{"permissions":{"allow":"nope"}}' "$(cat "$H/.claude/settings.json")"
-if grep -q "jq: error" "$WORK/installer.out"; then
-  fail "installer leaked a jq stack trace on a malformed settings file"
-else
-  pass "installer leaks no jq stack trace on a malformed settings file"
-fi
+check "installer leaves nothing else in ~/.claude" "settings.json" "$(ls "$H/.claude")"
 if grep -q "is ready!" "$WORK/installer.out"; then
-  pass "installer still reaches its closing message"
+  pass "installer reaches its closing message"
 else
-  fail "installer still reaches its closing message"
+  fail "installer reaches its closing message"
 fi
 
-# --- No global settings file at all ---
 H="$WORK/home-empty"
 mkdir -p "$H"
 STATUS=0
 run_installer "$H" || STATUS=$?
 check "missing global settings file is fine" "0" "$STATUS"
+check "installer does not create a global settings file" "0" "$(find "$H" -name settings.json | wc -l | tr -d ' ')"
 
 printf '\nMarketplace registration (install.sh)\n'
 
