@@ -19,9 +19,10 @@ mirrored in `.beads/metadata.json`). The operating rules are in
   `linear.pull_label` selects the issues, and `issue-prefix` names the
   beads a pull creates. For the prefix, `bd` reads the `BD_ISSUE_PREFIX`
   environment variable when set, else this `issue-prefix`, else the
-  `metadata.json` value; keep the two files equal. A by-id pull is the
-  exception: `bd linear sync --pull --issues` reads the shared DB
-  `issue_prefix` row (which is `punt-labs`), so pass it PL ids, not bead ids.
+  `metadata.json` value; keep the two files equal. Every pull resolves the
+  prefix the same way, a by-id pull included; `bd linear sync --pull
+  --issues` takes Linear identifiers (`PL-123`) because that is what it
+  asks Linear for, and the beads it creates still carry this prefix.
 - `.beads/issues.jsonl` and `.beads/interactions.jsonl` are local
   export views. Auto-export is disabled (`export.auto: false`);
   run `bd export` manually if needed. They are **gitignored** and
