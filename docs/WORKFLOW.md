@@ -31,7 +31,7 @@ except through a merged PR.** See `prfaq-6wz`.
    single-file, single-session fixes (see Workflow Tiers, T4 below) — even
    those still go through Loop 2.
 3. Claim it in Linear (state In Progress), then refresh the bead with
-   `bd linear sync --pull --issues <PL id> --team <id>`. A local `bd update`
+   `bd linear sync --pull --issues <PL id> --team c1dfbb2c-985e-40cf-b004-5127646efc9d`. A local `bd update`
    is undone by the next pull.
 4. Pick a tier (`CLAUDE.md` § Workflow Tiers) — T1 Forge, T2 Feature Dev, T3
    Direct, or T4 (see below). The tier decides which tool drives Loop 2, not
@@ -133,7 +133,7 @@ function local_review(diff):
         diff = this round's fix diff     # every change is reviewed,
                                          #   Low fixes included
     # at most four fix rounds, plus a fifth review that only verifies the
-    # fourth round's fixes. No deferral beads. Every caller acts only on
+    # fourth round's fixes. No deferral issues. Every caller acts only on
     # clean: on blocked, nothing opens and nothing is pushed until the
     # operator rules and local_review then returns clean.
 ```
@@ -373,7 +373,7 @@ function poll_tick(pr):
             fix it now (answered after the push, below), or answer it by
                 its source's path (answered(f))
             # never re-litigated; Qodo Lows are dropped by comments_routing;
-            # no deferral beads; the latest ruling governs
+            # no deferral issues; the latest ruling governs
     for each escalation the operator has ruled on:
         record the ruling in a ledger comment   # closes the escalation,
                                                 #   not the finding
@@ -453,7 +453,7 @@ function close_out():
                                            #   branch cannot be deleted
     mark the issue(s) Done in Linear, if the unit had any, then refresh
                                            #   the bead: bd linear sync --pull
-                                           #   --issues <PL id> --team <id>
+                                           #   --issues <PL id> --team c1dfbb2c-985e-40cf-b004-5127646efc9d
     send the merge recap                   # every merge, unprompted, with the
                                            #   review data block from
                                            #   ../.bin/review-metrics.py pr
