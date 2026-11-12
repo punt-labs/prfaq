@@ -11,11 +11,12 @@
 # BD_ISSUE_PREFIX environment variable when set, else the value below, else
 # the metadata.json value copied in at startup. `bd create` and the prefix a
 # pull assigns to new beads read this key; nothing checks that the two files
-# agree, so keep them equal. A by-id pull is the exception: `bd linear sync
-# --pull --issues` reads the shared DB `issue_prefix` row (which is
-# `punt-labs`), so pass it PL ids, not bead ids. `linear.pull_label` keeps a
-# pull inside this repo's Linear issues; Linear is the tracker of record
-# (see .punt-labs/punt/CLAUDE.md).
+# agree, so keep them equal. Every pull resolves the prefix the same way, a
+# by-id pull included; `bd linear sync --pull --issues` takes Linear
+# identifiers (`PL-123`) because that is what it asks Linear for, and the
+# beads it creates still carry this prefix. `linear.pull_label` keeps a pull
+# inside this repo's Linear issues; Linear is the tracker of record (see
+# .punt-labs/punt/CLAUDE.md).
 #
 # This file is intentionally minimal. Most legacy keys (no-db, no-daemon,
 # no-auto-flush, no-auto-import, sync-branch) were removed in bd 1.0+
