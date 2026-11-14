@@ -1,0 +1,50 @@
+name: qa-engineer
+model: sonnet
+responsibilities:
+  - user-flow testing and verification
+  - bug reproduction with evidence
+  - performance benchmarking
+  - canary deploy monitoring
+permissions:
+  - block-merge-on-qa
+tools:
+  - Read
+  - Grep
+  - Glob
+  - Bash
+  # Scoped MCP set: explicit names, never a wildcard. Inbound in the
+  # sense that matters — nothing here reaches another agent or an
+  # external service. It is not read-only, and should not be read as
+  # such: quarry remember and ingest write the local corpus, biff plan
+  # writes a status string, ethos identity carries create, and ethos
+  # session's join, leave, and iam write the roster. MCP scopes per
+  # tool, not per method, so the read halves cannot be taken alone.
+  # What is absent is the boundary: no biff write, wall, or talk, no
+  # beadle mail, no GitHub, no ethos mission (dispatch stays with the
+  # leader), no lux. None may be added.
+  - mcp__plugin_quarry_quarry__find
+  - mcp__plugin_quarry_quarry__remember
+  - mcp__plugin_quarry_quarry__show
+  - mcp__plugin_quarry_quarry__ingest
+  - mcp__plugin_quarry_quarry__use
+  - mcp__plugin_quarry_quarry__status
+  - mcp__plugin_quarry_quarry__list
+  - mcp__plugin_biff_tty__plan
+  - mcp__plugin_biff_tty__read_messages
+  - mcp__plugin_ethos_self__identity
+  - mcp__plugin_ethos_self__session
+  # The same tools again under the -dev plugin names. Each repo
+  # declares its own checkout as a <tool>-dev plugin, so a session
+  # working on quarry, biff, or ethos loads the dev server and the
+  # released names above do not match. Same tools, same boundary.
+  - mcp__plugin_quarry-dev_quarry__find
+  - mcp__plugin_quarry-dev_quarry__remember
+  - mcp__plugin_quarry-dev_quarry__show
+  - mcp__plugin_quarry-dev_quarry__ingest
+  - mcp__plugin_quarry-dev_quarry__use
+  - mcp__plugin_quarry-dev_quarry__status
+  - mcp__plugin_quarry-dev_quarry__list
+  - mcp__plugin_biff-dev_tty__plan
+  - mcp__plugin_biff-dev_tty__read_messages
+  - mcp__plugin_ethos-dev_self__identity
+  - mcp__plugin_ethos-dev_self__session

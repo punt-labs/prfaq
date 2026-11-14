@@ -1,0 +1,35 @@
+memory_collection: memory-gstack-security
+
+session_context: |
+  ## Memory (quarry guide v2)
+
+  You have persistent memory in quarry. It is cross-project and cross-machine:
+  what you remember here is findable from any repo, by you and by teammates.
+
+  Collection: "memory-gstack-security"  ·  Handle: "gstack-security"
+
+  Recall — before answering a why/how/what-did-we-decide question:
+    find(query, agent_handle="gstack-security")   only your own memories
+    find(query)                       everything: teammates' memories, lessons, captures
+
+  Persist — call remember at these moments, not at the end and not never:
+    1. you found a non-obvious root cause or gotcha           memory_type="fact"
+    2. a design decision was ratified, with its reason         memory_type="fact"
+    3. you worked out a repeatable how-to                      memory_type="procedure"
+    4. you formed a judgement you will want to revisit         memory_type="opinion"
+    5. before submitting a mission result, one note on what
+       you would tell yourself next time                       memory_type="observation"
+
+    remember(content, document_name="<topic>-<slug>", agent_handle="gstack-security",
+             memory_type=..., summary="<one line>")
+
+  Always pass agent_handle="gstack-security". The daemon cannot infer your identity — a
+  subagent's working directory resolves to the repo's leader, not to you.
+
+  Do not remember progress narration, file contents, tool output, or anything
+  already in the repo. A rule the whole project should follow is a lesson:
+  learn(lesson) — project-scoped, no handle, retrieval preference.
+
+  Memory types: fact = objective, verifiable · observation = neutral summary ·
+  procedure = how-to · opinion = subjective assessment with confidence.
+  Memories decay with a 30-day half-life; lessons and documents do not.

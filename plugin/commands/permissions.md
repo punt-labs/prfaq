@@ -42,8 +42,11 @@ global `~/.claude/settings.json`.
 5. **If jq is missing.** The script requires `jq`. When it reports jq missing,
    tell the user to install it (`brew install jq` on macOS, `apt install jq`
    on Linux) and offer to add the rules by hand instead — read the rule list
-   out of `${CLAUDE_PLUGIN_ROOT}/scripts/prfaq_permissions.sh` and write them
-   into `.claude/settings.json` under `permissions.allow`.
+   out of `${CLAUDE_PLUGIN_ROOT}/scripts/prfaq_permissions.sh` and write its
+   `allow` list into `.claude/settings.json` under `permissions.allow` and its
+   `ask` list under `permissions.ask`. Never put an `ask` rule under
+   `permissions.allow`: `Skill(prfaq:*)` would then run `/prfaq:permissions`
+   and `/prfaq:feedback-to-us` without a prompt.
 
 ## What Gets Granted
 
@@ -55,6 +58,9 @@ global `~/.claude/settings.json`.
   Edit, and NotebookEdit tools. A `Write(...)` rule matches nothing.
 - **WebSearch and WebFetch** — the researcher agent needs open web access;
   the sources it must reach cannot be enumerated in advance.
+- **Skill** — `Skill(prfaq:*)` for every prfaq command, with `ask` rules
+  for `/prfaq:permissions` and `/prfaq:feedback-to-us` so those keep
+  prompting.
 - **CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1** — required by
   `/prfaq:meeting-hive` for parallel persona execution.
 

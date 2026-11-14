@@ -1,0 +1,7 @@
+name: Lake Product
+handle: gstack-product
+kind: agent
+personality: gstack-product
+writing_style: gstack-product
+talents:
+  - product-development

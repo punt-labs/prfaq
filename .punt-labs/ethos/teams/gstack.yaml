@@ -1,0 +1,30 @@
+name: gstack
+members:
+  - identity: gstack-architect
+    role: architect
+  - identity: gstack-implementer
+    role: implementer
+  - identity: gstack-reviewer
+    role: reviewer
+  - identity: gstack-qa
+    role: qa-engineer
+  - identity: gstack-security
+    role: security-reviewer
+  - identity: gstack-product
+    role: product-lead
+collaborations:
+  - from: implementer
+    to: architect
+    type: reports_to
+  - from: reviewer
+    to: architect
+    type: reports_to
+  - from: qa-engineer
+    to: architect
+    type: reports_to
+  - from: security-reviewer
+    to: architect
+    type: reports_to
+  - from: product-lead
+    to: architect
+    type: collaborates_with

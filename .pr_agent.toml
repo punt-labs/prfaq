@@ -1,0 +1,38 @@
+# Qodo v2 review config, from punt-kit's pr_agent.toml template. One review on open,
+# no per-push re-review, only High findings inline (they become blocking threads).
+# Only bot-authored PRs are skipped; no title or label lets an author opt out.
+[github_app]
+ignore_bot_pr = true
+pr_commands = ["/agentic_describe", "/agentic_review"]
+handle_push_trigger = false
+
+[review_agent]
+enable_incremental_review = true
+# comments_routing below is authoritative; the threshold restates it (High only inline).
+inline_comments_severity_threshold = 3
+issues_user_guidelines = """
+prfaq is a Claude Code plugin implementing the Working Backwards PR/FAQ process: skill prompts, agent personas, and reference guides (markdown), LaTeX templates and a dogfood document, plus POSIX sh and stdlib-only Python 3 helper scripts and hooks, and install.sh.
+Targets: macOS and Ubuntu 24.04. Nothing else. POSIX sh must run under macOS /bin/sh and Ubuntu's dash.
+Report every finding in this one pass; do not hold findings back for a later pass.
+Flag only defects reachable by a real caller of the changed code: logic errors, None paths, security, API contract breaks, concurrency, resource leaks.
+Do not flag hypothetical environments (exotic env vars such as CDPATH or GIT_TRACE, control bytes in paths, tests run as root).
+Do not flag what CI enforces: every .tex file compiling with pdflatex, markdownlint, the permission and installer suite (tests/test_permissions.sh), the prose-lint suite (tests/test_prose_lint.py), and the install end-to-end legs.
+Do not flag lines the PR did not change.
+Never suggest suppressions (# noqa, # type: ignore, xfail) or replacing __new__ with __init__; __new__ is the constructor by design.
+Never suggest rewording prose that plugin/banlist.conf and plugin/scripts/prose_lint.py govern; the banlist owns that judgment.
+"""
+compliance_user_guidelines = """
+Apply code rules only: correctness, typing, error handling, security, and the coding standards for the changed files.
+Do not grade PR titles, PR descriptions, commit messages, or CHANGELOG wording.
+Do not grade agent process rules from CLAUDE.md, AGENTS.md, or WORKFLOW.md (missions, beads, review cycles, delegation).
+"""
+smart_router_extra_instructions = """
+High risk: plugin/scripts/prfaq_permissions.sh and install.sh (both edit a user's Claude Code settings file), plugin/hooks/hooks.json and plugin/hooks/prose_lint_hook.py,
+plugin/.claude-plugin/plugin.json, plugin/scripts/compile_prfaq.sh and the other plugin/scripts/*.sh (they run pdflatex and pandoc on user files), and scripts/release-plugin.sh and scripts/restore-dev-plugin.sh.
+Low risk: docs-only diffs (*.md, docs/, research/, meetings/, CHANGELOG.md, DESIGN.md), the dogfood and press-release documents (prfaq.tex, press-release-v1.0.0.tex), and test-only diffs (tests/).
+"""
+
+[review_agent.comments_routing]
+action_required = "both"
+remediation_recommended = "summary"
+informational = "drop"

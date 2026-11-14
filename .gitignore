@@ -181,8 +181,5 @@ timeline.xctimeline
 # Binary assets (voice auditions, etc.)
 research/spike-voices/
 
-# Local ethos worktree clone (not the vendored punt-labs/team submodule —
-# this repo deliberately has none, see CLAUDE.md § Ethos & Delegation).
-# Per-repo policy, same as z-spec: the whole tree is per-machine runtime
-# state, not vendored content, so it stays untracked here.
-.punt-labs/ethos/
+
+# ethos: shared machine-local zone (never track)

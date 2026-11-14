@@ -1,0 +1,58 @@
+# Written by `ethos vendor`. Records the vendored closure so ethos can
+# verify this set is complete under `resolution: repo-only`.
+# Do not edit by hand — re-run `ethos vendor --apply` instead.
+version: 1
+generated_at: 2026-11-03T14:28:34Z
+seeds:
+    - gstack-architect
+    - gstack-implementer
+    - gstack-product
+    - gstack-qa
+    - gstack-reviewer
+    - gstack-security
+identities:
+    - handle: gstack-architect
+      ext:
+        - quarry.yaml
+    - handle: gstack-implementer
+      ext:
+        - quarry.yaml
+    - handle: gstack-product
+      ext:
+        - quarry.yaml
+    - handle: gstack-qa
+      ext:
+        - quarry.yaml
+    - handle: gstack-reviewer
+      ext:
+        - quarry.yaml
+    - handle: gstack-security
+      ext:
+        - quarry.yaml
+personalities:
+    - gstack-architect
+    - gstack-implementer
+    - gstack-product
+    - gstack-qa
+    - gstack-reviewer
+    - gstack-security
+writing_styles:
+    - gstack-builder
+    - gstack-decisive
+    - gstack-product
+    - gstack-reviewer
+    - gstack-security
+    - gstack-tester
+talents:
+    - engineering
+    - product-development
+    - security
+roles:
+    - architect
+    - implementer
+    - product-lead
+    - qa-engineer
+    - reviewer
+    - security-reviewer
+teams:
+    - gstack
