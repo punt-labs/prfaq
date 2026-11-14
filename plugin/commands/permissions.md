@@ -55,8 +55,9 @@ global `~/.claude/settings.json`.
   Edit, and NotebookEdit tools. A `Write(...)` rule matches nothing.
 - **WebSearch and WebFetch** — the researcher agent needs open web access;
   the sources it must reach cannot be enumerated in advance.
-- **Skill** — `Skill(prfaq:<cmd>)` for every prfaq command except
-  `/prfaq:permissions` and `/prfaq:feedback-to-us`, which keep prompting.
+- **Skill** — `Skill(prfaq:*)` for every prfaq command, with `ask` rules
+  for `/prfaq:permissions` and `/prfaq:feedback-to-us` so those keep
+  prompting.
 - **CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1** — required by
   `/prfaq:meeting-hive` for parallel persona execution.
 

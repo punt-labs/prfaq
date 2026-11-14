@@ -105,15 +105,10 @@ printf '\nProject permissions (plugin/scripts/prfaq_permissions.sh)\n'
 P="$WORK/fresh"
 mkdir -p "$P"
 sh "$PERMS" --add "$P" >/dev/null
-check "fresh add writes every rule" "31" "$(jq '.permissions.allow | length' "$P/.claude/settings.json")"
-# One scoped Skill(prfaq:<cmd>) per shipped command, except the two whose
-# allowed-tools must keep prompting (permissions, feedback-to-us).
-EXPECTED_SKILLS=$(for f in "$REPO"/plugin/commands/*.md; do
-  n=$(basename "$f" .md)
-  case "$n" in (*-dev|permissions|feedback-to-us) continue ;; esac
-  printf 'Skill(prfaq:%s)\n' "$n"
-done | sort)
-check "fresh add grants one scoped Skill rule per command" "$EXPECTED_SKILLS" "$(jq -r '.permissions.allow[] | select(startswith("Skill("))' "$P/.claude/settings.json" | sort)"
+check "fresh add writes every allow rule" "20" "$(jq '.permissions.allow | length' "$P/.claude/settings.json")"
+check "fresh add allows every prfaq command broadly" "Skill(prfaq:*)" "$(jq -r '.permissions.allow[] | select(startswith("Skill("))' "$P/.claude/settings.json")"
+# The two commands whose allowed-tools must keep prompting get exact ask rules.
+check "fresh add asks for the unsafe commands" "Skill(prfaq:permissions) Skill(prfaq:feedback-to-us)" "$(jq -r '.permissions.ask | join(" ")' "$P/.claude/settings.json")"
 check "fresh add enables agent teams" "1" "$(jq -r '.env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS' "$P/.claude/settings.json")"
 check "fresh add writes no Write() rule" "0" "$(jq '[.permissions.allow[] | select(startswith("Write("))] | length' "$P/.claude/settings.json")"
 
@@ -131,6 +126,7 @@ check "check on a complete project exits 0" "0" "$?"
 # --- Remove ---
 sh "$PERMS" --remove "$P" >/dev/null
 check "remove takes every rule back out" "0" "$(jq '.permissions.allow | length' "$P/.claude/settings.json")"
+check "remove takes every ask rule back out" "0" "$(jq '.permissions.ask | length' "$P/.claude/settings.json")"
 check "remove leaves the env var alone" "1" "$(jq -r '.env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS' "$P/.claude/settings.json")"
 
 # --- Merging into a settings file the user already owns ---

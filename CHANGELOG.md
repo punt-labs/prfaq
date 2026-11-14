@@ -6,7 +6,7 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ### Changed
 
-- **`/prfaq:permissions` grants the prfaq commands too (PL-717).** It adds a plugin-scoped `Skill(prfaq:<cmd>)` rule for each command, so `/prfaq:*` stops prompting on every invocation, and `remove` takes them back out. `/prfaq:permissions` and `/prfaq:feedback-to-us` are left out: their `allowed-tools` (this script, and `curl` to the feedback endpoint) would otherwise run without a prompt.
+- **`/prfaq:permissions` grants the prfaq commands too (PL-717).** It adds `Skill(prfaq:*)` to `permissions.allow`, so `/prfaq:*` stops prompting on every invocation and a new command works without a rule update, and adds `Skill(prfaq:permissions)` and `Skill(prfaq:feedback-to-us)` to `permissions.ask` (punt-kit#471): their `allowed-tools` (this script, and `curl` to the feedback endpoint) would otherwise run without a prompt, and Claude Code checks ask before allow. `remove` takes both sets back out and never creates an absent tier.
 
 ### Fixed
 
