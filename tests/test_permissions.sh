@@ -110,7 +110,7 @@ check "fresh add writes every rule" "31" "$(jq '.permissions.allow | length' "$P
 # allowed-tools must keep prompting (permissions, feedback-to-us).
 EXPECTED_SKILLS=$(for f in "$REPO"/plugin/commands/*.md; do
   n=$(basename "$f" .md)
-  case "$n" in *-dev|permissions|feedback-to-us) continue ;; esac
+  case "$n" in (*-dev|permissions|feedback-to-us) continue ;; esac
   printf 'Skill(prfaq:%s)\n' "$n"
 done | sort)
 check "fresh add grants one scoped Skill rule per command" "$EXPECTED_SKILLS" "$(jq -r '.permissions.allow[] | select(startswith("Skill("))' "$P/.claude/settings.json" | sort)"
