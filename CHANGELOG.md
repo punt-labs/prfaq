@@ -4,6 +4,10 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
+### Changed
+
+- **`/prfaq:permissions` grants the prfaq commands too (PL-717).** It adds a plugin-scoped `Skill(prfaq:<cmd>)` rule for each command, so `/prfaq:*` stops prompting on every invocation, and `remove` takes them back out. `/prfaq:permissions` and `/prfaq:feedback-to-us` are left out: their `allowed-tools` (this script, and `curl` to the feedback endpoint) would otherwise run without a prompt.
+
 ### Fixed
 
 - ethos config resolves layered again so the engineering team, seeded pipelines and the claude leader identity resolve alongside the vendored gstack team

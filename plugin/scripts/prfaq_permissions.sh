@@ -35,6 +35,12 @@ fail() { printf '  %b✗%b %s\n' "$YELLOW" "$NC" "$1" >&2; exit 1; }
 #
 # Deliberately excluded: Bash(curl *) and every Bash(rm *) form. Sending data
 # to an external endpoint and deleting files stay at the prompt tier.
+#
+# Skills use the plugin-scoped Skill(prfaq:<cmd>) form; a bare Skill(<cmd>)
+# matches nothing. Two commands are left out because their allowed-tools would
+# run unprompted once the skill is: /prfaq:permissions (this script, the
+# consent step) and /prfaq:feedback-to-us (curl to an external endpoint).
+# tests/test_permissions.sh checks this list against plugin/commands/.
 PRFAQ_PROJECT_RULES='[
   "Bash(bash */compile_prfaq.sh *)",
   "Bash(bash scripts/compile_prfaq.sh *)",
@@ -54,7 +60,19 @@ PRFAQ_PROJECT_RULES='[
   "Edit(README.md)",
   "Edit(.gitignore)",
   "WebSearch",
-  "WebFetch"
+  "WebFetch",
+  "Skill(prfaq:badge)",
+  "Skill(prfaq:export)",
+  "Skill(prfaq:externalize)",
+  "Skill(prfaq:feedback)",
+  "Skill(prfaq:import)",
+  "Skill(prfaq:meeting)",
+  "Skill(prfaq:meeting-hive)",
+  "Skill(prfaq:meeting-listen)",
+  "Skill(prfaq:research)",
+  "Skill(prfaq:review)",
+  "Skill(prfaq:streamline)",
+  "Skill(prfaq:vote)"
 ]'
 
 # --- Arguments ---
