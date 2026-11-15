@@ -67,13 +67,8 @@
 .CLAUDE.md.punt-import.lock
 **/.create.lock
 
-# --- Beads runtime state ---
-.beads/bd.sock*
-.beads/beads.db*
-.beads/daemon-*
-.beads/daemon.log
-.beads/daemon-error
-.beads/.local_version
+# --- Beads (retired; Linear is the tracker) ---
+.beads/
 
 # --- Scratch / temp ---
 # .tmp/ is the repo-local TMPDIR (set via .envrc). We keep the directory but
