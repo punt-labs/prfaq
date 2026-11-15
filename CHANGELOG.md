@@ -6,6 +6,7 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ### Changed
 
+- **`Installer` no longer touches `~/.claude/settings.json`.** It used to remove the permission rules versions 1.5.0–1.6.1 wrote there. Under the repo-level-only permission standard ([punt-kit#396](https://github.com/punt-labs/punt-kit/pull/396)) no Punt Labs installer edits the global settings file, cleanup included. Remove any leftover prfaq rules from it by hand; `/prfaq:permissions` still grants rules per project.
 - **`/prfaq:permissions` grants the prfaq commands too (PL-717).** It adds `Skill(prfaq:*)` to `permissions.allow`, so `/prfaq:*` stops prompting on every invocation and a new command works without a rule update, and adds `Skill(prfaq:permissions)` and `Skill(prfaq:feedback-to-us)` to `permissions.ask` (punt-kit#471): their `allowed-tools` (this script, and `curl` to the feedback endpoint) would otherwise run without a prompt, and Claude Code checks ask before allow. `remove` takes both sets back out and never creates an absent tier.
 
 ### Fixed
