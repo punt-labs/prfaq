@@ -16,23 +16,15 @@ except through a merged PR.** See `prfaq-6wz`.
 
 *What to work on, and in what order.*
 
-1. Refresh the mirror, then `bd ready --label-any repo:prfaq --exclude-label
-   deferred` — see everything unblocked. Linear is the tracker of record
-   (Punt Labs team, label `repo:prfaq`); beads is a read-mostly local mirror
-   in a single shared central DB across all punt-labs repos, so `bd ready`
-   and `bd list` need `--label-any repo:prfaq` to stay inside this repo (see
-   `.beads/README.md` and `.punt-labs/punt/CLAUDE.md`). Before the refresh,
-   `bd config get linear.pull_label` must print `repo:prfaq`; then
-   `bd linear sync --pull-if-stale --relations --team
-   c1dfbb2c-985e-40cf-b004-5127646efc9d`.
+1. List the ready issues in Linear (Punt Labs team, label `repo:prfaq`,
+   state Todo or Backlog, no open blockers) — see everything unblocked.
+   Linear is the sole tracker of record (see `.punt-labs/punt/CLAUDE.md`).
 2. Pick an issue, or create one in Linear (`repo:prfaq` plus a type label:
    `Bug`, `Feature`, `Improvement`, `Epic`) if the work isn't tracked yet.
    Skip this only for genuinely trivial,
    single-file, single-session fixes (see Workflow Tiers, T4 below) — even
    those still go through Loop 2.
-3. Claim it in Linear (state In Progress), then refresh the bead with
-   `bd linear sync --pull --issues <PL id> --team c1dfbb2c-985e-40cf-b004-5127646efc9d`. A local `bd update`
-   is undone by the next pull.
+3. Claim it in Linear (state In Progress).
 4. Pick a tier (`CLAUDE.md` § Workflow Tiers) — T1 Forge, T2 Feature Dev, T3
    Direct, or T4 (see below). The tier decides which tool drives Loop 2, not
    whether Loop 2 runs.
@@ -451,9 +443,7 @@ function close_out():
     cancel the poll loop
     checkout main; pull; delete the branch # local and remote; a checked-out
                                            #   branch cannot be deleted
-    mark the issue(s) Done in Linear, if the unit had any, then refresh
-                                           #   the bead: bd linear sync --pull
-                                           #   --issues <PL id> --team c1dfbb2c-985e-40cf-b004-5127646efc9d
+    mark the issue(s) Done in Linear, if the unit had any
     send the merge recap                   # every merge, unprompted, with the
                                            #   review data block from
                                            #   ../.bin/review-metrics.py pr
@@ -473,13 +463,10 @@ remote review is round 2, and only after a High fix.
 **Demo.** prfaq explicitly declares that it has no demo. `demo_ok(pr)` is
 therefore true for every PR.
 
-**Close.** `close_out` above: mark the issue Done in Linear (if one existed)
-and refresh its bead with a by-id pull, pull main, delete the branch, and —
-this is also mandatory, not optional — actually push before the session ends
-(see `CLAUDE.md` § Session Close Protocol). The generated mirror state under
-`.beads/` (the Dolt database, JSONL exports, `.linear-sync.lock`, `last_pull`)
-is gitignored and never committed; tracked `.beads/` configuration and docs
-(`config.yaml`, `README.md`, `.gitignore`) are committed like any other file.
+**Close.** `close_out` above: mark the issue Done in Linear (if one existed),
+pull main, delete the branch, and — this is also mandatory, not optional —
+actually push before the session ends (see `CLAUDE.md` § Session Close
+Protocol).
 
 ## Loop 3: Delegation
 

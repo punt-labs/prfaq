@@ -1,6 +1,6 @@
 # Agent Instructions
 
-Read `.punt-labs/punt/CLAUDE.md` before planning or writing to the issue tracker. Linear is the tracker of record where this repo is migrated. Beads is a local mirror there and the tracker of record elsewhere.
+Read `.punt-labs/punt/CLAUDE.md` before planning or writing to the issue tracker. Linear is the sole tracker of record.
 
 ## Landing the Plane (Session Completion)
 
@@ -10,7 +10,7 @@ Read `.punt-labs/punt/CLAUDE.md` before planning or writing to the issue tracker
 
 1. **File issues for remaining work** - Create issues in Linear for anything that needs follow-up
 2. **Run quality gates** (if code changed) - Tests, linters, builds
-3. **Update issue status** - Close finished work and update in-progress items in Linear, never with a local `bd` edit
+3. **Update issue status** - Close finished work and update in-progress items in Linear
 4. **PUSH TO REMOTE** - This is MANDATORY:
    ```bash
    git pull --rebase
