@@ -62,6 +62,14 @@ jobs:
             texlive-fonts-recommended texlive-fonts-extra \
             texlive-pictures texlive-bibtex-extra \
             texlive-plain-generic biber
+      # The split-output path `make verify` (the ethos handoff gate) uses:
+      # every PDF and the biber bibliography land in the scratch directory and
+      # no committed PDF changes. Runs before `make test`, which rewrites them.
+      - name: Compile into a scratch directory
+        run: |
+          make prfaq TEX_OUT=.tmp/tex-check
+          test -s .tmp/tex-check/prfaq.bbl
+          git diff --exit-code -- '*.pdf'
       - name: Compile every shipped .tex
         run: make test
 
