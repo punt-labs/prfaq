@@ -43,7 +43,7 @@ prfaq: ## Compile .tex to .pdf and clean artifacts
 	  rm -f "$$out/$$base.pdf"; \
 	  pdflatex -interaction=nonstopmode -output-directory="$$out" "$$f" > /dev/null 2>&1; \
 	  if [ -f "$$dir/$$base.bib" ] && command -v biber > /dev/null 2>&1; then \
-	    (cd "$$out" && biber --input-directory="$(CURDIR)/$$dir" "$$base") > /dev/null 2>&1 || true; \
+	    (cd "$$out" && biber --input-directory="$(CURDIR)/$$dir" "$$(pwd)/$$base.bcf") > /dev/null 2>&1 || true; \
 	    pdflatex -interaction=nonstopmode -output-directory="$$out" "$$f" > /dev/null 2>&1; \
 	  fi; \
 	  pdflatex -interaction=nonstopmode -output-directory="$$out" "$$f" > /dev/null 2>&1; \
