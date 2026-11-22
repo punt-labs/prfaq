@@ -62,6 +62,19 @@ checks:
     target: test-prose
     on_fail: block
 
+  - name: pdf-freshness
+    stage: commit
+    files: ["**/*.tex", "**/*.pdf"]
+    run: [sh, tests/check_pdf_fresh.sh, "{files}"]
+    on_fail: block
+  - name: pdf-freshness-tests
+    stage: commit
+    files:
+      - tests/check_pdf_fresh.sh
+      - tests/test_pdf_fresh.sh
+    adapter: make
+    target: test-pdf-fresh
+    on_fail: block
   - name: full-gate
     stage: handoff
     files: all

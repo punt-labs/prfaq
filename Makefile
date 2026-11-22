@@ -1,4 +1,4 @@
-.PHONY: help prfaq test test-perms test-prose lint-prose check verify clean-tex
+.PHONY: help prfaq test test-perms test-prose test-pdf-fresh lint-prose check verify clean-tex
 
 # Directories holding a compiled .tex. Both TEX_FILES and the artifact globs
 # derive from this list, so a new document in one of these directories is
@@ -70,7 +70,10 @@ test-perms: ## Verify the permission scripts (needs jq)
 test-prose: ## Run the prose_lint unit and hook-scope tests
 	@python3 tests/test_prose_lint.py
 
-check: test test-perms test-prose ## Run all quality gates
+test-pdf-fresh: ## Test the stale-PDF check
+	@sh tests/test_pdf_fresh.sh
+
+check: test test-perms test-prose test-pdf-fresh ## Run all quality gates
 
 # The same gates as `check`, but the compile writes into $(TEX_CHECK_DIR) so
 # no committed PDF changes. The ethos handoff check runs this: a gate an agent
@@ -78,7 +81,7 @@ check: test test-perms test-prose ## Run all quality gates
 verify: ## Run all quality gates without rewriting committed PDFs
 	@rm -rf $(TEX_CHECK_DIR)
 	@$(MAKE) --no-print-directory prfaq TEX_OUT=$(TEX_CHECK_DIR)
-	@$(MAKE) --no-print-directory test-perms test-prose
+	@$(MAKE) --no-print-directory test-perms test-prose test-pdf-fresh
 
 # Informational only, deliberately not a `check` prerequisite: the shipped
 # hook only ever sees .tex files carrying \prfaqversion/\prfaqstage and
