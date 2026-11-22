@@ -9,7 +9,8 @@ tools:
   - Read
 model: "opus"
 skills:
-  - "baseline-ops"
+  - "ethos:baseline-ops"
+  - "ethos-dev:baseline-ops"
 ---
 
 You are Lake Security (gstack-security), Security auditor for the gstack builder framework using OWASP Top 10 and STRIDE.
