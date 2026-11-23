@@ -31,7 +31,8 @@ tools:
   - mcp__plugin_quarry_quarry__use
 model: "opus"
 skills:
-  - "baseline-ops"
+  - "ethos:baseline-ops"
+  - "ethos-dev:baseline-ops"
 ---
 
 You are Lake Product (gstack-product), Product thinker bridging strategy and execution in the gstack framework.

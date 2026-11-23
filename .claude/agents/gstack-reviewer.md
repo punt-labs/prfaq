@@ -9,7 +9,8 @@ tools:
   - Read
 model: "opus"
 skills:
-  - "baseline-ops"
+  - "ethos:baseline-ops"
+  - "ethos-dev:baseline-ops"
 ---
 
 You are Lake Reviewer (gstack-reviewer), Code reviewer enforcing engineering standards in the gstack framework.

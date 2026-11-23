@@ -1,0 +1,83 @@
+name: prfaq
+description: >-
+  Prose lint and shellcheck on edit (advisory), staged-file gates on commit,
+  and the full quality gate at handoff, compiled into .tmp/ so no committed
+  PDF is rewritten.
+checks:
+  # The shipped PreToolUse hook (plugin/hooks/prose_lint_hook.py) already
+  # denies banned prose in these files before the write lands. This advisory
+  # pass reports the density findings that hook lets through. The list mirrors
+  # the hook's scope: .tex files carrying \prfaqversion/\prfaqstage, and
+  # meeting summaries.
+  - name: prose-lint
+    stage: edit
+    files:
+      - prfaq.tex
+      - docs/prfaq-overview.tex
+      - plugin/assets/prfaq-template.tex
+      - "meetings/meeting-*summary-*.md"
+    run: [python3, plugin/scripts/prose_lint.py, --config, plugin/banlist.conf, "{file}"]
+    on_fail: advisory
+  - name: shellcheck
+    stage: edit
+    files: ["**/*.sh"]
+    run: [shellcheck, "{file}"]
+    on_fail: advisory
+
+  # prose_lint.py exits 1 for density findings and 2 for banned terms; the
+  # runner cannot tell them apart, and every scoped document has density
+  # findings, so blocking here would block every commit that touches one.
+  - name: prose-lint-staged
+    stage: commit
+    files:
+      - prfaq.tex
+      - docs/prfaq-overview.tex
+      - plugin/assets/prfaq-template.tex
+      - "meetings/meeting-*summary-*.md"
+    run: [python3, plugin/scripts/prose_lint.py, --config, plugin/banlist.conf, "{files}"]
+    on_fail: advisory
+  # Errors block; warnings stay with the advisory edit pass.
+  - name: shellcheck-staged
+    stage: commit
+    files: ["**/*.sh"]
+    run: [shellcheck, --severity=error, "{files}"]
+    on_fail: block
+  - name: permission-tests
+    stage: commit
+    files:
+      - install.sh
+      - plugin/scripts/prfaq_permissions.sh
+      - tests/test_permissions.sh
+    adapter: make
+    target: test-perms
+    on_fail: block
+  - name: prose-tests
+    stage: commit
+    files:
+      - plugin/banlist.conf
+      - plugin/scripts/prose_lint.py
+      - plugin/hooks/prose_lint_hook.py
+      - tests/test_prose_lint.py
+    adapter: make
+    target: test-prose
+    on_fail: block
+
+  - name: pdf-freshness
+    stage: commit
+    files: ["**/*.tex", "**/*.pdf"]
+    run: [sh, tests/check_pdf_fresh.sh, "{files}"]
+    on_fail: block
+  - name: pdf-freshness-tests
+    stage: commit
+    files:
+      - tests/check_pdf_fresh.sh
+      - tests/test_pdf_fresh.sh
+    adapter: make
+    target: test-pdf-fresh
+    on_fail: block
+  - name: full-gate
+    stage: handoff
+    files: all
+    adapter: make
+    target: verify
+    on_fail: block

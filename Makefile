@@ -1,4 +1,4 @@
-.PHONY: help prfaq test test-perms test-prose lint-prose check clean-tex
+.PHONY: help prfaq test test-perms test-prose test-pdf-fresh lint-prose check verify clean-tex
 
 # Directories holding a compiled .tex. Both TEX_FILES and the artifact globs
 # derive from this list, so a new document in one of these directories is
@@ -20,6 +20,13 @@ LATEX_ARTIFACTS = $(foreach d,$(TEX_DIRS),\
 # .tmp/ (not a TEX_DIR) rather than at the repo root.
 TEX_FILES = $(foreach d,$(TEX_DIRS),$(wildcard $(d)/*.tex))
 
+# Where `prfaq` writes each PDF. Empty (the default) rebuilds the committed PDF
+# next to its source. Set, it compiles into $(TEX_OUT)/<dir>/ instead, which is
+# how `verify` proves every document still compiles without rewriting a
+# tracked file.
+TEX_OUT =
+TEX_CHECK_DIR = .tmp/tex-check
+
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-12s %s\n", $$1, $$2}'
 
@@ -32,22 +39,23 @@ prfaq: ## Compile .tex to .pdf and clean artifacts
 	@for f in $(TEX_FILES); do \
 	  echo "Compiling $$f ..."; \
 	  dir=$$(dirname "$$f"); base=$$(basename "$$f" .tex); \
-	  rm -f "$$dir/$$base.pdf"; \
-	  pdflatex -interaction=nonstopmode -output-directory="$$dir" "$$f" > /dev/null 2>&1; \
+	  out="$(if $(TEX_OUT),$(TEX_OUT)/$$dir,$$dir)"; mkdir -p "$$out"; \
+	  rm -f "$$out/$$base.pdf"; \
+	  pdflatex -interaction=nonstopmode -output-directory="$$out" "$$f" > /dev/null 2>&1; \
 	  if [ -f "$$dir/$$base.bib" ] && command -v biber > /dev/null 2>&1; then \
-	    (cd "$$dir" && biber "$$base") > /dev/null 2>&1 || true; \
-	    pdflatex -interaction=nonstopmode -output-directory="$$dir" "$$f" > /dev/null 2>&1; \
+	    (cd "$$out" && biber --input-directory="$(CURDIR)/$$dir" "$$(pwd)/$$base.bcf") > /dev/null 2>&1 || true; \
+	    pdflatex -interaction=nonstopmode -output-directory="$$out" "$$f" > /dev/null 2>&1; \
 	  fi; \
-	  pdflatex -interaction=nonstopmode -output-directory="$$dir" "$$f" > /dev/null 2>&1; \
-	  if [ -f "$$dir/$$base.pdf" ]; then \
-	    echo "  $$dir/$$base.pdf"; \
+	  pdflatex -interaction=nonstopmode -output-directory="$$out" "$$f" > /dev/null 2>&1; \
+	  if [ -f "$$out/$$base.pdf" ]; then \
+	    echo "  $$out/$$base.pdf"; \
 	  else \
 	    echo "Error: $$f failed to compile" >&2; \
-	    if [ -f "$$dir/$$base.log" ]; then \
-	      echo "--- first errors from $$dir/$$base.log ---" >&2; \
-	      grep -A3 '^!' "$$dir/$$base.log" | head -40 >&2; \
-	      echo "--- tail of $$dir/$$base.log ---" >&2; \
-	      tail -25 "$$dir/$$base.log" >&2; \
+	    if [ -f "$$out/$$base.log" ]; then \
+	      echo "--- first errors from $$out/$$base.log ---" >&2; \
+	      grep -A3 '^!' "$$out/$$base.log" | head -40 >&2; \
+	      echo "--- tail of $$out/$$base.log ---" >&2; \
+	      tail -25 "$$out/$$base.log" >&2; \
 	    fi; \
 	    exit 1; \
 	  fi; \
@@ -62,7 +70,18 @@ test-perms: ## Verify the permission scripts (needs jq)
 test-prose: ## Run the prose_lint unit and hook-scope tests
 	@python3 tests/test_prose_lint.py
 
-check: test test-perms test-prose ## Run all quality gates
+test-pdf-fresh: ## Test the stale-PDF check
+	@sh tests/test_pdf_fresh.sh
+
+check: test test-perms test-prose test-pdf-fresh ## Run all quality gates
+
+# The same gates as `check`, but the compile writes into $(TEX_CHECK_DIR) so
+# no committed PDF changes. The ethos handoff check runs this: a gate an agent
+# runs before handing work back must not leave a dirty tree behind it.
+verify: ## Run all quality gates without rewriting committed PDFs
+	@rm -rf $(TEX_CHECK_DIR)
+	@$(MAKE) --no-print-directory prfaq TEX_OUT=$(TEX_CHECK_DIR)
+	@$(MAKE) --no-print-directory test-perms test-prose test-pdf-fresh
 
 # Informational only, deliberately not a `check` prerequisite: the shipped
 # hook only ever sees .tex files carrying \prfaqversion/\prfaqstage and

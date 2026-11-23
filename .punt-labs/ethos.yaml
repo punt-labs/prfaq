@@ -1,2 +1,3 @@
 agent: claude
 team: gstack
+checks: prfaq
