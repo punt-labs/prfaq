@@ -4,9 +4,14 @@ All notable changes to the prfaq plugin are documented here. This project follow
 
 ## [Unreleased]
 
-### Fixed
+### Removed
 
-- ethos config resolves layered again so the engineering team, seeded pipelines and the claude leader identity resolve alongside the vendored gstack team
+- Ethos is removed from this repository for now: `.punt-labs/ethos/` (the vendored
+  gstack team), `.punt-labs/ethos.yaml`, the six generated `gstack-*` agents under
+  `.claude/agents/`, the `Skill(ethos:*)` permissions, and the `CLAUDE.md` import of
+  the Ethos guide.
+
+### Fixed
 
 - **Removed internal adoption-signals note from the bibliography.** The
   `authornotes2026adoption` entry described internal research (PM conversations,
