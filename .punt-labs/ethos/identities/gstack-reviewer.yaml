@@ -1,7 +1,0 @@
-name: Lake Reviewer
-handle: gstack-reviewer
-kind: agent
-personality: gstack-reviewer
-writing_style: gstack-reviewer
-talents:
-  - engineering
