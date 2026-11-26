@@ -1,0 +1,18 @@
+# Run the unchanged make verify with system tools; no runtime bundle is needed.
+# The system /usr mount covers TeX Live; its configuration and generated
+# formats live outside /usr. Mount .tmp writable so verify can remove and
+# recreate .tmp/tex-check. PDF freshness tests need the Git index, not refs.
+checks:
+  full-gate:
+    profile: linux-worktree-v1
+    epoch: prfaq-v1
+    sources:
+      mode: worktree
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+    system:
+      tools: [bash, sh, make, git, pdflatex, biber, kpsewhich, perl, python3, jq, ssh]
+      dirs: [/etc/texmf, /var/lib/texmf]
+    scratch:
+      checkout: [.tmp]
+    git: {}
