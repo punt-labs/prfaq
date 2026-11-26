@@ -35,7 +35,13 @@ fail() { printf '  %b✗%b %s\n' "$YELLOW" "$NC" "$1" >&2; exit 1; }
 #
 # Deliberately excluded: Bash(curl *) and every Bash(rm *) form. Sending data
 # to an external endpoint and deleting files stay at the prompt tier.
-PRFAQ_PROJECT_RULES='[
+#
+# Skills are allowed broadly as Skill(prfaq:*) with exact ask carve-outs
+# (punt-kit permissions.md § 6): Claude Code evaluates ask before allow, so
+# /prfaq:permissions (this script, the consent step) and /prfaq:feedback-to-us
+# (curl to an external endpoint) still prompt while a new command works
+# without a rule update.
+PRFAQ_PROJECT_RULES='{"allow": [
   "Bash(bash */compile_prfaq.sh *)",
   "Bash(bash scripts/compile_prfaq.sh *)",
   "Bash(bash */export_prfaq_docx.sh *)",
@@ -54,8 +60,12 @@ PRFAQ_PROJECT_RULES='[
   "Edit(README.md)",
   "Edit(.gitignore)",
   "WebSearch",
-  "WebFetch"
-]'
+  "WebFetch",
+  "Skill(prfaq:*)"
+], "ask": [
+  "Skill(prfaq:permissions)",
+  "Skill(prfaq:feedback-to-us)"
+]}'
 
 # --- Arguments ---
 
@@ -114,6 +124,7 @@ if [ -f "$SETTINGS_FILE" ]; then
   MALFORMED=$(jq -r '
     if (has("permissions") and (.permissions | type) != "object") then "permissions"
     elif ((.permissions // {} | has("allow")) and (.permissions.allow | type) != "array") then "permissions.allow"
+    elif ((.permissions // {} | has("ask")) and (.permissions.ask | type) != "array") then "permissions.ask"
     elif (has("env") and (.env | type) != "object") then "env"
     else "" end
   ' "$SETTINGS_FILE" 2>/dev/null) || fail "Could not read $SETTINGS_FILE."
@@ -133,9 +144,11 @@ read_settings() {
 }
 
 PRESENT=$(read_settings | jq -r --argjson rules "$PRFAQ_PROJECT_RULES" '
-  [(.permissions.allow? // [])[] | select(. as $r | $rules | index($r))] | length
+  . as $s
+  | [$rules | to_entries[] | .key as $t | .value[]
+     | select(. as $r | ($s.permissions[$t]? // []) | index($r))] | length
 ')
-TOTAL=$(printf '%s' "$PRFAQ_PROJECT_RULES" | jq -r 'length')
+TOTAL=$(printf '%s' "$PRFAQ_PROJECT_RULES" | jq -r '[.[][]] | length')
 
 # set -e does not see a failure inside $(...), and sh has no pipefail, so a jq
 # that died leaves an empty string here. Untrapped, "$((TOTAL - PRESENT))"
@@ -159,8 +172,10 @@ if [ "$MODE" = "check" ]; then
   else
     warn "$PRESENT of $TOTAL rule(s) present — missing:"
     read_settings | jq -r --argjson rules "$PRFAQ_PROJECT_RULES" '
-      (.permissions.allow? // []) as $have
-      | $rules[] | select(. as $r | $have | index($r) | not) | "      " + .
+      . as $s
+      | $rules | to_entries[] | .key as $t | .value[]
+      | select(. as $r | ($s.permissions[$t]? // []) | index($r) | not)
+      | "      " + $t + ": " + .
     '
   fi
   if [ "$TEAMS" = "1" ]; then
@@ -203,8 +218,9 @@ trap cleanup_tmp EXIT INT TERM
 if [ "$MODE" = "add" ]; then
   # Order-preserving: existing rules keep their position, new ones append.
   read_settings | jq --argjson rules "$PRFAQ_PROJECT_RULES" '
-    (.permissions.allow? // []) as $have
-    | .permissions.allow = $have + [$rules[] | select(. as $r | $have | index($r) | not)]
+    reduce ($rules | to_entries[]) as $e (.;
+      (.permissions[$e.key]? // []) as $have
+      | .permissions[$e.key] = $have + [$e.value[] | select(. as $r | $have | index($r) | not)])
     | .env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1"
   ' > "$TMP" || fail "Could not update $SETTINGS_FILE"
   mv "$TMP" "$SETTINGS_FILE" || fail "Could not replace $SETTINGS_FILE"
@@ -223,8 +239,12 @@ if [ "$MODE" = "add" ]; then
   info "Restart if they do not seem to have taken."
   printf '\n'
 else
+  # A tier the file lacks stays absent: removing never creates one.
   read_settings | jq --argjson rules "$PRFAQ_PROJECT_RULES" '
-    .permissions.allow = [(.permissions.allow? // [])[] | select(. as $r | $rules | index($r) | not)]
+    reduce ($rules | to_entries[]) as $e (.;
+      if (.permissions? // {} | has($e.key))
+      then .permissions[$e.key] |= map(select(. as $r | $e.value | index($r) | not))
+      else . end)
   ' > "$TMP" || fail "Could not update $SETTINGS_FILE"
   mv "$TMP" "$SETTINGS_FILE" || fail "Could not replace $SETTINGS_FILE"
 

@@ -54,6 +54,14 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+      # The compile steps below build into scratch space or rewrite PDFs in
+      # the runner only, so they cannot see a committed PDF left stale by a
+      # .tex change in this PR.
+      - name: Committed PDFs match changed .tex
+        if: github.event_name == 'pull_request'
+        run: git diff --name-only "origin/${{ github.base_ref }}...HEAD" | xargs sh tests/check_pdf_fresh.sh
       - name: Install TeX packages the documents use
         run: |
           sudo apt-get update
@@ -62,6 +70,14 @@ jobs:
             texlive-fonts-recommended texlive-fonts-extra \
             texlive-pictures texlive-bibtex-extra \
             texlive-plain-generic biber
+      # The split-output path `make verify` (the ethos handoff gate) uses:
+      # every PDF and the biber bibliography land in the scratch directory and
+      # no committed PDF changes. Runs before `make test`, which rewrites them.
+      - name: Compile into a scratch directory
+        run: |
+          make prfaq TEX_OUT=.tmp/tex-check
+          test -s .tmp/tex-check/prfaq.bbl
+          git diff --exit-code -- '*.pdf'
       - name: Compile every shipped .tex
         run: make test
 

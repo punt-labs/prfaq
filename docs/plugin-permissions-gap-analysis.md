@@ -202,31 +202,9 @@ jq --argjson rules "$PLUGIN_RULES" '
 
 #### Installer (install.sh)
 
-Installs the plugin. Grants nothing. Its only permission-related job is
-removing rules earlier versions of the same plugin injected globally:
-
-```sh
-# Frozen historical list — every rule the plugin ever wrote to the global file.
-# Never add to it.
-LEGACY_GLOBAL_RULES='[ ... ]'
-
-FOUND=$(jq -r --argjson legacy "$LEGACY_GLOBAL_RULES" '
-  [(.permissions.allow // [])[] | select(. as $r | $legacy | index($r))] | length
-' "$SETTINGS_FILE")
-
-if [ "$FOUND" -gt 0 ]; then
-  cp "$SETTINGS_FILE" "${SETTINGS_FILE}.prfaq-backup.$(date +%Y%m%d%H%M%S)"
-  jq --argjson legacy "$LEGACY_GLOBAL_RULES" '
-    .permissions.allow = [(.permissions.allow // [])[] | select(. as $r | $legacy | index($r) | not)]
-  ' "$SETTINGS_FILE" > "${SETTINGS_FILE}.tmp" && mv "${SETTINGS_FILE}.tmp" "$SETTINGS_FILE"
-  # then print every removed rule, so a user who authored an overlapping
-  # generic rule (WebSearch, Edit(README.md)) can restore it from the backup
-fi
-```
-
-Print what was removed. Cleanup cannot distinguish a rule the plugin injected
-from an identical rule the user wrote by hand, so the backup and the printed
-list are what make the operation safe.
+Installs the plugin. Grants nothing and edits no settings file, global or
+project. Rules earlier versions wrote globally are not cleaned up
+([punt-kit#396](https://github.com/punt-labs/punt-kit/pull/396)).
 
 #### Command Frontmatter (allowed-tools)
 
@@ -253,7 +231,7 @@ allowed-tools: Bash(mkdir -p meetings), Read, Write, Glob, Grep
 | Global installer injection | **Removed in v1.7.0.** Shipped in v1.5.0 (PR #22), carried to v1.6.1 |
 | Project permissions command | `/prfaq:permissions` (v1.7.0) |
 | Path rules use `Edit(...)` | Yes (v1.7.0). v1.5.0–1.6.1 shipped 8 dead `Write(...)` rules |
-| Legacy global cleanup | Implemented — installer removes all 24 legacy rules, with backup |
+| Legacy global cleanup | Dropped (punt-kit#396: no global cleanup code) |
 | `allowed-tools` frontmatter | Implemented (PR #22) |
 
 ### tts
@@ -334,7 +312,6 @@ Update the uninstall requirements table to explicitly list:
 | Artifact | Created by | Cleaned up by |
 |----------|-----------|---------------|
 | Project permission entries | `/<plugin>:permissions` | `/<plugin>:permissions remove` |
-| Legacy global permission entries | Installers before the project-scoped rule | Installer, on upgrade |
 
 ### workflow.md
 

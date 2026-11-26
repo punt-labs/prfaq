@@ -70,7 +70,7 @@ Commit message format: `type: description`
 
 ### Issue Tracking
 
-Linear is the tracker of record: the Punt Labs team, issues labelled `repo:prfaq`, listed in the shared `prfaq` view. Beads (`bd`) is a read-mostly local mirror; `.punt-labs/punt/CLAUDE.md` (imported below) has the rules for which tracker to write to, and `.beads/README.md` has the mirror commands and the required `bd` build. If an issue discovered here affects multiple repos or requires a standards change, file it against punt-kit instead (see [bead placement scheme](../.docs/CLAUDE.md#where-to-create-a-bead)).
+Linear is the sole tracker of record: the Punt Labs team, issues labelled `repo:prfaq`, listed in the shared `prfaq` view. `.punt-labs/punt/CLAUDE.md` (imported below) has the rules for reading and writing it. If an issue discovered here affects multiple repos or requires a standards change, file it against punt-kit instead.
 
 | Use the tracker | Use TodoWrite |
 |-----------------|---------------|
@@ -78,15 +78,7 @@ Linear is the tracker of record: the Punt Labs team, issues labelled `repo:prfaq
 | Work with dependencies | Simple linear execution |
 | Discovered work to track | Immediate TODO items |
 
-```bash
-# Local reads of the mirror; refresh it first
-bd config get linear.pull_label   # Must print repo:prfaq; if not, pull main and re-run before any pull
-bd linear sync --pull-if-stale --relations --team c1dfbb2c-985e-40cf-b004-5127646efc9d
-bd ready --label-any repo:prfaq --exclude-label deferred   # Ready work in this repo
-bd show <id>                                               # Details with dependencies
-```
-
-Create, claim (In Progress), finish (Done) and cancel issues in Linear, with the `repo:prfaq` label plus a type label (`Bug`, `Feature`, `Improvement`, `Epic`). A local `bd update`, `bd close` or `bd create` is undone by the next pull. Blockers are `blocks` relations in Linear, mirrored with `bd dep add <bead> <blocker>` when the refresh ran without `--relations`.
+Create, claim (In Progress), finish (Done) and cancel issues in Linear, with the `repo:prfaq` label plus a type label (`Bug`, `Feature`, `Improvement`, `Epic`). Blockers are `blocks` relations in Linear.
 
 ### Workflow Tiers
 
@@ -317,7 +309,7 @@ scratch `.tex` in `.tmp/`, or the gate will compile it and fail on it. To compil
 one file on its own, `bash plugin/scripts/compile_prfaq.sh <file.tex>`. If a
 LaTeX change breaks compilation, fix it before committing.
 
-The permission tests cover `plugin/scripts/prfaq_permissions.sh` and `install.sh` Step 5 — both edit a user's Claude Code settings file, so the cases that matter are the destructive ones: rules the user wrote must survive, a no-op must not rewrite the file, and a successful run must exit 0. Run them after touching either script. They need `jq` and take about five seconds.
+The permission tests cover `plugin/scripts/prfaq_permissions.sh`, which edits a project's Claude Code settings file, so the cases that matter are the destructive ones: rules the user wrote must survive, a no-op must not rewrite the file, and a successful run must exit 0. They also check that `install.sh` leaves `~/.claude/settings.json` untouched. Run them after touching either script. They need `jq` and take about five seconds.
 
 ### GitHub Operations
 
@@ -356,7 +348,7 @@ Before ending any session:
 
 1. **File issues for remaining work** — Create Linear issues (`repo:prfaq` plus a type label) for anything that needs follow-up
 2. **Run quality gates** — Both `.tex` files compile to valid PDFs
-3. **Update issue status** — Close finished work and update in-progress items in Linear, never with a local `bd` edit
+3. **Update issue status** — Close finished work and update in-progress items in Linear
 4. **PUSH TO REMOTE** — This is MANDATORY:
    ```bash
    git pull --rebase
@@ -366,7 +358,7 @@ Before ending any session:
 5. **Verify** — All changes committed AND pushed
 6. **Hand off** — Provide context for next session
 
-Issue status is written in Linear, never with a local `bd` edit; there is no beads sync step.
+Issue status is written in Linear.
 
 **CRITICAL RULES:**
 - Work is NOT complete until `git push` succeeds

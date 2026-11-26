@@ -24,7 +24,7 @@ Never suggest rewording prose that plugin/banlist.conf and plugin/scripts/prose_
 compliance_user_guidelines = """
 Apply code rules only: correctness, typing, error handling, security, and the coding standards for the changed files.
 Do not grade PR titles, PR descriptions, commit messages, or CHANGELOG wording.
-Do not grade agent process rules from CLAUDE.md, AGENTS.md, or WORKFLOW.md (missions, beads, review cycles, delegation).
+Do not grade agent process rules from CLAUDE.md, AGENTS.md, or WORKFLOW.md (missions, review cycles, delegation).
 """
 smart_router_extra_instructions = """
 High risk: plugin/scripts/prfaq_permissions.sh and install.sh (both edit a user's Claude Code settings file), plugin/hooks/hooks.json and plugin/hooks/prose_lint_hook.py,
