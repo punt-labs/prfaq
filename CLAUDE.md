@@ -374,6 +374,5 @@ Issue status is written in Linear, never with a local `bd` edit; there is no bea
 - NEVER say "ready to push when you are" — YOU must push
 - If push fails, resolve and retry until it succeeds
 @.punt-labs/vox/CLAUDE.md
-@.punt-labs/ethos/CLAUDE.md
 @.punt-labs/beadle/CLAUDE.md
 @.punt-labs/punt/CLAUDE.md
